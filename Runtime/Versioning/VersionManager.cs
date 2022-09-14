@@ -96,7 +96,8 @@ namespace fwp.buildor.version
                 guis.normal.textColor = Color.gray;
                 guis.alignment = TextAnchor.LowerRight;
 
-                guis.fontSize = fwp.halpers.HalperGuiStyle.getPropSizedTextSize(1.25f);
+                //guis.fontSize = fwp.halpers.HalperGuiStyle.getPropSizedTextSize(1.25f);
+                guis.fontSize = 10;
             }
 
             // must be safe from rounded angle on mobile
