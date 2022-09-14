@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using System.IO;
+using fwp.buildor.version;
 
 /// <summary>
 /// 
@@ -34,7 +35,7 @@ using System.IO;
 /// 
 /// </summary>
 
-namespace buildor
+namespace fwp.buildor
 {
 
 #if UNITY_EDITOR

@@ -12,7 +12,7 @@ using System.IO;
 /// </summary>
 
 
-namespace buildor
+namespace fwp.buildor
 {
     [CreateAssetMenu(menuName = "buildor/new profil:windows", order = 100)]
     public class DataBuildSettingProfileWindows : DataBuildSettingProfile

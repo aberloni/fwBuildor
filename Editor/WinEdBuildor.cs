@@ -3,8 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
+using fwp.buildor.version;
+using fwp.halpers;
 
-namespace buildor
+
+namespace fwp.buildor
 {
 
     public class WinEdBuildor : EditorWindow

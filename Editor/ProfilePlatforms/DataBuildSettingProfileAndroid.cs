@@ -15,7 +15,7 @@ using UnityEditor;
 /// </summary>
 
 
-namespace buildor
+namespace fwp.buildor
 {
     [CreateAssetMenu(menuName = "buildor/new profil:android", order = 100)]
     public class DataBuildSettingProfileAndroid : DataBuildSettingProfileMobile

@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.IO;
-using version;
+using fwp.buildor.version;
 
 /// <summary>
 /// (ratio iphone)
@@ -9,7 +9,7 @@ using version;
 /// 506x900
 /// </summary>
 
-namespace buildor
+namespace fwp.buildor
 {
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
@@ -73,7 +73,7 @@ namespace buildor
             return absPath;
         }
 
-        public string getBuildFolderName() => build_prefix + "_" + HalperTime.getFullDate();
+        public string getBuildFolderName() => build_prefix + "_" + fwp.halpers.HalperTime.getFullDate();
         public string getBuildNameVersion()
         {
             string output = build_prefix;
@@ -182,6 +182,7 @@ namespace buildor
                 PlayerSettings.bundleVersion = internalVersion.version;
             }
         }
+
     }
 
 }

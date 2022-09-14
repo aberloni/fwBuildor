@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using System.IO;
+using fwp.buildor.version;
 
 /// <summary>
 /// (ratio iphone)
@@ -30,7 +31,7 @@ using System.IO;
 /// </summary>
 
 
-namespace buildor
+namespace fwp.buildor
 {
     [CreateAssetMenu(menuName = "buildor/new profil:switch", order = 100)]
     public class DataBuildSettingProfileSwitch : DataBuildSettingProfile
