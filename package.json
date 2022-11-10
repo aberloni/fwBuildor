@@ -1,8 +1,8 @@
 {
   "name": "com.ab.fwp.buildor",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "displayName": "ab:buildor",
-  "description": "tools for buidlding",
+  "description": "various tools to manage building and app:version-ing",
   "keywords": [
     "build"
   ],
@@ -16,5 +16,6 @@
     "name": "Andrei Berloni",
     "email": "dev@andreberlemont.com",
     "url": "http://www.andreberlemont.com"
-  }
+  },
+  "type": "tool"
 }

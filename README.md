@@ -1,5 +1,5 @@
-# fwInputeer
+# buildor
 
-2022-09-14
+2022-11-08
 
-framework for inputs for unity 3D
+various tools to manage building and app:version-ing

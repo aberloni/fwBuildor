@@ -2,12 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
-public enum BuildPhase
+namespace fwp.buildor.version
 {
-  none,
-  φ, // proto
-  α, // alpha
-  β, // beta
-  Ω  // gold
+    [System.Serializable]
+    public enum BuildPhase
+    {
+        none,
+        φ, // proto
+        α, // alpha
+        β, // beta
+        Ω  // gold
+    }
 }

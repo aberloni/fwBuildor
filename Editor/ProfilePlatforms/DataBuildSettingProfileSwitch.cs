@@ -104,7 +104,10 @@ namespace fwp.buildor
             bn = "";
             for (int i = 0; i < split.Length; i++)
             {
-                bn += split[i].ToString().upperFirstLetter();
+                string upper = split[i].ToString();
+                upper = upper[0].ToString().ToUpper() + upper.Substring(1);
+
+                bn += upper;
             }
 
             return bn + " (" + VersionManager.getFormatedVersion('.') + ")";

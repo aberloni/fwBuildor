@@ -73,7 +73,16 @@ namespace fwp.buildor
             return absPath;
         }
 
-        public string getBuildFolderName() => build_prefix + "_" + fwp.halpers.HalperTime.getFullDate();
+        /// <summary>
+        /// yyyy-mm-dd_hh:mm
+        /// </summary>
+        static public string getFullDate()
+        {
+            System.DateTime dt = System.DateTime.Now;
+            return dt.Year + "-" + dt.Month + "-" + dt.Day + "_" + dt.Hour + "-" + dt.Minute;
+        }
+
+        public string getBuildFolderName() => build_prefix + "_" + getFullDate();
         public string getBuildNameVersion()
         {
             string output = build_prefix;

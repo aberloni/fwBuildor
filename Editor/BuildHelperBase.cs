@@ -35,10 +35,9 @@ using fwp.buildor.version;
 /// 
 /// </summary>
 
-namespace fwp.buildor
+namespace fwp.buildor.editor
 {
 
-#if UNITY_EDITOR
     using UnityEditor.Build.Reporting;
     using UnityEditor;
 
@@ -248,7 +247,7 @@ namespace fwp.buildor
 
             if (summary.result == BuildResult.Failed)
             {
-                Debug.LogError("Helper Build failed");
+                Debug.LogError("BuildResult : Helper Build failed");
             }
         }
 
@@ -297,7 +296,7 @@ namespace fwp.buildor
             //DataBuildSettingProfile profile = getActiveProfile();
             //string path = profile.getBasePath();
             Debug.Log("opening folder : " + path);
-            HalperNatives.os_openFolder(path);
+            WinEdBuildor.os_openFolder(path);
         }
 
         protected string getBuildName()
@@ -346,7 +345,9 @@ namespace fwp.buildor
 
         static public DataBuildSettingProfile getActiveProfile()
         {
-            return getScriptableDataBuildSettings().getPlatformProfil();
+            var settings = getScriptableDataBuildSettings();
+            Debug.Assert(settings != null, "no settings ?");
+            return settings.getPlatformProfil();
         }
 
         static public void applySettings(DataBuildSettingProfile profil)
@@ -463,5 +464,4 @@ namespace fwp.buildor
 
     }
 
-#endif
 }

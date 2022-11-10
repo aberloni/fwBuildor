@@ -2,7 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface IBuildSettingsMobile
+namespace fwp.buildor
 {
-  string getPackageName();
+    public interface IBuildSettingsMobile
+    {
+        string getPackageName();
+    }
 }

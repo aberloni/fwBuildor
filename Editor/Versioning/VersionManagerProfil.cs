@@ -8,6 +8,8 @@ using UnityEditor;
 
 namespace fwp.buildor.version
 {
+    using fwp.buildor.editor;
+
     public class VersionManagerProfil
     {
 #if UNITY_EDITOR

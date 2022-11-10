@@ -2,15 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using buildor;
 
 namespace fwp.buildor.version
 {
+    using fwp.buildor.editor;
+
     public class VersionIncrementor
     {
-
-#if UNITY_EDITOR
-
+        
         [MenuItem("Build/Version/Internal/MAJOR++")]
         static public void incInternalMajor()
         {
@@ -73,7 +72,7 @@ namespace fwp.buildor.version
 
             v.applyVersionToEditor();
         }
-#endif
+
     }
 
 }

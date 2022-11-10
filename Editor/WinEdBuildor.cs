@@ -4,16 +4,13 @@ using UnityEngine;
 using UnityEditor;
 
 using fwp.buildor.version;
-using fwp.halpers;
 
-
-namespace fwp.buildor
+namespace fwp.buildor.editor
 {
-
     public class WinEdBuildor : EditorWindow
     {
 
-        [MenuItem("Build/open buildor", false, 0)]
+        [MenuItem("Buildor/(winEd) open buildor", false, 0)]
         static void init()
         {
             EditorWindow.GetWindow(typeof(WinEdBuildor));
@@ -23,20 +20,20 @@ namespace fwp.buildor
 
         void OnGUI()
         {
-            GUILayout.Label("Buildor", HalperGuiStyle.getWinTitle());
+            GUILayout.Label("Buildor", BuildorHelperGuiStyle.getWinTitle());
 
             scroll = GUILayout.BeginScrollView(scroll);
             DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
 
-            GUILayout.Label("platform", HalperGuiStyle.getCategoryBold());
+            GUILayout.Label("platform", BuildorHelperGuiStyle.getCategoryBold());
             GUI.enabled = false;
             EditorGUILayout.ObjectField(prof, typeof(DataBuildSettingProfile), true);
             GUI.enabled = true;
 
             GUILayout.Space(20f);
-            GUILayout.Label("version", HalperGuiStyle.getCategoryBold());
+            GUILayout.Label("version", BuildorHelperGuiStyle.getCategoryBold());
 
-            BuildSettingVersionType vType = WinEdFieldsHelper.drawEnum<BuildSettingVersionType>("publish type", "publish", 0);
+            BuildSettingVersionType vType = BuildorWinEdHelper.drawEnum<BuildSettingVersionType>("publish type", "publish", 0);
             bool _publish = vType == BuildSettingVersionType.vPublish;
 
             GUILayout.BeginHorizontal();
@@ -68,7 +65,7 @@ namespace fwp.buildor
             GUILayout.Label("version manager output : " + VersionManager.getDisplayVersion());
 
             GUILayout.Space(20f);
-            GUILayout.Label("misc", HalperGuiStyle.getCategoryBold());
+            GUILayout.Label("misc", BuildorHelperGuiStyle.getCategoryBold());
 
             WinEdFieldsHelper.drawCopyPastablePath("output folder :", prof.getBasePath());
             WinEdFieldsHelper.drawCopyPastablePath("build name :", prof.getBuildFullName(true));
@@ -78,11 +75,11 @@ namespace fwp.buildor
 
             if(GUILayout.Button("open output folder"))
             {
-                HalperNatives.os_openFolder(prof.getExportFolderPath());
+                os_openFolder(prof.getExportFolderPath());
             }
 
             GUILayout.Space(20f);
-            GUILayout.Label("toggles for build", HalperGuiStyle.getCategoryBold());
+            GUILayout.Label("toggles for build", BuildorHelperGuiStyle.getCategoryBold());
 
             bool autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
             bool incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
@@ -95,12 +92,38 @@ namespace fwp.buildor
             }
 
             GUILayout.Space(20f);
-            if (GUILayout.Button("BUILD", HalperGuiStyle.getButtonBig(50f)))
+            if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
             {
                 new BuildHelperBase(_publish, autorun, incVersion, openAfterBuild);
             }
 
             GUILayout.EndScrollView();
+        }
+
+
+
+        /// <summary>
+        /// open explorer at path
+        /// </summary>
+        /// <param name="folderPath"></param>
+        static public void os_openFolder(string folderPath, bool selectFolder = false)
+        {
+            folderPath = folderPath.Replace(@"/", @"\");   // explorer doesn't like front slashes
+
+            string argument = string.Empty;
+
+            if (selectFolder)
+            {
+                //https://stackoverflow.com/questions/334630/opening-a-folder-in-explorer-and-selecting-a-file
+                argument = "/select, ";
+            }
+
+            argument += "\"" + folderPath + "\"";
+
+            UnityEngine.Debug.Log("cmd:opening : " + argument);
+
+            //https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=netframework-4.7.2#System_Diagnostics_Process_Start_System_String_System_String_
+            System.Diagnostics.Process.Start("explorer.exe", argument);
         }
 
     }
