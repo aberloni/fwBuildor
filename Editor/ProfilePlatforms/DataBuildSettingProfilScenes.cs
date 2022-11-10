@@ -14,7 +14,7 @@ using UnityEditor.SceneManagement;
 /// 
 /// </summary>
 
-[CreateAssetMenu(menuName = "protoss/create DataBuildSettingProfilScenes", order = 100)]
+[CreateAssetMenu(menuName = "buildor/merger/create DataBuildSettingProfilScenes", order = 100)]
 public class DataBuildSettingProfilScenes : ScriptableObject
 {
   public string filter = ""; // filter a string that the scene NEEDs to have

@@ -443,23 +443,23 @@ namespace fwp.buildor.editor
 
         }
 
-        [MenuItem("Build/Apply platform settings")]
+        [MenuItem("Window/Buildor/Apply platform settings")]
         static public void applySettings()
         {
             DataBuildSettingProfile data = getActiveProfile();
             applySettings(data);
         }
 
-        [MenuItem("Build/Build n Open platform (no-increment)")]
+        [MenuItem("Window/Buildor/Build n Open platform (no-increment)")]
         public static void menu_build_open() { new BuildHelperBase(false, false, true); }
 
-        [MenuItem("Build/Build n Open platform (increment)")]
+        [MenuItem("Window/Buildor/Build n Open platform (increment)")]
         public static void menu_build_open_inc() { new BuildHelperBase(false, true, true); }
 
-        [MenuItem("Build/Build n Run platform (no-increment) %&x")]
+        [MenuItem("Window/Buildor/Build n Run platform (no-increment) %&x")]
         public static void menu_build_run() { new BuildHelperBase(true, false); }
 
-        [MenuItem("Build/Build n Run platform (increment) %&c")]
+        [MenuItem("Window/Buildor/Build n Run platform (increment) %&c")]
         public static void menu_build_run_inc() { new BuildHelperBase(true, true); }
 
     }

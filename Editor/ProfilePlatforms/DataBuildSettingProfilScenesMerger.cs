@@ -15,7 +15,7 @@ using UnityEditor.SceneManagement;
 
 namespace fwp.buildor
 {
-    [CreateAssetMenu(menuName = "protoss/create DataBuildSettingProfilScenesMerger", order = 100)]
+    [CreateAssetMenu(menuName = "buildor/merger/create DataBuildSettingProfilScenesMerger", order = 100)]
     public class DataBuildSettingProfilScenesMerger : ScriptableObject
     {
         public DataBuildSettingProfilScenes[] engines;

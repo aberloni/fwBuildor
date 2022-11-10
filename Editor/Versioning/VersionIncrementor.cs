@@ -10,7 +10,7 @@ namespace fwp.buildor.version
     public class VersionIncrementor
     {
         
-        [MenuItem("Build/Version/Internal/MAJOR++")]
+        [MenuItem("Version/Internal/MAJOR++")]
         static public void incInternalMajor()
         {
             DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
@@ -18,7 +18,7 @@ namespace fwp.buildor.version
             apply(false);
         }
 
-        [MenuItem("Build/Version/Internal/MINOR++")]
+        [MenuItem("Version/Internal/MINOR++")]
         static public void incInternalMinor()
         {
             DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
@@ -26,7 +26,7 @@ namespace fwp.buildor.version
             apply(false);
         }
 
-        [MenuItem("Build/Version/Internal/FIX++")]
+        [MenuItem("Version/Internal/FIX++")]
         static public void incInternalFix()
         {
             DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
@@ -35,7 +35,7 @@ namespace fwp.buildor.version
         }
 
 
-        [MenuItem("Build/Version/Publish/MAJOR++")]
+        [MenuItem("Version/Publish/MAJOR++")]
         static public void incPublishMajor()
         {
             DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
@@ -43,7 +43,7 @@ namespace fwp.buildor.version
             apply(true);
         }
 
-        [MenuItem("Build/Version/Publish/MINOR++")]
+        [MenuItem("Version/Publish/MINOR++")]
         static public void incPublishMinor()
         {
             DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
@@ -51,7 +51,7 @@ namespace fwp.buildor.version
             apply(true);
         }
 
-        [MenuItem("Build/Version/Publish/FIX++")]
+        [MenuItem("Version/Publish/FIX++")]
         static public void incPublishFix()
         {
             DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();

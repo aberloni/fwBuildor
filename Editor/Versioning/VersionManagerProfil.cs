@@ -16,14 +16,14 @@ namespace fwp.buildor.version
         static public string getProfilWorkVersion() => BuildHelperBase.getActiveProfile().internalVersion.version;
         static public string getProfilWorkBuildNumber() => BuildHelperBase.getActiveProfile().internalVersion.buildNumber.ToString();
 
-        [MenuItem("Build/Version/log profil internal version")]
+        [MenuItem("Version/log profil internal version")]
         static public void miLogCurrProfilWork()
         {
             var profil = BuildHelperBase.getActiveProfile();
             VersionManager.logXYZVersion(profil.internalVersion);
         }
 
-        [MenuItem("Build/Version/log profil publish version")]
+        [MenuItem("Version/log profil publish version")]
         static public void miLogCurrProfilPublish()
         {
             var profil = BuildHelperBase.getActiveProfile();

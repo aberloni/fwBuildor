@@ -69,7 +69,7 @@ namespace fwp.buildor
 		}
 
 #if UNITY_EDITOR
-		[UnityEditor.MenuItem("Buildor/log app.version")]
+		[UnityEditor.MenuItem("Window/Buildor/log app.version")]
 		static public void logAppVersion() => Debug.Log(Application.version);
 #endif
 	}
