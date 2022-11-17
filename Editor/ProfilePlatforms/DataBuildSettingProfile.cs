@@ -14,9 +14,15 @@ namespace fwp.buildor
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
     ///  it's meant to be used as a build flow tool params
+    ///  
+    /// .../builds/.../prefix_X-Y-Z.app
+    /// .../builds/.../Y-m-d/...
     /// </summary>
     abstract public class DataBuildSettingProfile : ScriptableObject
     {
+        const string build_path = "builds/"; // next to Assets/
+        const string path_separator = "__";
+
         [Header("version")]
         public DataBuildSettingVersion publishVersion; // shown on marketplace and used by build
         public DataVersionInternal internalVersion; // local iterations
@@ -25,9 +31,6 @@ namespace fwp.buildor
         [Header("identification")]
         public string compagny_name = "*";
         public string product_name = "*";
-
-        [Header("file")]
-        public string build_path = "builds/";
 
         [Tooltip("project name used to generate output file")]
         public string build_prefix = "";
@@ -55,70 +58,78 @@ namespace fwp.buildor
 #endif
 
         /// <summary>
-        /// path/to/build/
-        /// no name
+        /// output builds/ folder (next to Assets/)
         /// </summary>
-        protected string getAbsBuildFolderPath()
+        virtual public string getAbsoluteBuildFolderPath(bool includeDate, bool includeVersion, bool includePlatform)
         {
+            // path/to/Assets/
             string baseProjectPath = Application.dataPath;
             baseProjectPath = baseProjectPath.Substring(0, baseProjectPath.LastIndexOf('/')); // remove Assets/
 
-            //profile build suffix path 
-            string buildPathFolder = build_path;
-            if (!buildPathFolder.EndsWith("/")) buildPathFolder += "/";
+            // path/to/builds/
+            baseProjectPath = Path.Combine(baseProjectPath, build_path);
 
-            string absPath = Path.Combine(baseProjectPath, buildPathFolder);
-            //Debug.Log("build folder => " + absPath);
+            string sub = string.Empty;
 
-            return absPath;
+            if (includeDate) sub += getFullDate() + path_separator;
+            if (includeVersion) sub += VersionManager.getFormatedVersion('-') + path_separator;
+            if (includePlatform) sub += getPlatformUid() + path_separator;
+
+            if(sub.Length > 0)
+            {
+                sub = sub.Substring(0, sub.Length - path_separator.Length); // remove last "__"
+            }
+
+            // builds/(sub/)
+            baseProjectPath = Path.Combine(baseProjectPath, sub);
+
+            return baseProjectPath;
         }
 
         /// <summary>
-        /// yyyy-mm-dd_hh:mm
+        /// prefix(_date)(_version)(.extension)
         /// </summary>
-        static public string getFullDate()
-        {
-            System.DateTime dt = System.DateTime.Now;
-            return dt.Year + "-" + dt.Month + "-" + dt.Day + "_" + dt.Hour + "-" + dt.Minute;
-        }
-
-        public string getBuildFolderName() => build_prefix + "_" + getFullDate();
-        public string getBuildNameVersion()
+        public string getAppName(bool includeExtension = true)
         {
             string output = build_prefix;
-            if (addVersionToBuildPath()) output += "_" + VersionManager.getFormatedVersion('-');
+
+            if (includeExtension) output += "." + getExtension();
+
             return output;
         }
 
-        virtual public bool addVersionToBuildPath()
+        // windows, osx, ios, ...
+        public string getPlatformUid()
         {
-            bool addVersion = addVersionInBuildPath;
-
-#if steam
-    addVersion = false;
-#endif
-
-            return addVersion;
-        }
-
-        public string getFullPath() => Path.Combine(getBasePath(), getBuildFullName(true));
-
-        public string getExportFolderPath() => getAbsBuildFolderPath();
-
-        // all path by NOT build name.ext
-        virtual public string getBasePath() => getAbsBuildFolderPath();
-
-        virtual public string getBuildFullName(bool ext)
-        {
-            string buildName = getBuildNameVersion();
-
-            if (ext) buildName += "." + getExtension();
-            return buildName;
+            switch (getPlatformTarget())
+            {
+                case BuildTarget.StandaloneOSX:
+                    return "osx";
+                case BuildTarget.StandaloneWindows64:
+                case BuildTarget.StandaloneWindows:
+                    return "win";
+                case BuildTarget.iOS:
+                    return "ios";
+                case BuildTarget.Android:
+                    return "android";
+                //case BuildTarget.StandaloneLinux: 
+                case BuildTarget.StandaloneLinux64:
+                    return "linux";
+                case BuildTarget.WebGL:
+                    return "web";
+                case BuildTarget.Switch:
+                    return "switch";
+                case BuildTarget.NoTarget:
+                    return string.Empty;
+                default:
+                    Debug.LogError(getPlatformUid() + " : UID unknown ? or un-supported");
+                    return string.Empty;
+            }
         }
 
         public string getZipName()
         {
-            string zipName = getBuildNameVersion();
+            string zipName = getAppName(false);
 
 #if debug
     zipName += "_d";
@@ -190,6 +201,16 @@ namespace fwp.buildor
             {
                 PlayerSettings.bundleVersion = internalVersion.version;
             }
+        }
+
+
+        /// <summary>
+        /// yyyy-mm-dd_hh:mm
+        /// </summary>
+        static public string getFullDate()
+        {
+            System.DateTime dt = System.DateTime.Now;
+            return dt.Year + "-" + dt.Month + "-" + dt.Day + "_" + dt.Hour + "-" + dt.Minute;
         }
 
     }

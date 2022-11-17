@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEditor;
 
@@ -18,13 +19,26 @@ namespace fwp.buildor.editor
 
         Vector2 scroll;
 
+        BuildHelperBase.BuildHelperFlags flags;
+
+        private void Update()
+        {
+            
+        }
+
         void OnGUI()
         {
             GUILayout.Label("Buildor", BuildorHelperGuiStyle.getWinTitle());
+            
+            DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
+            if (prof == null)
+            {
+                GUILayout.Label("this view needs some active profil setup");
+                return;
+            }
 
             scroll = GUILayout.BeginScrollView(scroll);
-            DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
-
+            
             GUILayout.Label("platform", BuildorHelperGuiStyle.getCategoryBold());
             GUI.enabled = false;
             EditorGUILayout.ObjectField(prof, typeof(DataBuildSettingProfile), true);
@@ -34,7 +48,7 @@ namespace fwp.buildor.editor
             GUILayout.Label("version", BuildorHelperGuiStyle.getCategoryBold());
 
             BuildSettingVersionType vType = BuildorWinEdHelper.drawEnum<BuildSettingVersionType>("publish type", "publish", 0);
-            bool _publish = vType == BuildSettingVersionType.vPublish;
+            flags.isPublishingBuild = vType == BuildSettingVersionType.vPublish;
 
             GUILayout.BeginHorizontal();
 
@@ -64,37 +78,50 @@ namespace fwp.buildor.editor
 
             GUILayout.Label("version manager output : " + VersionManager.getDisplayVersion());
 
-            GUILayout.Space(20f);
-            GUILayout.Label("misc", BuildorHelperGuiStyle.getCategoryBold());
-
-            WinEdFieldsHelper.drawCopyPastablePath("output folder :", prof.getBasePath());
-            WinEdFieldsHelper.drawCopyPastablePath("build name :", prof.getBuildFullName(true));
-            WinEdFieldsHelper.drawCopyPastablePath("zip name suggestion :", prof.getZipName());
             GUILayout.Space(10f);
-            WinEdFieldsHelper.drawCopyPastablePath("full path :", prof.getFullPath());
 
-            if(GUILayout.Button("open output folder"))
-            {
-                os_openFolder(prof.getExportFolderPath());
-            }
+            GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
 
-            GUILayout.Space(20f);
-            GUILayout.Label("toggles for build", BuildorHelperGuiStyle.getCategoryBold());
+            flags.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
+            flags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
+            flags.openFolderOnSucess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
 
-            bool autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
-            bool incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
-            bool openAfterBuild = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
+            GUILayout.Label("path modifiers", BuildorHelperGuiStyle.getCategoryBold());
+
+            GUILayout.BeginHorizontal();
+            flags.pathIncludePlatform = WinEdFieldsHelper.drawToggle("platform", "pathIncludePlatform");
+            flags.pathIncludeDate = WinEdFieldsHelper.drawToggle("date", "pathIncludeDate");
+            flags.pathIncludeVersion = WinEdFieldsHelper.drawToggle("version", "pathIncludeVersion");
+            GUILayout.EndHorizontal();
 
             prof.developement_build = GUILayout.Toggle(prof.developement_build, "dev build");
-            if(prof.developement_build != EditorUserBuildSettings.development)
+            if (prof.developement_build != EditorUserBuildSettings.development)
             {
                 EditorUserBuildSettings.development = prof.developement_build;
             }
 
             GUILayout.Space(20f);
+            GUILayout.Label("outputs", BuildorHelperGuiStyle.getCategoryBold());
+
+            string outputFolder = prof.getAbsoluteBuildFolderPath(flags.pathIncludeDate, flags.pathIncludeVersion, flags.pathIncludePlatform);
+            
+            WinEdFieldsHelper.drawCopyPastablePath("base path : ", outputFolder);
+            WinEdFieldsHelper.drawCopyPastablePath("app name :", prof.getAppName());
+            WinEdFieldsHelper.drawCopyPastablePath("zip name :", prof.getZipName());
+            
+
+            string fullPath = Path.Combine(outputFolder, prof.getAppName());
+            WinEdFieldsHelper.drawCopyPastablePath("full path :", fullPath);
+
+            if(GUILayout.Button("open output folder"))
+            {
+                os_openFolder(outputFolder);
+            }
+
+            GUILayout.Space(20f);
             if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
             {
-                new BuildHelperBase(_publish, autorun, incVersion, openAfterBuild);
+                new BuildHelperBase(flags);
             }
 
             GUILayout.EndScrollView();

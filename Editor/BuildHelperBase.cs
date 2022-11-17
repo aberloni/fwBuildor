@@ -43,6 +43,18 @@ namespace fwp.buildor.editor
 
     public class BuildHelperBase
     {
+        public struct BuildHelperFlags
+        {
+            public bool autorun;
+            public bool incVersion;
+            public bool openFolderOnSucess;
+            public bool isPublishingBuild;
+
+            public bool pathIncludePlatform;
+            public bool pathIncludeDate;
+            public bool pathIncludeVersion;
+        }
+
         BuildPlayerOptions buildPlayerOptions;
 
         IEnumerator preProc = null;
@@ -51,29 +63,34 @@ namespace fwp.buildor.editor
         //float time_at_process = 0f;
 
         DataBuildSettingsBridge data = null;
-        bool auto_run = false;
-        bool version_increment = false;
-        bool open_on_sucess = false;
-
         string outputPath = "";
 
-        bool publish;
+        BuildHelperFlags _flags;
 
-        public BuildHelperBase(bool publish, bool autorun = false, bool incVersion = true, bool openFolderOnSucess = false, DataBuildSettingsBridge paramData = null)
+        public BuildHelperBase(bool autorun, bool incVersion, bool openFolder)
         {
-            this.publish = publish;
+            launch(new BuildHelperFlags()
+            {
+                autorun = autorun,
+                incVersion = incVersion,
+                openFolderOnSucess = openFolder
+            });
+        }
 
-            //update data
-            if (paramData != null) data = paramData;
-            else data = getScriptableDataBuildSettings();
+        public BuildHelperBase(BuildHelperFlags flags)
+        {
+            launch(flags);
+        }
+
+        void launch(BuildHelperFlags flags)
+        {
+            this._flags = flags;
+
+            data = getScriptableDataBuildSettings();
 
             //if (data != null) applySettings(data.activeProfile);
 
             Debug.Log("starting build process");
-
-            this.auto_run = autorun;
-            this.version_increment = incVersion;
-            this.open_on_sucess = openFolderOnSucess;
 
             preProc = preBuildProcess();
 
@@ -107,11 +124,17 @@ namespace fwp.buildor.editor
                     Debug.Log("build proc done");
 
                     buildProc = null;
-                    EditorApplication.update -= update_check_process;
+
+                    processEnded();
                 }
                 return;
             }
 
+        }
+
+        void processEnded()
+        {
+            EditorApplication.update -= update_check_process;
         }
 
         /// <summary>
@@ -162,7 +185,7 @@ namespace fwp.buildor.editor
 
             if (BuildPipeline.isBuildingPlayer) return;
 
-            Debug.Log("now building app ; inc version ? " + version_increment);
+            Debug.Log("now building app ; inc version ? " + _flags.incVersion);
 
             buildPlayerOptions = new BuildPlayerOptions();
 
@@ -182,9 +205,9 @@ namespace fwp.buildor.editor
             //DataBuildSettingProfileSwitch pSwitch = profile as DataBuildSettingProfileSwitch;
 
             //this will apply
-            if (version_increment)
+            if (_flags.incVersion)
             {
-                if (publish)
+                if (_flags.isPublishingBuild)
                     VersionIncrementor.incPublishFix();
                 else
                     VersionIncrementor.incInternalFix();
@@ -196,9 +219,11 @@ namespace fwp.buildor.editor
             //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
             buildPlayerOptions.scenes = getScenePaths();
             //buildPlayerOptions.
+
+
             // === CREATE SOLVED BUILD PATH
 
-            string absPath = profile.getBasePath();
+            string absPath = profile.getAbsoluteBuildFolderPath(_flags.pathIncludeDate, _flags.pathIncludeVersion, _flags.pathIncludePlatform);
 
             bool pathExists = Directory.Exists(absPath);
 
@@ -213,7 +238,7 @@ namespace fwp.buildor.editor
             outputPath = absPath;
 
             //[project]_[version].[ext]
-            absPath = Path.Combine(absPath, profile.getBuildFullName(true));
+            absPath = Path.Combine(absPath, profile.getAppName());
 
             Debug.Log("BuildHelper, saving build at : " + absPath);
             buildPlayerOptions.locationPathName = absPath;
@@ -226,7 +251,7 @@ namespace fwp.buildor.editor
             {
                 buildPlayerOptions.options |= BuildOptions.AllowDebugging;
             }
-            if (auto_run) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
+            if (_flags.autorun) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
 
             //BuildPipeline.BuildPlayer(buildPlayerOptions);
         }
@@ -242,7 +267,7 @@ namespace fwp.buildor.editor
 
             if (summary.result == BuildResult.Succeeded)
             {
-                onSuccess(summary, open_on_sucess);
+                onSuccess(summary, _flags.openFolderOnSucess);
             }
 
             if (summary.result == BuildResult.Failed)
@@ -337,16 +362,18 @@ namespace fwp.buildor.editor
                     if (data != null) return data;
                 }
             }
-            else Debug.LogWarning("no objects returned by AssetDatabase for type : DataBuildSettingsBridge");
+            //Debug.LogWarning("no objects returned by AssetDatabase for type : DataBuildSettingsBridge");
 
-            Debug.LogError("could not find object of type : DataBuildSettingsBridge");
+            //Debug.LogError("could not find object of type : DataBuildSettingsBridge");
             return null;
         }
 
         static public DataBuildSettingProfile getActiveProfile()
         {
             var settings = getScriptableDataBuildSettings();
-            Debug.Assert(settings != null, "no settings ?");
+            
+            if (settings == null) return null;
+
             return settings.getPlatformProfil();
         }
 
@@ -435,12 +462,6 @@ namespace fwp.buildor.editor
                 Debug.Log("  L updated ios stuff");
             }
 
-            //PlayerSettings.Android.name
-            
-            Debug.Log("~output~");
-            Debug.Log("  L base path : " + profil.getBasePath());
-            Debug.Log("  L build name : " + profil.getBuildFullName(true));
-
         }
 
         [MenuItem("Window/Buildor/Apply platform settings")]
@@ -449,18 +470,6 @@ namespace fwp.buildor.editor
             DataBuildSettingProfile data = getActiveProfile();
             applySettings(data);
         }
-
-        [MenuItem("Window/Buildor/Build n Open platform (no-increment)")]
-        public static void menu_build_open() { new BuildHelperBase(false, false, true); }
-
-        [MenuItem("Window/Buildor/Build n Open platform (increment)")]
-        public static void menu_build_open_inc() { new BuildHelperBase(false, true, true); }
-
-        [MenuItem("Window/Buildor/Build n Run platform (no-increment) %&x")]
-        public static void menu_build_run() { new BuildHelperBase(true, false); }
-
-        [MenuItem("Window/Buildor/Build n Run platform (increment) %&c")]
-        public static void menu_build_run_inc() { new BuildHelperBase(true, true); }
 
     }
 

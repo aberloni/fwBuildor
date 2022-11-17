@@ -19,22 +19,7 @@ namespace fwp.buildor
     {
         public override string getExtension() => "exe";
         public override BuildTarget getPlatformTarget() => BuildTarget.StandaloneWindows;
-
-        protected override void OnValidate()
-        {
-            base.OnValidate();
-
-        }
-
-        public override string getBasePath()
-        {
-            string basePath = base.getBasePath();
-
-            basePath = Path.Combine(basePath, getBuildNameVersion());
-
-            return basePath;
-        }
-
+        
         static public string getPlayerSettingsBuildNumber() => "-";
         static public string getPlayerSettingsVersion() => PlayerSettings.bundleVersion;
 

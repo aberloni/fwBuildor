@@ -49,24 +49,17 @@ namespace fwp.buildor
         public Il2CppCompilerConfiguration compilerConfig = Il2CppCompilerConfiguration.Release;
         public int maxControllerCount = 8;
 
-        // .../builds/[project]_[date]/?[rom]/?[dev]
-        public override string getBasePath()
+        // .../builds/(roms/)app.ext
+        public override string getAbsoluteBuildFolderPath(bool includeDate, bool includeVersion, bool includePlatform)
         {
-            string basePath = base.getBasePath();
+            string output = base.getAbsoluteBuildFolderPath(includeDate, includeVersion, includePlatform);
 
             if (EditorUserBuildSettings.switchCreateRomFile)
             {
-                basePath = Path.Combine(basePath, "roms");
+                output = Path.Combine(output, "roms");
             }
 
-            if (EditorUserBuildSettings.development)
-            {
-                basePath = Path.Combine(basePath, "dev");
-            }
-
-            basePath = Path.Combine(basePath, getBuildFolderName());
-
-            return basePath;
+            return output;
         }
 
         public override string getExtension()
