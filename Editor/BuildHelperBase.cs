@@ -43,18 +43,6 @@ namespace fwp.buildor.editor
 
     public class BuildHelperBase
     {
-        public struct BuildHelperFlags
-        {
-            public bool autorun;
-            public bool incVersion;
-            public bool openFolderOnSucess;
-            public bool isPublishingBuild;
-
-            public bool pathIncludePlatform;
-            public bool pathIncludeDate;
-            public bool pathIncludeVersion;
-        }
-
         BuildPlayerOptions buildPlayerOptions;
 
         IEnumerator preProc = null;
@@ -65,26 +53,18 @@ namespace fwp.buildor.editor
         DataBuildSettingsBridge data = null;
         string outputPath = "";
 
-        BuildHelperFlags _flags;
+        BuildPathFlags flagsPath;
+        BuildHelperFlags flagsBuild;
 
-        public BuildHelperBase(bool autorun, bool incVersion, bool openFolder)
+        public BuildHelperBase(BuildHelperFlags build, BuildPathFlags path)
         {
-            launch(new BuildHelperFlags()
-            {
-                autorun = autorun,
-                incVersion = incVersion,
-                openFolderOnSucess = openFolder
-            });
+            launch(build, path);
         }
 
-        public BuildHelperBase(BuildHelperFlags flags)
+        void launch(BuildHelperFlags build, BuildPathFlags path)
         {
-            launch(flags);
-        }
-
-        void launch(BuildHelperFlags flags)
-        {
-            this._flags = flags;
+            this.flagsBuild = build;
+            this.flagsPath = path;
 
             data = getScriptableDataBuildSettings();
 
@@ -185,7 +165,7 @@ namespace fwp.buildor.editor
 
             if (BuildPipeline.isBuildingPlayer) return;
 
-            Debug.Log("now building app ; inc version ? " + _flags.incVersion);
+            Debug.Log("now building app ; inc version ? " + flagsBuild.incVersion);
 
             buildPlayerOptions = new BuildPlayerOptions();
 
@@ -205,9 +185,9 @@ namespace fwp.buildor.editor
             //DataBuildSettingProfileSwitch pSwitch = profile as DataBuildSettingProfileSwitch;
 
             //this will apply
-            if (_flags.incVersion)
+            if (flagsBuild.incVersion)
             {
-                if (_flags.isPublishingBuild)
+                if (flagsBuild.isPublishingBuild)
                     VersionIncrementor.incPublishFix();
                 else
                     VersionIncrementor.incInternalFix();
@@ -223,7 +203,7 @@ namespace fwp.buildor.editor
 
             // === CREATE SOLVED BUILD PATH
 
-            string absPath = profile.getAbsoluteBuildFolderPath(_flags.pathIncludeDate, _flags.pathIncludeVersion, _flags.pathIncludePlatform);
+            string absPath = profile.getAbsoluteBuildFolderPath(flagsPath);
 
             bool pathExists = Directory.Exists(absPath);
 
@@ -251,7 +231,8 @@ namespace fwp.buildor.editor
             {
                 buildPlayerOptions.options |= BuildOptions.AllowDebugging;
             }
-            if (_flags.autorun) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
+
+            if (flagsBuild.autorun) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
 
             //BuildPipeline.BuildPlayer(buildPlayerOptions);
         }
@@ -267,7 +248,7 @@ namespace fwp.buildor.editor
 
             if (summary.result == BuildResult.Succeeded)
             {
-                onSuccess(summary, _flags.openFolderOnSucess);
+                onSuccess(summary, flagsBuild.openFolderOnSucess);
             }
 
             if (summary.result == BuildResult.Failed)

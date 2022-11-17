@@ -60,7 +60,7 @@ namespace fwp.buildor
         /// <summary>
         /// output builds/ folder (next to Assets/)
         /// </summary>
-        virtual public string getAbsoluteBuildFolderPath(bool includeDate, bool includeVersion, bool includePlatform)
+        virtual public string getAbsoluteBuildFolderPath(BuildPathFlags flags)
         {
             // path/to/Assets/
             string baseProjectPath = Application.dataPath;
@@ -71,11 +71,12 @@ namespace fwp.buildor
 
             string sub = string.Empty;
 
-            if (includeDate) sub += getFullDate() + path_separator;
-            if (includeVersion) sub += VersionManager.getFormatedVersion('-') + path_separator;
-            if (includePlatform) sub += getPlatformUid() + path_separator;
+            if (flags.pathIncludePrefix) sub += build_prefix + path_separator;
+            if (flags.pathIncludeDate) sub += getFullDate() + path_separator;
+            if (flags.pathIncludePlatform) sub += getPlatformUid() + path_separator;
+            if (flags.pathIncludeVersion) sub += VersionManager.getFormatedVersion('-') + path_separator;
 
-            if(sub.Length > 0)
+            if (sub.Length > 0)
             {
                 sub = sub.Substring(0, sub.Length - path_separator.Length); // remove last "__"
             }

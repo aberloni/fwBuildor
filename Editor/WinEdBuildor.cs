@@ -19,12 +19,11 @@ namespace fwp.buildor.editor
 
         Vector2 scroll;
 
-        BuildHelperBase.BuildHelperFlags flags;
+        BuildHelperFlags flagsBuild;
+        BuildPathFlags flagsPath;
 
         private void Update()
-        {
-            
-        }
+        { }
 
         void OnGUI()
         {
@@ -48,7 +47,7 @@ namespace fwp.buildor.editor
             GUILayout.Label("version", BuildorHelperGuiStyle.getCategoryBold());
 
             BuildSettingVersionType vType = BuildorWinEdHelper.drawEnum<BuildSettingVersionType>("publish type", "publish", 0);
-            flags.isPublishingBuild = vType == BuildSettingVersionType.vPublish;
+            flagsBuild.isPublishingBuild = vType == BuildSettingVersionType.vPublish;
 
             GUILayout.BeginHorizontal();
 
@@ -82,17 +81,9 @@ namespace fwp.buildor.editor
 
             GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
 
-            flags.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
-            flags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
-            flags.openFolderOnSucess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
-
-            GUILayout.Label("path modifiers", BuildorHelperGuiStyle.getCategoryBold());
-
-            GUILayout.BeginHorizontal();
-            flags.pathIncludePlatform = WinEdFieldsHelper.drawToggle("platform", "pathIncludePlatform");
-            flags.pathIncludeDate = WinEdFieldsHelper.drawToggle("date", "pathIncludeDate");
-            flags.pathIncludeVersion = WinEdFieldsHelper.drawToggle("version", "pathIncludeVersion");
-            GUILayout.EndHorizontal();
+            flagsBuild.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
+            flagsBuild.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
+            flagsBuild.openFolderOnSucess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
 
             prof.developement_build = GUILayout.Toggle(prof.developement_build, "dev build");
             if (prof.developement_build != EditorUserBuildSettings.development)
@@ -100,16 +91,24 @@ namespace fwp.buildor.editor
                 EditorUserBuildSettings.development = prof.developement_build;
             }
 
+            GUILayout.Label("path modifiers", BuildorHelperGuiStyle.getCategoryBold());
+
+            GUILayout.BeginHorizontal();
+            flagsPath.pathIncludePrefix = WinEdFieldsHelper.drawToggle("prefix", "pathIncludePrefix");
+            flagsPath.pathIncludePlatform = WinEdFieldsHelper.drawToggle("platform", "pathIncludePlatform");
+            flagsPath.pathIncludeDate = WinEdFieldsHelper.drawToggle("date", "pathIncludeDate");
+            flagsPath.pathIncludeVersion = WinEdFieldsHelper.drawToggle("version", "pathIncludeVersion");
+            GUILayout.EndHorizontal();
+
             GUILayout.Space(20f);
             GUILayout.Label("outputs", BuildorHelperGuiStyle.getCategoryBold());
 
-            string outputFolder = prof.getAbsoluteBuildFolderPath(flags.pathIncludeDate, flags.pathIncludeVersion, flags.pathIncludePlatform);
+            string outputFolder = prof.getAbsoluteBuildFolderPath(flagsPath);
             
             WinEdFieldsHelper.drawCopyPastablePath("base path : ", outputFolder);
             WinEdFieldsHelper.drawCopyPastablePath("app name :", prof.getAppName());
             WinEdFieldsHelper.drawCopyPastablePath("zip name :", prof.getZipName());
             
-
             string fullPath = Path.Combine(outputFolder, prof.getAppName());
             WinEdFieldsHelper.drawCopyPastablePath("full path :", fullPath);
 
@@ -121,7 +120,7 @@ namespace fwp.buildor.editor
             GUILayout.Space(20f);
             if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
             {
-                new BuildHelperBase(flags);
+                new BuildHelperBase(flagsBuild, flagsPath);
             }
 
             GUILayout.EndScrollView();
