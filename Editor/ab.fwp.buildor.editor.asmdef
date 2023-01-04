@@ -2,9 +2,7 @@
     "name": "ab.fwp.buildor.editor",
     "rootNamespace": "",
     "references": [
-        "GUID:a492988323ef9d1499135f2584b740b8",
-        "GUID:01ec6b89e758df54ea01a78f2d271b6c",
-        "GUID:315c0fd4dc31eff439ecf89d38fe57b9"
+        "GUID:a492988323ef9d1499135f2584b740b8"
     ],
     "includePlatforms": [
         "Editor"

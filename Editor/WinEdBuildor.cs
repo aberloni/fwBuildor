@@ -11,7 +11,7 @@ namespace fwp.buildor.editor
     public class WinEdBuildor : EditorWindow
     {
 
-        [MenuItem("Window/Buildor/(winEd) open buildor", false, 0)]
+        [MenuItem("Window/Buildor/(window) open buildor", false, 0)]
         static void init()
         {
             EditorWindow.GetWindow(typeof(WinEdBuildor));
