@@ -70,7 +70,10 @@ namespace fwp.buildor
 
 #if UNITY_EDITOR
 		[UnityEditor.MenuItem("Window/Buildor/log app.version")]
-		static public void logAppVersion() => Debug.Log(Application.version);
+		static public void logAppVersion()
+		{
+			Debug.Log(version.VersionManager.getPlayerSettingsVersion());
+		}
 #endif
 	}
 

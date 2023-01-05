@@ -161,7 +161,7 @@ namespace fwp.buildor.version
         static private int[] getPlayerSettingsVersionInts()
         {
             // https://docs.unity3d.com/ScriptReference/Application-version.html
-            return splitVersion(Application.version);
+            return splitVersion(getPlayerSettingsVersion());
         }
 
         static public int[] splitVersion(string v)
@@ -171,6 +171,7 @@ namespace fwp.buildor.version
             //default
             if (v.Length < 1 || v.IndexOf(".") < 0)
             {
+                Debug.LogWarning("no version given, defaulting to 0.0.1");
                 v = "0.0.1";
             }
 
@@ -192,10 +193,10 @@ namespace fwp.buildor.version
             return output;
         }
 
-
         static public string getPlayerSettingsVersion()
         {
-            return "";
+            //return PlayerSettings.bundleVersion;
+            return Application.version;
         }
 
         static public string getPlayerSettingsBuildNumber()
