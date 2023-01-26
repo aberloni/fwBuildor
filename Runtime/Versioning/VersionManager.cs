@@ -116,7 +116,8 @@ namespace fwp.buildor.version
         {
             string output = getFormatedVersion(splitVersion(XYZ));
             if (inc.Length > 0) output += ":" + inc;
-            Debug.Log(output);
+
+            Debug.Log($"<b>{output}</b>");
         }
 
         /// <summary>
