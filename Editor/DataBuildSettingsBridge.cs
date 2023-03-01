@@ -22,42 +22,49 @@ namespace fwp.buildor
             RELEASE,DEBUG,FEST
         }
 
+        [Header("desktop")]
         public DataBuildSettingsBridgeCouple windows;
+        public DataBuildSettingsBridgeCouple osx;
+        public DataBuildSettingsBridgeCouple linux;
+
+        [Header("mobile")]
         public DataBuildSettingsBridgeCouple android;
         public DataBuildSettingsBridgeCouple ios;
-        public DataBuildSettingsBridgeCouple osx;
+        
+        [Header("console")]
         public DataBuildSettingsBridgeCouple switcheu;
-
+        
         public DataBuildSettingProfile getPlatformProfil(BuildorBuildState? tarState = null)
         {
             BuildTarget target = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
 
-            DataBuildSettingsBridgeCouple couple;
+            DataBuildSettingsBridgeCouple couple = new DataBuildSettingsBridgeCouple();
 
-            if (target == BuildTarget.iOS)
+            switch (target)
             {
-                couple = ios;
-            } 
-            else if (target == BuildTarget.Android)
-            {
-                couple = android;
-            }
-            else if (target == BuildTarget.StandaloneWindows || target == BuildTarget.StandaloneWindows64)
-            {
-                couple = windows;
-            }
-            else if (target == BuildTarget.Switch)
-            {
-                couple = switcheu;
-            }
-            else if (target == BuildTarget.StandaloneOSX)
-            {
-                couple = osx;
-            }
-            else
-            {
-                Debug.LogError("not implem for " + target);
-                return null;
+                case BuildTarget.StandaloneWindows64:
+                case BuildTarget.StandaloneWindows:
+                    couple = windows;
+                    break;
+                case BuildTarget.iOS:
+                    couple = ios;
+                    break;
+                case BuildTarget.Android:
+                    couple = android;
+                    break;
+                case BuildTarget.StandaloneLinux64:
+                    couple = linux;
+                    break;
+                case BuildTarget.Switch:
+                    couple = switcheu;
+                    break;
+                case BuildTarget.StandaloneOSX:
+                    couple = osx;
+                    break;
+                case BuildTarget.NoTarget:
+                default:
+                    Debug.LogError("not implem for " + target);
+                    break;
             }
 
             return couple.getActive(tarState);
