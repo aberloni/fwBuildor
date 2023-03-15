@@ -82,6 +82,8 @@ namespace fwp.buildor.version
         }
 
         GUIStyle guis;
+        float _sWidth;
+        Rect rec = new Rect();
 
         private void OnGUI()
         {
@@ -96,14 +98,40 @@ namespace fwp.buildor.version
                 guis.normal.textColor = Color.gray;
                 guis.alignment = TextAnchor.LowerRight;
 
-                //guis.fontSize = fwp.halpers.HalperGuiStyle.getPropSizedTextSize(1.25f);
-                guis.fontSize = 10;
+                //updateFontSize();
+            }
+
+            if (_sWidth != Screen.width)
+            {
+                _sWidth = Screen.width;
+
+                updateFontSize();
+                updateRect();
             }
 
             // must be safe from rounded angle on mobile
 
-            GUI.Label(new Rect(Screen.width - 30f, Screen.height - 65f, 25f, 25f), v, guis);
+            GUI.Label(rec, v, guis);
         }
+
+        void updateRect()
+        {
+
+            rec.x = Screen.width - 30f;
+            rec.y = Screen.height - 65f;
+            rec.width = 25f;
+            rec.height = 25f;
+            
+        }
+
+        void updateFontSize()
+        {
+            float pxSize = 20f;
+            float ratio = pxSize / 1920f; // N px on a 1080p screen
+            int size = Mathf.FloorToInt(Screen.width * ratio);
+            guis.fontSize = size;
+        }
+
 
         /// <summary>
         /// ce qui est dans les champs correspondant / platforms
