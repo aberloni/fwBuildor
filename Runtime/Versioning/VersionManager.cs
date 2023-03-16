@@ -41,26 +41,28 @@ namespace fwp.buildor.version
         {
             logPlayerSettingsVersion();
 
-#if !noversion
+#if !noVersion
             new GameObject("--version").AddComponent<VersionManager>();
 #endif
         }
 
         public const char versionSeparator = '.';
 
+        [SerializeField]
         float timer = 0f;
+
         float timerTarget = 4f;
 
         private void Awake()
         {
 
-#if debug
-        //https://docs.unity3d.com/ScriptReference/Debug-isDebugBuild.html
-        if (Debug.isDebugBuild)
-        {
-            timerTarget = -1f;
-        }
-#endif
+            /*
+            //https://docs.unity3d.com/ScriptReference/Debug-isDebugBuild.html
+            if (Debug.isDebugBuild)
+            {
+                timerTarget = -1f;
+            }
+            */
 
             timer = timerTarget;
 
@@ -121,7 +123,7 @@ namespace fwp.buildor.version
             rec.y = Screen.height - 65f;
             rec.width = 25f;
             rec.height = 25f;
-            
+
         }
 
         void updateFontSize()
