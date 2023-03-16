@@ -230,7 +230,7 @@ namespace fwp.buildor.version
 
         static public string getPlayerSettingsBuildNumber()
         {
-            return "";
+            return string.Empty;
         }
 
     }

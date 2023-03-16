@@ -89,6 +89,9 @@ namespace fwp.buildor.editor
             if (prof.developement_build != EditorUserBuildSettings.development)
             {
                 EditorUserBuildSettings.development = prof.developement_build;
+                Debug.LogWarning("changed dev build : " + EditorUserBuildSettings.development);
+
+                UnityEditor.EditorUtility.SetDirty(prof);
             }
 
             GUILayout.Label("path modifiers", BuildorHelperGuiStyle.getCategoryBold());
