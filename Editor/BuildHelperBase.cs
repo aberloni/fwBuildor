@@ -151,8 +151,7 @@ namespace fwp.buildor.editor
             //curTime = Time.realtimeSinceStartup;
             //Debug.Log(curTime);
 
-            Debug.Log("BuildHelper, building ...");
-            Debug.Log(buildPlayerOptions.locationPathName);
+            Debug.Log("BuildHelper, building @ "+buildPlayerOptions.locationPathName);
 
             yield return null;
 
@@ -232,7 +231,10 @@ namespace fwp.buildor.editor
                 buildPlayerOptions.options |= BuildOptions.AllowDebugging;
             }
 
-            if (flagsBuild.autorun) buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
+            if (flagsBuild.autorun)
+            {
+                buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
+            }
 
             //BuildPipeline.BuildPlayer(buildPlayerOptions);
         }
@@ -243,27 +245,56 @@ namespace fwp.buildor.editor
 
             DataBuildSettingProfile profile = data.getPlatformProfil();
 
+            if(buildPlayerOptions.options.HasFlag(BuildOptions.AutoRunPlayer))
+            {
+                Debug.Log("FLAGS = autorun");
+            }
+
+            Debug.Log("build_app() options : " + buildPlayerOptions.options);
+            Debug.Log("build_app() @ "+buildPlayerOptions.locationPathName);
+
+            // BUILD
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             BuildSummary summary = report.summary;
 
-            if (summary.result == BuildResult.Succeeded)
-            {
-                onSuccess(summary, flagsBuild.openFolderOnSucess);
-            }
+            // path/to/build/build.exe
+            string buildFolderPath = summary.outputPath;
 
-            if (summary.result == BuildResult.Failed)
+            // remove file.exe at the end
+            //buildFolderPath = buildFolderPath.Replace('\\', '/');
+            //buildFolderPath = buildFolderPath.Substring(0, buildFolderPath.LastIndexOf('/'));
+
+            switch (summary.result)
             {
-                Debug.LogError("BuildResult : Helper Build failed");
+                case BuildResult.Succeeded:
+
+                    onSuccess(summary);
+
+                    if (flagsBuild.openFolderOnSuccess)
+                    {
+                        openBuildFolder(summary.outputPath);
+                    }
+
+                    if (flagsBuild.zipOnSuccess)
+                    {
+                        zipBuildFolder(summary.outputPath, profile.getZipName());
+                    }
+
+                    break;
+
+                case BuildResult.Failed:
+                case BuildResult.Cancelled:
+                case BuildResult.Unknown:
+                default:
+                    Debug.LogError($"BuildResult : Helper Build : {summary.result}");
+                    Debug.Log("options : "+summary.options);
+                    Debug.Log("output path : "+summary.outputPath);
+                    break;
             }
         }
 
-        protected void onSuccess(BuildSummary summary, bool openFolder = false)
+        protected void onSuccess(BuildSummary summary)
         {
-
-            ulong bytes = summary.totalSize;
-            ulong byteToMo = 1048576;
-
-            int size = (int)(bytes / byteToMo);
 
             bool success = summary.totalErrors <= 0;
 
@@ -272,23 +303,21 @@ namespace fwp.buildor.editor
             Debug.Log("  L result : summary says " + summary.result + " ( success ? " + success + " ) | warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
             Debug.Log("  L platform : <b>" + summary.platform + "</b>");
             Debug.Log("  L build time : " + summary.totalTime);
-
+            
             switch (summary.result)
             {
                 case BuildResult.Succeeded:
 
+                    ulong bytes = summary.totalSize;
+                    ulong byteToMo = 1048576;
+
+                    int size = (int)(bytes / byteToMo);
+
                     Debug.Log("  L byte size : " + summary.totalSize + " bytes");
                     Debug.Log("  L ~ size : " + size + " Mo");
+
                     Debug.Log("  L path : " + summary.outputPath);
 
-                    //DataBuildSettings data = SettingsManager.getScriptableDataBuildSettings();
-
-                    if (openFolder)
-                    {
-                        Debug.Log("opening build folder ...");
-                        //openBuildFolder(summary.outputPath);
-                        openBuildFolder(outputPath);
-                    }
                     break;
                 default:
                     Debug.LogError("Build failed: " + summary.result);
@@ -303,6 +332,50 @@ namespace fwp.buildor.editor
             //string path = profile.getBasePath();
             Debug.Log("opening folder : " + path);
             WinEdBuildor.os_openFolder(path);
+        }
+
+        /// <summary>
+        /// https://superuser.com/questions/201371/create-zip-folder-from-the-command-line-windows
+        /// https://techcommunity.microsoft.com/t5/containers/tar-and-curl-come-to-windows/ba-p/382409
+        /// https://ss64.com/nt/tar.html
+        /// </summary>
+        void zipBuildFolder(string outputPath, string zipName)
+        {
+            
+            // path/to/builds/project/zipName.exe
+            if(outputPath.Contains("exe"))
+            {
+                outputPath = outputPath.Substring(0, outputPath.LastIndexOf('/'));
+            }
+
+            Debug.Log("zip output path @ " + outputPath);
+
+            // remove '/' just before exe file name
+            if (outputPath.EndsWith("/")) outputPath = outputPath.Substring(0, outputPath.Length-1);
+
+            // parent folder to project/ (builds/)
+            string buildsRoot = outputPath.Substring(0, outputPath.LastIndexOf('/'));
+            Debug.Log("rool : " + buildsRoot + " (from : " + outputPath+")");
+
+            // get project/
+            string projectFolder = outputPath.Substring(outputPath.LastIndexOf('/')+1);
+            
+            //string args = $"-cf {outputZip} {buildFolderPath}";
+
+            // cd /D D:/fwProtoss/fw/builds/ && tar.exe -avcf fwp.zip fwp__win__0-0-11
+
+            // https://stackoverflow.com/questions/60904/how-can-i-open-a-cmd-window-in-a-specific-location
+
+            // /K cd /D {absPathToBuilds} && tar.exe -avcf {zipName} {relativeBuildFolderName}
+            // /K cd /D D:/path/to/builds/ && tar.exe -avcf output.zip game_win_011
+            string command = $"/K cd /D {buildsRoot} && tar.exe -avcf {zipName} {projectFolder}";
+
+            Debug.Log("zip : " + command);
+
+            //var info = new System.Diagnostics.ProcessStartInfo();
+            //info.
+            WinEdBuildor.startCmd(command);
+            //System.Diagnostics.Process.Start("cmd", command);
         }
 
         protected string getBuildName()

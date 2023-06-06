@@ -81,9 +81,8 @@ namespace fwp.buildor.editor
 
             GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
 
-            flagsBuild.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
             flagsBuild.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
-            flagsBuild.openFolderOnSucess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
+            
 
             prof.developement_build = GUILayout.Toggle(prof.developement_build, "dev build");
             if (prof.developement_build != EditorUserBuildSettings.development)
@@ -101,7 +100,14 @@ namespace fwp.buildor.editor
             flagsPath.pathIncludePlatform = WinEdFieldsHelper.drawToggle("platform", "pathIncludePlatform");
             flagsPath.pathIncludeDate = WinEdFieldsHelper.drawToggle("date", "pathIncludeDate");
             flagsPath.pathIncludeVersion = WinEdFieldsHelper.drawToggle("version", "pathIncludeVersion");
+            
             GUILayout.EndHorizontal();
+
+            GUILayout.Label("on success", BuildorHelperGuiStyle.getCategoryBold());
+
+            flagsBuild.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
+            flagsBuild.zipOnSuccess = WinEdFieldsHelper.drawToggle("zip", "zip");
+            flagsBuild.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
 
             GUILayout.Space(20f);
             GUILayout.Label("outputs", BuildorHelperGuiStyle.getCategoryBold());
@@ -115,10 +121,24 @@ namespace fwp.buildor.editor
             string fullPath = Path.Combine(outputFolder, prof.getAppName());
             WinEdFieldsHelper.drawCopyPastablePath("full path :", fullPath);
 
-            if(GUILayout.Button("open output folder"))
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("(folder) player logs"))
+            {
+                openPlayerLogsFolder();
+            }
+
+            if (GUILayout.Button("(folder) editor logs"))
+            {
+                openEditorLogsFolder();
+            }
+
+            if (GUILayout.Button("(folder) build output "))
             {
                 os_openFolder(outputFolder);
             }
+
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(20f);
             if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
@@ -149,10 +169,62 @@ namespace fwp.buildor.editor
 
             argument += "\"" + folderPath + "\"";
 
-            UnityEngine.Debug.Log("cmd:opening : " + argument);
+            UnityEngine.Debug.Log("explorer:opening : " + argument);
+
+            System.Diagnostics.Process.Start("explorer.exe", argument);
+        }
+
+        static public void startCmd(string args)
+        {
+            Debug.Log("cmd :: " + args);
+            startExecute("cmd", args);
+        }
+
+        /// <summary>
+        /// meant to call cmd on windows
+        /// </summary>
+        static public void startExecute(string processPath, string args = "")
+        {
+            // string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
+
+            var startInfo = new System.Diagnostics.ProcessStartInfo(processPath);
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+            if (args.Length > 0) startInfo.Arguments = args;
+
+            //UnityEngine.Debug.Log(processPath);
+
+            //Debug.Log(Environment.CurrentDirectory);
 
             //https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=netframework-4.7.2#System_Diagnostics_Process_Start_System_String_System_String_
-            System.Diagnostics.Process.Start("explorer.exe", argument);
+            //System.Diagnostics.Process.Start(startInfo);
+            System.Diagnostics.Process.Start(processPath, args);
+        }
+
+
+        [MenuItem("Window/Buildor/Logs/(folder) player logs")]
+        static void openPlayerLogsFolder()
+        {
+            //https://stackoverflow.com/questions/4494290/detect-the-location-of-appdata-locallow
+            // Environment.SpecialFolder.LocalApplicationData)
+
+            //startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
+            //startCmd("cmd", "start %APPDATA%"); // roaming
+            //startCmd("cmd", "/K \"cd /D %LOCALAPPDATA%\""); // local
+            string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + "Low"; // c:/[USERAPPDATA]/LocalLow
+            path = System.IO.Path.Combine(path, Application.companyName, Application.productName);
+            path = System.IO.Path.Combine(path, "Player.log");
+
+            startExecute(path); // local
+        }
+
+        [MenuItem("Window/Buildor/Logs/(folder) editor logs")]
+        static void openEditorLogsFolder()
+        {
+            string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData); // c:/[USERAPPDATA]/Local
+            path = System.IO.Path.Combine(path, "Unity/Editor");
+
+            //startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
+            startExecute("C:/Users/lego/AppData/Local/Unity/Editor");
         }
 
     }

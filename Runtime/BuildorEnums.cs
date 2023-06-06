@@ -9,8 +9,10 @@ namespace fwp.buildor
     {
         public bool autorun;
         public bool incVersion;
-        public bool openFolderOnSucess;
         public bool isPublishingBuild;
+
+        public bool openFolderOnSuccess;
+        public bool zipOnSuccess;
     }
 
     public struct BuildPathFlags
