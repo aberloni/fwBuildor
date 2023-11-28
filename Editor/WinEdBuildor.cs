@@ -128,7 +128,12 @@ namespace fwp.buildor.editor
 
             if (GUILayout.Button("(folder) build output "))
             {
-                os_openFolder(outputFolder);
+                BuildHelperBase.openBuildFolder(outputFolder);
+            }
+
+            if (GUILayout.Button("exe last build"))
+            {
+                BuildHelperBase.execAtPath(fullPath);
             }
 
             GUILayout.EndHorizontal();

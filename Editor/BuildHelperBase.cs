@@ -272,14 +272,21 @@ namespace fwp.buildor.editor
 
                     if (flagsBuild.openFolderOnSuccess)
                     {
+                        Debug.Log("OPEN FOLDER");
                         openBuildFolder(summary.outputPath);
                     }
 
                     if (flagsBuild.zipOnSuccess)
                     {
+                        Debug.Log("ZIP");
                         zipBuildFolder(summary.outputPath, profile.getZipName());
                     }
 
+                    if (flagsBuild.autorun)
+                    {
+                        Debug.Log("AUTORUN");
+                        execAtPath(summary.outputPath);
+                    }
                     break;
 
                 case BuildResult.Failed:
@@ -326,11 +333,23 @@ namespace fwp.buildor.editor
 
         }
 
-        protected void openBuildFolder(string path)
+        static public void execAtPath(string path)
         {
-            //DataBuildSettingProfile profile = getActiveProfile();
-            //string path = profile.getBasePath();
-            Debug.Log("opening folder : " + path);
+            WinEdBuildor.os_openFolder(path);
+        }
+
+        /// <summary>
+        /// open FOLDER of current build
+        /// </summary>
+        static public void openBuildFolder(string path)
+        {
+            // remove file name from path
+            var profil = getActiveProfile();
+            if (path.Contains(profil.getExtension()))
+            {
+                path = path.Substring(0, path.LastIndexOf("/"));
+            }
+
             WinEdBuildor.os_openFolder(path);
         }
 
