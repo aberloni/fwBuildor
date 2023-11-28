@@ -54,23 +54,23 @@ namespace fwp.buildor.editor
 
             GUILayout.BeginHorizontal();
             merger = (DataBuildSettingProfilScenesMerger)EditorGUILayout.ObjectField(merger, typeof(DataBuildSettingProfilScenesMerger), true);
-            if (GUILayout.Button("apply", GUILayout.Width(50f)))
+            if(merger != null)
             {
-                merger.apply();
+                if (GUILayout.Button("apply", GUILayout.Width(50f)))
+                {
+                    merger.apply();
+                }
             }
             GUILayout.EndHorizontal();
 
             foldMerger = EditorGUILayout.Foldout(foldMerger, "scenes in build settings x" + EditorBuildSettings.scenes.Length, true);
-
             if (foldMerger)
             {
                 foreach(var sc in EditorBuildSettings.scenes)
                 {
                     GUILayout.Label(sc.path);
                 }
-                
             }
-
 
             GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
 
@@ -136,7 +136,7 @@ namespace fwp.buildor.editor
             GUILayout.Space(20f);
             if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
             {
-                merger.apply();
+                merger?.apply();
                 new BuildHelperBase(flagsBuild, flagsPath);
             }
 
