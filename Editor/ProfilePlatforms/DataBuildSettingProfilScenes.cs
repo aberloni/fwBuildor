@@ -18,11 +18,14 @@ using UnityEditor.SceneManagement;
 public class DataBuildSettingProfilScenes : ScriptableObject
 {
     [Header("params")]
+    
     [Tooltip("all string pattern that will be recorded")]
     public string[] includesFilter; // filter a string that the scene NEEDs to have, CONTAINS
+    public bool includesAND;
 
     [Tooltip("all string pattern that will be ignored")]
     public string[] excludesFilter; // filter things that are excluded, CONTAINS
+    public bool excludesAND;
 
     [Header("result")]
     public string[] paths; // can't use Scene type :/ (not serializable)
@@ -64,32 +67,34 @@ public class DataBuildSettingProfilScenes : ScriptableObject
         EditorBuildSettingsScene[] edScenes = EditorBuildSettings.scenes;
         foreach (EditorBuildSettingsScene sc in edScenes)
         {
-            bool add = false;
+            bool toAdd = includesAND;
 
+            // must include ALL
             if(includesFilter != null)
             {
                 foreach(string filter in includesFilter)
                 {
                     if (filter.Length <= 0) continue;
                     
-                    if (sc.path.Contains(filter)) add = true;
+                    if(includesAND && !sc.path.Contains(filter)) toAdd = false;
+                    else if(!includesAND && sc.path.Contains(filter)) toAdd = true;
                 }
             }
-            
-            if (add)
+
+            bool toExclude = excludesAND;
+
+            if(excludesFilter != null)
             {
-                if(excludesFilter != null)
+                foreach (string exclude in excludesFilter)
                 {
-                    foreach (string exclude in excludesFilter)
-                    {
-                        if (exclude.Length <= 0) continue;
+                    if (exclude.Length <= 0) continue;
 
-                        if (sc.path.Contains(exclude)) add = false;
-                    }
+                    if (excludesAND && !sc.path.Contains(exclude)) toExclude = false;
+                    else if (!excludesAND && sc.path.Contains(exclude)) toExclude = true;
                 }
             }
 
-            if (add)
+            if (toAdd && !toExclude)
             {
                 tmp.Add(sc.path);
             }
