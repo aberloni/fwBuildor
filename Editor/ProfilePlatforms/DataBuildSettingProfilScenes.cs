@@ -19,10 +19,10 @@ public class DataBuildSettingProfilScenes : ScriptableObject
 {
     [Header("params")]
     [Tooltip("all string pattern that will be recorded")]
-    public string[] filters; // filter a string that the scene NEEDs to have, CONTAINS
+    public string[] includesFilter; // filter a string that the scene NEEDs to have, CONTAINS
 
     [Tooltip("all string pattern that will be ignored")]
-    public string[] excludes; // filter things that are excluded, CONTAINS
+    public string[] excludesFilter; // filter things that are excluded, CONTAINS
 
     [Header("result")]
     public string[] paths; // can't use Scene type :/ (not serializable)
@@ -64,28 +64,26 @@ public class DataBuildSettingProfilScenes : ScriptableObject
         EditorBuildSettingsScene[] edScenes = EditorBuildSettings.scenes;
         foreach (EditorBuildSettingsScene sc in edScenes)
         {
-            bool add = true;
+            bool add = false;
 
-            if(filters != null)
+            if(includesFilter != null)
             {
-                foreach(string filter in filters)
+                foreach(string filter in includesFilter)
                 {
-                    if (filter.Length > 0)
-                    {
-                        if (!sc.path.Contains(filter))
-                        {
-                            add = false;
-                        }
-                    }
+                    if (filter.Length <= 0) continue;
+                    
+                    if (sc.path.Contains(filter)) add = true;
                 }
             }
             
             if (add)
             {
-                if(excludes != null)
+                if(excludesFilter != null)
                 {
-                    foreach (string exclude in excludes)
+                    foreach (string exclude in excludesFilter)
                     {
+                        if (exclude.Length <= 0) continue;
+
                         if (sc.path.Contains(exclude)) add = false;
                     }
                 }
@@ -93,8 +91,6 @@ public class DataBuildSettingProfilScenes : ScriptableObject
 
             if (add)
             {
-                Debug.Log(sc.path);
-                //tmp.Add(EditorSceneManager.GetSceneByPath(sc.path));
                 tmp.Add(sc.path);
             }
         }
