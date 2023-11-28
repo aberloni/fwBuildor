@@ -136,6 +136,7 @@ namespace fwp.buildor.editor
             GUILayout.Space(20f);
             if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
             {
+                merger.apply();
                 new BuildHelperBase(flagsBuild, flagsPath);
             }
 
