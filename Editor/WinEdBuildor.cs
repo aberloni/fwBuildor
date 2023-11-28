@@ -22,6 +22,10 @@ namespace fwp.buildor.editor
         BuildHelperFlags flagsBuild;
         BuildPathFlags flagsPath;
 
+        DataBuildSettingProfilScenesMerger merger;
+        DataBuildSettingProfile prof;
+        bool foldMerger;
+
         private void Update()
         { }
 
@@ -29,7 +33,7 @@ namespace fwp.buildor.editor
         {
             GUILayout.Label("Buildor", BuildorHelperGuiStyle.getWinTitle());
             
-            DataBuildSettingProfile prof = BuildHelperBase.getActiveProfile();
+            prof = BuildHelperBase.getActiveProfile();
             if (prof == null)
             {
                 GUILayout.Label("this view needs some active profil setup");
@@ -38,46 +42,35 @@ namespace fwp.buildor.editor
 
             scroll = GUILayout.BeginScrollView(scroll);
             
+            // just display
             GUILayout.Label("platform", BuildorHelperGuiStyle.getCategoryBold());
             GUI.enabled = false;
             EditorGUILayout.ObjectField(prof, typeof(DataBuildSettingProfile), true);
             GUI.enabled = true;
 
-            GUILayout.Space(20f);
-            GUILayout.Label("version", BuildorHelperGuiStyle.getCategoryBold());
+            drawVersion();
 
-            BuildSettingVersionType vType = BuildorWinEdHelper.drawEnum<BuildSettingVersionType>("publish type", "publish", 0);
-            flagsBuild.isPublishingBuild = vType == BuildSettingVersionType.vPublish;
+            GUILayout.Label("merger", BuildorHelperGuiStyle.getCategoryBold());
 
             GUILayout.BeginHorizontal();
-
-            GUI.enabled = false;
-            var version = vType == BuildSettingVersionType.vPublish ? prof.publishVersion : prof.internalVersion;
-            EditorGUILayout.ObjectField(version, typeof(DataBuildSettingVersion), true);
-            GUI.enabled = true;
-
-            if(version != null)
+            merger = (DataBuildSettingProfilScenesMerger)EditorGUILayout.ObjectField(merger, typeof(DataBuildSettingProfilScenesMerger), true);
+            if (GUILayout.Button("apply", GUILayout.Width(50f)))
             {
-                GUILayout.Label(version.getFormated());
-
-                if (GUILayout.Button("MAJOR"))
-                {
-                    version.incrementMajor();
-                }
-                if (GUILayout.Button("MINOR"))
-                {
-                    version.incrementMinor();
-                }
-                if (GUILayout.Button("FIX"))
-                {
-                    version.incrementFix();
-                }
+                merger.apply();
             }
             GUILayout.EndHorizontal();
 
-            GUILayout.Label("version manager output : " + VersionManager.getDisplayVersion());
+            foldMerger = EditorGUILayout.Foldout(foldMerger, "scenes in build settings x" + EditorBuildSettings.scenes.Length, true);
 
-            GUILayout.Space(10f);
+            if (foldMerger)
+            {
+                foreach(var sc in EditorBuildSettings.scenes)
+                {
+                    GUILayout.Label(sc.path);
+                }
+                
+            }
+
 
             GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
 
@@ -149,6 +142,46 @@ namespace fwp.buildor.editor
             GUILayout.EndScrollView();
         }
 
+        void drawVersion()
+        {
+
+            GUILayout.Space(20f);
+            GUILayout.Label("version", BuildorHelperGuiStyle.getCategoryBold());
+
+            BuildSettingVersionType vType = BuildorWinEdHelper.drawEnum<BuildSettingVersionType>("publish type", "publish", 0);
+            flagsBuild.isPublishingBuild = vType == BuildSettingVersionType.vPublish;
+
+            GUILayout.BeginHorizontal();
+
+            GUI.enabled = false;
+            var version = vType == BuildSettingVersionType.vPublish ? prof.publishVersion : prof.internalVersion;
+            EditorGUILayout.ObjectField(version, typeof(DataBuildSettingVersion), true);
+            GUI.enabled = true;
+
+            if (version != null)
+            {
+                GUILayout.Label(version.getFormated());
+
+                if (GUILayout.Button("MAJOR"))
+                {
+                    version.incrementMajor();
+                }
+                if (GUILayout.Button("MINOR"))
+                {
+                    version.incrementMinor();
+                }
+                if (GUILayout.Button("FIX"))
+                {
+                    version.incrementFix();
+                }
+            }
+            GUILayout.EndHorizontal();
+
+            GUILayout.Label("version manager output : " + VersionManager.getDisplayVersion());
+
+            GUILayout.Space(10f);
+
+        }
 
 
         /// <summary>
