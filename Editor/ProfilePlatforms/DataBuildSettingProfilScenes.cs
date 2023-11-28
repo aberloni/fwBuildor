@@ -17,9 +17,14 @@ using UnityEditor.SceneManagement;
 [CreateAssetMenu(menuName = "buildor/merger/create DataBuildSettingProfilScenes", order = 100)]
 public class DataBuildSettingProfilScenes : ScriptableObject
 {
-    public string filter = ""; // filter a string that the scene NEEDs to have
-    public string[] excludes; // filter things that are excluded
+    [Header("params")]
+    [Tooltip("all string pattern that will be recorded")]
+    public string[] filters; // filter a string that the scene NEEDs to have, CONTAINS
 
+    [Tooltip("all string pattern that will be ignored")]
+    public string[] excludes; // filter things that are excluded, CONTAINS
+
+    [Header("result")]
     public string[] paths; // can't use Scene type :/ (not serializable)
 
 #if UNITY_EDITOR
@@ -61,13 +66,16 @@ public class DataBuildSettingProfilScenes : ScriptableObject
         {
             bool add = true;
 
-            if(filter != null)
+            if(filters != null)
             {
-                if (filter.Length > 0)
+                foreach(string filter in filters)
                 {
-                    if (!sc.path.Contains(filter))
+                    if (filter.Length > 0)
                     {
-                        add = false;
+                        if (!sc.path.Contains(filter))
+                        {
+                            add = false;
+                        }
                     }
                 }
             }

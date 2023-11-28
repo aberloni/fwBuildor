@@ -18,31 +18,47 @@ namespace fwp.buildor
     [CreateAssetMenu(menuName = "buildor/merger/create DataBuildSettingProfilScenesMerger", order = 100)]
     public class DataBuildSettingProfilScenesMerger : ScriptableObject
     {
-        public DataBuildSettingProfilScenes[] engines;
+        [Tooltip("engine scenes")]
+        public DataBuildSettingProfilScenes[] cores;
+
+        [Tooltip("game content")]
         public DataBuildSettingProfilScenes[] levels;
 
+        [Tooltip("debug content")]
+        public DataBuildSettingProfilScenes[] debugs;
+
+        public DataBuildSettingProfilScenes[] menus;
+
 #if UNITY_EDITOR
+
+        List<EditorBuildSettingsScene> tmp = new List<EditorBuildSettingsScene>();
+
         [ContextMenu("apply")]
         public void apply()
         {
-            List<EditorBuildSettingsScene> tmp = new List<EditorBuildSettingsScene>();
+            tmp.Clear();
 
-            foreach (DataBuildSettingProfilScenes item in engines)
-            {
-                for (int i = 0; i < item.paths.Length; i++)
-                {
-                    tmp.Add(new EditorBuildSettingsScene(item.paths[i], true));
-                }
-            }
+            inject(cores);
+            inject(levels);
+            inject(debugs);
+            inject(menus);
 
-            foreach (DataBuildSettingProfilScenes item in levels)
-            {
-                for (int i = 0; i < item.paths.Length; i++)
-                {
-                    tmp.Add(new EditorBuildSettingsScene(item.paths[i], true));
-                }
-            }
             EditorBuildSettings.scenes = tmp.ToArray();
+        }
+
+        void inject(DataBuildSettingProfilScenes[] profils)
+        {
+            if (profils.Length <= 0)
+                return;
+
+            foreach (DataBuildSettingProfilScenes item in profils)
+            {
+                for (int i = 0; i < item.paths.Length; i++)
+                {
+                    tmp.Add(new EditorBuildSettingsScene(item.paths[i], true));
+                }
+            }
+
         }
 
         static public void addSceneToBuildSettings(string sceneName)
