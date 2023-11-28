@@ -18,7 +18,9 @@ using UnityEditor.SceneManagement;
 public class DataBuildSettingProfilScenes : ScriptableObject
 {
     [Header("params")]
-    
+
+    public bool recordFromBuildSettings;
+
     [Tooltip("all string pattern that will be recorded")]
     public string[] includesFilter; // filter a string that the scene NEEDs to have, CONTAINS
     public bool includesAND;
@@ -64,8 +66,21 @@ public class DataBuildSettingProfilScenes : ScriptableObject
     {
         List<string> tmp = new List<string>();
 
-        EditorBuildSettingsScene[] edScenes = EditorBuildSettings.scenes;
-        foreach (EditorBuildSettingsScene sc in edScenes)
+        List<string> scenesPaths = new List<string>();
+        if(recordFromBuildSettings)
+        {
+            var edScenes = EditorBuildSettings.scenes;
+            foreach (var sc in edScenes)
+            {
+                scenesPaths.Add(sc.path);
+            }
+        }
+        else
+        {
+            scenesPaths.AddRange(getProjectAssetScenesPaths());
+        }
+
+        foreach (string path in scenesPaths)
         {
             bool toAdd = includesAND;
 
@@ -76,8 +91,8 @@ public class DataBuildSettingProfilScenes : ScriptableObject
                 {
                     if (filter.Length <= 0) continue;
                     
-                    if(includesAND && !sc.path.Contains(filter)) toAdd = false;
-                    else if(!includesAND && sc.path.Contains(filter)) toAdd = true;
+                    if(includesAND && !path.Contains(filter)) toAdd = false;
+                    else if(!includesAND && path.Contains(filter)) toAdd = true;
                 }
             }
 
@@ -89,14 +104,14 @@ public class DataBuildSettingProfilScenes : ScriptableObject
                 {
                     if (exclude.Length <= 0) continue;
 
-                    if (excludesAND && !sc.path.Contains(exclude)) toExclude = false;
-                    else if (!excludesAND && sc.path.Contains(exclude)) toExclude = true;
+                    if (excludesAND && !path.Contains(exclude)) toExclude = false;
+                    else if (!excludesAND && path.Contains(exclude)) toExclude = true;
                 }
             }
 
             if (toAdd && !toExclude)
             {
-                tmp.Add(sc.path);
+                tmp.Add(path);
             }
         }
 
@@ -105,6 +120,27 @@ public class DataBuildSettingProfilScenes : ScriptableObject
         EditorUtility.SetDirty(this);
     }
 
+    /// <summary>
+    /// fetch all scene present in database
+    /// this should return all scene in projet
+    /// </summary>
+    static public string[] getProjectAssetScenesPaths()
+    {
+        string[] paths = AssetDatabase.FindAssets("t:Scene");
+
+        if (paths.Length <= 0)
+        {
+            Debug.LogWarning("asking for scene but none ?");
+        }
+
+        //replace GUID by full path
+        for (int i = 0; i < paths.Length; i++)
+        {
+            paths[i] = AssetDatabase.GUIDToAssetPath(paths[i]);
+        }
+
+        return paths;
+    }
 #endif
 
 }
