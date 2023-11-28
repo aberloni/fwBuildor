@@ -226,7 +226,7 @@ namespace fwp.buildor.editor
             buildPlayerOptions.target = EditorUserBuildSettings.activeBuildTarget;
 
             if (profile.developement_build) buildPlayerOptions.options |= BuildOptions.Development;
-            if (profile.scriptDebugging)
+            if (profile.debugScripting)
             {
                 buildPlayerOptions.options |= BuildOptions.AllowDebugging;
             }

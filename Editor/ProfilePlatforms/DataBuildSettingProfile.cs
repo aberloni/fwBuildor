@@ -38,7 +38,17 @@ namespace fwp.buildor
         [Header("misc")]
         public bool developement_build = false;
         public bool addVersionInBuildPath = true;
-        public bool scriptDebugging = false;
+
+        [Tooltip("activate all profiler stuff")]
+        public bool debugScripting = false;
+
+        public enum ProfilingLevel
+        {
+            none,
+            profiling,
+            deep,
+        }
+        public ProfilingLevel debugProfiling = ProfilingLevel.none;
 
         [Header("splashscreen")]
         public Sprite splashscreen;

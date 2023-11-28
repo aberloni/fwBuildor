@@ -41,12 +41,20 @@ namespace fwp.buildor.editor
             }
 
             scroll = GUILayout.BeginScrollView(scroll);
-            
+
+            GUILayout.BeginHorizontal();
             // just display
             GUILayout.Label("platform", BuildorHelperGuiStyle.getCategoryBold());
             GUI.enabled = false;
             EditorGUILayout.ObjectField(prof, typeof(DataBuildSettingProfile), true);
             GUI.enabled = true;
+
+            if(GUILayout.Button(">>"))
+            {
+                UnityEditor.Selection.activeObject = prof;
+            }
+
+            GUILayout.EndHorizontal();
 
             drawVersion();
 
@@ -83,6 +91,37 @@ namespace fwp.buildor.editor
                 EditorUserBuildSettings.development = prof.developement_build;
                 Debug.LogWarning("changed dev build : " + EditorUserBuildSettings.development);
 
+                UnityEditor.EditorUtility.SetDirty(prof);
+            }
+
+            prof.debugScripting = GUILayout.Toggle(prof.debugScripting, "debug scripting");
+            if (prof.debugScripting != EditorUserBuildSettings.allowDebugging)
+            {
+                EditorUserBuildSettings.allowDebugging = prof.debugScripting;
+                UnityEditor.EditorUtility.SetDirty(prof);
+            }
+
+            var level = (DataBuildSettingProfile.ProfilingLevel)EditorGUILayout.EnumPopup("profiling", prof.debugProfiling);
+
+            if(level != prof.debugProfiling)
+            {
+                switch(level)
+                {
+                    case DataBuildSettingProfile.ProfilingLevel.deep:
+                        EditorUserBuildSettings.connectProfiler = true;
+                        EditorUserBuildSettings.buildWithDeepProfilingSupport = true;
+                        break;
+                    case DataBuildSettingProfile.ProfilingLevel.profiling:
+                        EditorUserBuildSettings.connectProfiler = true;
+                        EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
+                        break;
+                    default:
+                        EditorUserBuildSettings.connectProfiler = false;
+                        EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
+                        break;
+
+                }
+                prof.debugProfiling = level;
                 UnityEditor.EditorUtility.SetDirty(prof);
             }
 
