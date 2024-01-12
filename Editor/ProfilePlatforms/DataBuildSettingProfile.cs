@@ -64,7 +64,8 @@ namespace fwp.buildor
         public bool isSelectedPlatform() => getPlatformTarget() == EditorUserBuildSettings.activeBuildTarget;
 
 #if UNITY_EDITOR
-        virtual public BuildTarget getPlatformTarget() => BuildTarget.NoTarget;
+        abstract public BuildTarget getPlatformTarget();
+        abstract public BuildTargetGroup getPlatformTargetGroup();
 #endif
 
         /// <summary>

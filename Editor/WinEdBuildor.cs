@@ -8,14 +8,11 @@ using fwp.buildor.version;
 
 namespace fwp.buildor.editor
 {
-    public class WinEdBuildor : EditorWindow
+    public class EdWinBuildor : EditorWindow
     {
 
         [MenuItem("Window/Buildor/(window) open buildor", false, 0)]
-        static void init()
-        {
-            EditorWindow.GetWindow(typeof(WinEdBuildor));
-        }
+        static void init() => EditorWindow.GetWindow(typeof(EdWinBuildor));
 
         Vector2 scroll;
 
@@ -81,6 +78,17 @@ namespace fwp.buildor.editor
             }
 
             GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
+
+            string symbols = ScriptableSymbolHelper.getGroupSymbols(prof.getPlatformTargetGroup());
+            if(string.IsNullOrEmpty(symbols))
+            {
+                GUILayout.Label("empty scriptable symbols");
+            }
+            else
+            {
+                GUILayout.Label("#if "+symbols);
+            }
+            
 
             flagsBuild.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
             

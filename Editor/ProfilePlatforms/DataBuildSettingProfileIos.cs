@@ -25,6 +25,7 @@ namespace fwp.buildor
         public override string getExtension() => "";
 
         public override BuildTarget getPlatformTarget() => BuildTarget.iOS;
+        public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.iOS;
 
         static public string getPlayerSettingsBuildNumber() => PlayerSettings.iOS.buildNumber.ToString();
         static public string getPlayerSettingsVersion() => PlayerSettings.bundleVersion;

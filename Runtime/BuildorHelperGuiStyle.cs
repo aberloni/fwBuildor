@@ -72,6 +72,8 @@ namespace fwp.buildor
             {
                 gCategoryBold = new GUIStyle();
                 gCategoryBold.normal.textColor = new Color(1f, 0.5f, 0.5f); // red ish
+                gCategoryBold.padding.left = 10;
+                gCategoryBold.padding.top = 5;
                 gCategoryBold.fontStyle = FontStyle.Bold;
             }
             return gCategoryBold;

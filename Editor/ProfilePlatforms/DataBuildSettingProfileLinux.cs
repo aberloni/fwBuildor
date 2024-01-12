@@ -19,7 +19,8 @@ namespace fwp.buildor
     {
         public override string getExtension() => "x86_64";
         public override BuildTarget getPlatformTarget() => BuildTarget.StandaloneLinux64;
-        
+        public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.EmbeddedLinux;
+
         static public string getPlayerSettingsBuildNumber() => "-";
         static public string getPlayerSettingsVersion() => PlayerSettings.bundleVersion;
 

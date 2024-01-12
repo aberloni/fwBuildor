@@ -335,7 +335,7 @@ namespace fwp.buildor.editor
 
         static public void execAtPath(string path)
         {
-            WinEdBuildor.os_openFolder(path);
+            EdWinBuildor.os_openFolder(path);
         }
 
         /// <summary>
@@ -350,7 +350,7 @@ namespace fwp.buildor.editor
                 path = path.Substring(0, path.LastIndexOf("/"));
             }
 
-            WinEdBuildor.os_openFolder(path);
+            EdWinBuildor.os_openFolder(path);
         }
 
         /// <summary>
@@ -393,7 +393,7 @@ namespace fwp.buildor.editor
 
             //var info = new System.Diagnostics.ProcessStartInfo();
             //info.
-            WinEdBuildor.startCmd(command);
+            EdWinBuildor.startCmd(command);
             //System.Diagnostics.Process.Start("cmd", command);
         }
 

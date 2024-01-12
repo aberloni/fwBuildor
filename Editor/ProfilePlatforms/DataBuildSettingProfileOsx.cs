@@ -17,6 +17,7 @@ namespace fwp.buildor
         public override string getExtension() => "app";
 
         public override BuildTarget getPlatformTarget() => BuildTarget.StandaloneOSX;
+        public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.iOS;
 
     }
 
