@@ -16,18 +16,18 @@ using UnityEditor.SceneManagement;
 namespace fwp.buildor
 {
     [CreateAssetMenu(menuName = "buildor/merger/create DataBuildSettingProfilScenesMerger", order = 100)]
-    public class DataBuildSettingProfilScenesMerger : ScriptableObject
+    public class DataBuildorScenesMerger : ScriptableObject
     {
         [Tooltip("engine scenes")]
-        public DataBuildSettingProfilScenes[] cores;
+        public DataBuildorScenesFilter[] cores;
 
         [Tooltip("game content")]
-        public DataBuildSettingProfilScenes[] levels;
+        public DataBuildorScenesFilter[] levels;
 
         [Tooltip("debug content")]
-        public DataBuildSettingProfilScenes[] debugs;
+        public DataBuildorScenesFilter[] debugs;
 
-        public DataBuildSettingProfilScenes[] menus;
+        public DataBuildorScenesFilter[] menus;
 
 #if UNITY_EDITOR
 
@@ -46,12 +46,12 @@ namespace fwp.buildor
             EditorBuildSettings.scenes = tmp.ToArray();
         }
 
-        void inject(DataBuildSettingProfilScenes[] profils)
+        void inject(DataBuildorScenesFilter[] profils)
         {
             if (profils.Length <= 0)
                 return;
 
-            foreach (DataBuildSettingProfilScenes item in profils)
+            foreach (DataBuildorScenesFilter item in profils)
             {
                 for (int i = 0; i < item.paths.Length; i++)
                 {
@@ -105,7 +105,7 @@ namespace fwp.buildor
 
         public static void injectLevel(string level)
         {
-            DataBuildSettingProfilScenesMerger merger = getScriptableObjectInEditor<DataBuildSettingProfilScenesMerger>("everything");
+            DataBuildorScenesMerger merger = getScriptableObjectInEditor<DataBuildorScenesMerger>("everything");
 
             if (merger == null)
             {
@@ -134,7 +134,7 @@ namespace fwp.buildor
         public static void injectAll(string filter = "everything")
         {
             //DataBuildSettingProfilScenes scenes = HalperScriptables.getScriptableObjectInEditor<DataBuildSettingProfilScenes>("game_release");
-            DataBuildSettingProfilScenesMerger merger = getScriptableObjectInEditor<DataBuildSettingProfilScenesMerger>(filter);
+            DataBuildorScenesMerger merger = getScriptableObjectInEditor<DataBuildorScenesMerger>(filter);
 
             merger.apply();
 

@@ -12,10 +12,12 @@ using UnityEditor.SceneManagement;
 /// 
 /// https://docs.unity3d.com/ScriptReference/EditorBuildSettingsScene.html
 /// 
+/// meant to filter a list of path
+/// this will be feed to the ScenesMerger
 /// </summary>
 
-[CreateAssetMenu(menuName = "buildor/merger/create DataBuildSettingProfilScenes", order = 100)]
-public class DataBuildSettingProfilScenes : ScriptableObject
+[CreateAssetMenu(menuName = "buildor/merger/new filter", order = 100)]
+public class DataBuildorScenesFilter : ScriptableObject
 {
     [Header("params")]
 

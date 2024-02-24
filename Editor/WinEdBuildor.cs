@@ -19,7 +19,38 @@ namespace fwp.buildor.editor
         BuildHelperFlags flagsBuild;
         BuildPathFlags flagsPath;
 
-        DataBuildSettingProfilScenesMerger merger;
+        const string _merger_selection = "merger_selection";
+
+        DataBuildorScenesMerger _merger;
+        DataBuildorScenesMerger merger
+        {
+            get
+            {
+                string val = EditorPrefs.GetString(_merger_selection, string.Empty);
+                
+                if (_merger != null && !_merger.name.Contains(val))
+                {
+                    _merger = null;
+                    EditorPrefs.SetString(_merger_selection, string.Empty);
+                }
+
+                if (_merger == null && !string.IsNullOrEmpty(val))
+                {
+                    _merger = BuildorHelpers.getScriptableObjectInEditor<DataBuildorScenesMerger>(val);
+                }
+
+                return _merger;
+            }
+            set
+            {
+                if(value != _merger)
+                {
+                    _merger = value;
+                    EditorPrefs.SetString(_merger_selection, _merger.name);
+                }
+            }
+        }
+
         DataBuildSettingProfile prof;
         bool foldMerger;
 
@@ -58,7 +89,7 @@ namespace fwp.buildor.editor
             GUILayout.Label("merger", BuildorHelperGuiStyle.getCategoryBold());
 
             GUILayout.BeginHorizontal();
-            merger = (DataBuildSettingProfilScenesMerger)EditorGUILayout.ObjectField(merger, typeof(DataBuildSettingProfilScenesMerger), true);
+            merger = (DataBuildorScenesMerger)EditorGUILayout.ObjectField(merger, typeof(DataBuildorScenesMerger), true);
             if(merger != null)
             {
                 if (GUILayout.Button("apply", GUILayout.Width(50f)))
