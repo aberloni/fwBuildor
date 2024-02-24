@@ -14,12 +14,22 @@ using System.IO;
 
 namespace fwp.buildor
 {
+    /// <summary>
+    /// not compatible before u2020
+    /// </summary>
     [CreateAssetMenu(menuName = "buildor/new profil:linux", order = 100)]
     public class DataBuildSettingProfileLinux : DataBuildSettingProfile
     {
         public override string getExtension() => "x86_64";
         public override BuildTarget getPlatformTarget() => BuildTarget.StandaloneLinux64;
-        public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.EmbeddedLinux;
+        public override BuildTargetGroup getPlatformTargetGroup()
+        {
+#if UNITY_2019
+            return BuildTargetGroup.Unknown;
+#else
+            return BuildTargetGroup.EmbeddedLinux;
+#endif
+        }
 
         static public string getPlayerSettingsBuildNumber() => "-";
         static public string getPlayerSettingsVersion() => PlayerSettings.bundleVersion;

@@ -88,7 +88,7 @@ namespace fwp.buildor.editor
             {
                 var w = GUILayout.Width(60f);
                 //GUILayout.Label("#if "+symbols);
-                string[] split = symbols.Split(";");
+                string[] split = symbols.Split(';');
                 GUILayout.BeginHorizontal();
                 GUILayout.Label("#if", w);
                 for (int i = 0; i < split.Length; i++)
