@@ -15,7 +15,7 @@ using System.IO;
 namespace fwp.buildor
 {
     /// <summary>
-    /// not compatible before u2020
+    /// not compatible before u2021
     /// </summary>
     [CreateAssetMenu(menuName = "buildor/new profil:linux", order = 100)]
     public class DataBuildSettingProfileLinux : DataBuildSettingProfile
@@ -24,7 +24,7 @@ namespace fwp.buildor
         public override BuildTarget getPlatformTarget() => BuildTarget.StandaloneLinux64;
         public override BuildTargetGroup getPlatformTargetGroup()
         {
-#if UNITY_2019
+#if UNITY_2019 || UNITY_2020
             return BuildTargetGroup.Unknown;
 #else
             return BuildTargetGroup.EmbeddedLinux;
