@@ -26,11 +26,7 @@ namespace fwp.buildor.editor
             return output.ToArray();
         }
 
-
-        static public ScriptableObject[] getScriptableObjectsInEditor<T>() where T : ScriptableObject
-            => getScriptableObjectsInEditor(typeof(T));
-
-        static public T getScriptableObjectInEditor<T>(string nameContains = "") where T : ScriptableObject
+        static public T getScriptableObjectInEditor<T>(string nameContains = "", bool pingFailure = false) where T : ScriptableObject
         {
             string[] all = AssetDatabase.FindAssets("t:" + typeof(T).Name);
             for (int i = 0; i < all.Length; i++)
@@ -46,7 +42,12 @@ namespace fwp.buildor.editor
 
                 return data;
             }
-            Debug.LogWarning("can't locate scriptable of type " + typeof(T).Name + " (filter name ? " + nameContains + ")");
+
+            if(pingFailure)
+            {
+                Debug.LogWarning("can't locate scriptable of type " + typeof(T).Name + " (filter name ? " + nameContains + ")");
+            }
+
             return null;
         }
 

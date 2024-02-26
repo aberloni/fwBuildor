@@ -8,11 +8,11 @@ using fwp.buildor.version;
 
 namespace fwp.buildor.editor
 {
-    public class EdWinBuildor : EditorWindow
+    public class WinEdBuildor : EditorWindow
     {
 
         [MenuItem("Window/Buildor/(window) open buildor", false, 0)]
-        static void init() => EditorWindow.GetWindow(typeof(EdWinBuildor));
+        static void init() => EditorWindow.GetWindow(typeof(WinEdBuildor));
 
         Vector2 scroll;
 
@@ -37,6 +37,12 @@ namespace fwp.buildor.editor
                 if (_merger == null && !string.IsNullOrEmpty(val))
                 {
                     _merger = BuildorHelpers.getScriptableObjectInEditor<DataBuildorScenesMerger>(val);
+
+                    // reset
+                    if(_merger == null)
+                    {
+                        EditorPrefs.SetString(_merger_selection, string.Empty);
+                    }
                 }
 
                 return _merger;
