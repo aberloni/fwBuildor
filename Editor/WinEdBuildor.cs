@@ -12,7 +12,11 @@ namespace fwp.buildor.editor
     {
 
         [MenuItem("Window/Buildor/(window) open buildor", false, 0)]
-        static void init() => EditorWindow.GetWindow(typeof(WinEdBuildor));
+        static void init()
+        {
+            var win = EditorWindow.GetWindow(typeof(WinEdBuildor));
+            win.titleContent = new GUIContent("Buildor");
+        }
 
         Vector2 scroll;
 
