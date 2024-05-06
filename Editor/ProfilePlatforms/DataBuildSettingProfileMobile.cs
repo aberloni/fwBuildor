@@ -9,7 +9,7 @@ using UnityEditor;
 /// 506x900
 /// </summary>
 
-namespace fwp.buildor
+namespace fwp.buildor.editor
 {
 
 
@@ -28,6 +28,21 @@ namespace fwp.buildor
 
         [Header("archi")]
         public bool sixtyFourBits = true;
+
+        public override void applyProfilEditor(bool usePublishVersion = false)
+        {
+            base.applyProfilEditor(usePublishVersion);
+
+            Debug.Log("~Mobile");
+
+            // mobile specifics
+
+            PlayerSettings.defaultInterfaceOrientation = orientation_default;
+            Debug.Log(" L " + PlayerSettings.defaultInterfaceOrientation);
+
+            PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, getPackageName());
+            Debug.Log(" L " + PlayerSettings.GetApplicationIdentifier(BuildTargetGroup.Android));
+        }
 
         public string getPackageName()
         {

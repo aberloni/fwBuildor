@@ -12,7 +12,7 @@ using System.IO;
 /// </summary>
 
 
-namespace fwp.buildor
+namespace fwp.buildor.editor
 {
     /// <summary>
     /// not compatible before u2021

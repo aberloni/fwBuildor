@@ -31,7 +31,7 @@ using fwp.buildor.version;
 /// </summary>
 
 
-namespace fwp.buildor
+namespace fwp.buildor.editor
 {
     [CreateAssetMenu(menuName = "buildor/new profil:switch", order = 100)]
     public class DataBuildSettingProfileSwitch : DataBuildSettingProfile
@@ -107,9 +107,9 @@ namespace fwp.buildor
             return bn + " (" + VersionManager.getFormatedVersion('.') + ")";
         }
 
-        public override void apply(bool publish = false)
+        public override void applyProfilEditor(bool publish = false)
         {
-            base.apply(publish);
+            base.applyProfilEditor(publish);
 
             EditorUserBuildSettings.switchCreateRomFile = build_rom;
 

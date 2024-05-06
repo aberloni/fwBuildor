@@ -10,7 +10,7 @@ using UnityEditor;
 /// </summary>
 
 
-namespace fwp.buildor
+namespace fwp.buildor.editor
 {
     [CreateAssetMenu(menuName = "buildor/new profil:ios", order = 100)]
     public class DataBuildSettingProfileIos : DataBuildSettingProfileMobile
@@ -23,6 +23,15 @@ namespace fwp.buildor
 #endif
 
         public override string getExtension() => "";
+
+        public override void applyProfilEditor(bool usePublishVersion = false)
+        {
+            base.applyProfilEditor(usePublishVersion);
+
+            //ios specific
+            PlayerSettings.iOS.targetDevice = target_device;
+            PlayerSettings.iOS.targetOSVersionString = iOSVersion;
+        }
 
         public override BuildTarget getPlatformTarget() => BuildTarget.iOS;
         public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.iOS;

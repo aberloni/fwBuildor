@@ -10,7 +10,7 @@ using UnityEditor;
 /// 506x900
 /// </summary>
 
-namespace fwp.buildor
+namespace fwp.buildor.editor
 {
 
 

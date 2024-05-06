@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace fwp.buildor
 {
-
+    [System.Serializable]
     public struct BuildHelperFlags
     {
         public bool autorun;
@@ -15,6 +15,7 @@ namespace fwp.buildor
         public bool zipOnSuccess;
     }
 
+    [System.Serializable]
     public struct BuildPathFlags
     {
         public bool pathIncludePrefix;

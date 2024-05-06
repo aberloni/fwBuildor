@@ -53,8 +53,8 @@ namespace fwp.buildor.editor
         DataBuildSettingsBridge data = null;
         string outputPath = "";
 
-        BuildPathFlags flagsPath;
-        BuildHelperFlags flagsBuild;
+        BuildPathFlags _pathFlags;
+        BuildHelperFlags _buildFlags;
 
         public BuildHelperBase(BuildHelperFlags build, BuildPathFlags path)
         {
@@ -63,8 +63,8 @@ namespace fwp.buildor.editor
 
         void launch(BuildHelperFlags build, BuildPathFlags path)
         {
-            this.flagsBuild = build;
-            this.flagsPath = path;
+            _buildFlags = build;
+            _pathFlags = path;
 
             data = getScriptableDataBuildSettings();
 
@@ -151,7 +151,7 @@ namespace fwp.buildor.editor
             //curTime = Time.realtimeSinceStartup;
             //Debug.Log(curTime);
 
-            Debug.Log("BuildHelper, building @ "+buildPlayerOptions.locationPathName);
+            Debug.Log("BuildHelper, building @ " + buildPlayerOptions.locationPathName);
 
             yield return null;
 
@@ -164,7 +164,7 @@ namespace fwp.buildor.editor
 
             if (BuildPipeline.isBuildingPlayer) return;
 
-            Debug.Log("now building app ; inc version ? " + flagsBuild.incVersion);
+            Debug.Log("now building app ; inc version ? " + _buildFlags.incVersion);
 
             buildPlayerOptions = new BuildPlayerOptions();
 
@@ -176,7 +176,7 @@ namespace fwp.buildor.editor
                 return;
             }
 
-            profile.apply(); // build prep
+            profile.applyProfilEditor(); // build prep
 
             //DataBuildSettingProfileAndroid pAndroid = profile as DataBuildSettingProfileAndroid;
             //DataBuildSettingProfileIos pIos = profile as DataBuildSettingProfileIos;
@@ -184,25 +184,23 @@ namespace fwp.buildor.editor
             //DataBuildSettingProfileSwitch pSwitch = profile as DataBuildSettingProfileSwitch;
 
             //this will apply
-            if (flagsBuild.incVersion)
+            if (_buildFlags.incVersion)
             {
-                if (flagsBuild.isPublishingBuild)
+                if (_buildFlags.isPublishingBuild)
                     VersionIncrementor.incPublishFix();
                 else
                     VersionIncrementor.incInternalFix();
             }
 
             //apply everything (after inc)
-            applySettings(profile);
+            profile.applyProfilEditor(_buildFlags.isPublishingBuild);
 
             //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
             buildPlayerOptions.scenes = getScenePaths();
-            //buildPlayerOptions.
-
 
             // === CREATE SOLVED BUILD PATH
 
-            string absPath = profile.getAbsoluteBuildFolderPath(flagsPath);
+            string absPath = profile.getAbsoluteBuildFolderPath(_pathFlags);
 
             bool pathExists = Directory.Exists(absPath);
 
@@ -231,7 +229,7 @@ namespace fwp.buildor.editor
                 buildPlayerOptions.options |= BuildOptions.AllowDebugging;
             }
 
-            if (flagsBuild.autorun)
+            if (_buildFlags.autorun)
             {
                 buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
             }
@@ -245,13 +243,13 @@ namespace fwp.buildor.editor
 
             DataBuildSettingProfile profile = data.getPlatformProfil();
 
-            if(buildPlayerOptions.options.HasFlag(BuildOptions.AutoRunPlayer))
+            if (buildPlayerOptions.options.HasFlag(BuildOptions.AutoRunPlayer))
             {
                 Debug.Log("FLAGS = autorun");
             }
 
             Debug.Log("build_app() options : " + buildPlayerOptions.options);
-            Debug.Log("build_app() @ "+buildPlayerOptions.locationPathName);
+            Debug.Log("build_app() @ " + buildPlayerOptions.locationPathName);
 
             // BUILD
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
@@ -270,19 +268,20 @@ namespace fwp.buildor.editor
 
                     onSuccess(summary);
 
-                    if (flagsBuild.openFolderOnSuccess)
+                    if (_buildFlags.openFolderOnSuccess)
                     {
-                        Debug.Log("OPEN FOLDER");
+                        Debug.Log($"OPEN FOLDER @{summary.outputPath}");
                         openBuildFolder(summary.outputPath);
                     }
 
-                    if (flagsBuild.zipOnSuccess)
+                    if (_buildFlags.zipOnSuccess)
                     {
-                        Debug.Log("ZIP");
-                        zipBuildFolder(summary.outputPath, profile.getZipName());
+                        string zipName = profile.getZipName(_pathFlags);
+                        Debug.Log($"ZIP {summary.outputPath}@{zipName}");
+                        zipBuildFolder(summary.outputPath, zipName);
                     }
 
-                    if (flagsBuild.autorun)
+                    if (_buildFlags.autorun)
                     {
                         Debug.Log("AUTORUN");
                         execAtPath(summary.outputPath);
@@ -294,8 +293,8 @@ namespace fwp.buildor.editor
                 case BuildResult.Unknown:
                 default:
                     Debug.LogError($"BuildResult : Helper Build : {summary.result}");
-                    Debug.Log("options : "+summary.options);
-                    Debug.Log("output path : "+summary.outputPath);
+                    Debug.Log("options : " + summary.options);
+                    Debug.Log("output path : " + summary.outputPath);
                     break;
             }
         }
@@ -310,7 +309,7 @@ namespace fwp.buildor.editor
             Debug.Log("  L result : summary says " + summary.result + " ( success ? " + success + " ) | warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
             Debug.Log("  L platform : <b>" + summary.platform + "</b>");
             Debug.Log("  L build time : " + summary.totalTime);
-            
+
             switch (summary.result)
             {
                 case BuildResult.Succeeded:
@@ -360,9 +359,9 @@ namespace fwp.buildor.editor
         /// </summary>
         void zipBuildFolder(string outputPath, string zipName)
         {
-            
+
             // path/to/builds/project/zipName.exe
-            if(outputPath.Contains("exe"))
+            if (outputPath.Contains("exe"))
             {
                 outputPath = outputPath.Substring(0, outputPath.LastIndexOf('/'));
             }
@@ -370,15 +369,15 @@ namespace fwp.buildor.editor
             Debug.Log("zip output path @ " + outputPath);
 
             // remove '/' just before exe file name
-            if (outputPath.EndsWith("/")) outputPath = outputPath.Substring(0, outputPath.Length-1);
+            if (outputPath.EndsWith("/")) outputPath = outputPath.Substring(0, outputPath.Length - 1);
 
             // parent folder to project/ (builds/)
             string buildsRoot = outputPath.Substring(0, outputPath.LastIndexOf('/'));
-            Debug.Log("rool : " + buildsRoot + " (from : " + outputPath+")");
+            Debug.Log("rool : " + buildsRoot + " (from : " + outputPath + ")");
 
             // get project/
-            string projectFolder = outputPath.Substring(outputPath.LastIndexOf('/')+1);
-            
+            string projectFolder = outputPath.Substring(outputPath.LastIndexOf('/') + 1);
+
             //string args = $"-cf {outputZip} {buildFolderPath}";
 
             // cd /D D:/fwProtoss/fw/builds/ && tar.exe -avcf fwp.zip fwp__win__0-0-11
@@ -444,34 +443,43 @@ namespace fwp.buildor.editor
         static public DataBuildSettingProfile getActiveProfile()
         {
             var settings = getScriptableDataBuildSettings();
-            
+
             if (settings == null) return null;
 
             return settings.getPlatformProfil();
         }
 
-        static public void applySettings(DataBuildSettingProfile profil)
+        static public void applyUnity(DataBuildSettingProfile profil)
         {
-            if (profil == null)
-            {
-                Debug.LogError("no profil ?");
-                return;
-            }
 
-            profil.apply();
+            PlayerSettings.SplashScreen.show = false;
+            Debug.Log(" L splash show (auto false under licence) : " + PlayerSettings.SplashScreen.show);
 
-            BuildTarget bt = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
+            //dev build
+            EditorUserBuildSettings.development = profil.developement_build;
+            Debug.Log(" L dev build : " + EditorUserBuildSettings.development);
 
-            //if (bt == null) Debug.LogError("no build target ?");
+        }
 
-            Debug.Log("applying profile : <b>" + profil.name + "</b> | current platform ? " + bt);
+        static public void applyIcons(DataBuildSettingProfile profil)
+        {
 
-            Debug.Log("//Globals//");
+            Texture2D[] icons = new Texture2D[1];
+            icons[0] = profil.icon;
+
+            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, icons);
+
+            Debug.Log(" L icons updated");
+        }
+
+        static public void applyCompagny(DataBuildSettingProfile profil, bool verbose = false)
+        {
 
             //profil.applyVersionToEditor(); // apply version
 
             PlayerSettings.companyName = profil.compagny_name;
-            Debug.Log("  L companyName : " + PlayerSettings.companyName);
+
+            if (verbose) Debug.Log("companyName : " + PlayerSettings.companyName);
 
             //α,β,Ω
             string productName = profil.getProductName();
@@ -479,71 +487,11 @@ namespace fwp.buildor.editor
             {
                 productName += "(" + profil.phase + ")";
             }
+
             PlayerSettings.productName = productName;
-            Debug.Log("  L productName : " + PlayerSettings.productName);
-
-            //TODO mobile
-            //PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, profil.package_name);
-            //PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, profil.package_name);
-
-            Debug.Log("~Systems~");
-
-            DataBuildSettingProfileMobile pMobile = profil as DataBuildSettingProfileMobile;
-            if (pMobile != null)
-            {
-                PlayerSettings.defaultInterfaceOrientation = pMobile.orientation_default;
-
-                PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, pMobile.getPackageName());
-            }
-
-            Texture2D[] icons = new Texture2D[1];
-            icons[0] = profil.icon;
-
-            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, icons);
-
-            Debug.Log("  L updated icons");
-
-            PlayerSettings.SplashScreen.show = false;
-            //PlayerSettings.SplashScreen.background = data.splashscreen;
-            //PlayerSettings.SplashScreenLogo.unityLogo = data.splashscreen;
-            //PlayerSettings.SplashScreenLogo.unityLogo = data.splashscreen;
-            Debug.Log("  L updated splash");
-
-            //dev build
-            UnityEditor.EditorUserBuildSettings.development = profil.developement_build;
-
-            DataBuildSettingProfileSwitch pSwitch = profil as DataBuildSettingProfileSwitch;
-            if (pSwitch != null)
-            {
-                EditorUserBuildSettings.switchCreateRomFile = pSwitch.build_rom;
-            }
-
-            //android specific
-            DataBuildSettingProfileAndroid pAndroid = profil as DataBuildSettingProfileAndroid;
-            if (pAndroid != null)
-            {
-                PlayerSettings.Android.minSdkVersion = pAndroid.minSdk;
-                Debug.Log("  L updated android stuff");
-            }
-
-            DataBuildSettingProfileIos pIos = profil as DataBuildSettingProfileIos;
-            if (pIos != null)
-            {
-                //ios specific
-                PlayerSettings.iOS.targetDevice = pIos.target_device;
-                PlayerSettings.iOS.targetOSVersionString = pIos.iOSVersion;
-                Debug.Log("  L updated ios stuff");
-            }
+            if (verbose) Debug.Log("productName : " + PlayerSettings.productName);
 
         }
-
-        [MenuItem("Window/Buildor/Apply platform settings")]
-        static public void applySettings()
-        {
-            DataBuildSettingProfile data = getActiveProfile();
-            applySettings(data);
-        }
-
     }
 
 }

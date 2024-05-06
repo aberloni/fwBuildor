@@ -9,7 +9,7 @@ using fwp.buildor.version;
 /// 506x900
 /// </summary>
 
-namespace fwp.buildor
+namespace fwp.buildor.editor
 {
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
@@ -36,7 +36,7 @@ namespace fwp.buildor
         public string build_prefix = "";
 
         [Header("misc")]
-        public bool developement_build = false;
+        public bool developement_build = false; // match : EditorUserBuildSettings.development
         public bool addVersionInBuildPath = true;
 
         [Tooltip("activate all profiler stuff")]
@@ -58,7 +58,7 @@ namespace fwp.buildor
 
         virtual protected void OnValidate()
         {
-            if (isSelectedPlatform()) apply(); // on validate
+            if (isSelectedPlatform()) applyProfilEditor(); // on validate
         }
 
         public bool isSelectedPlatform() => getPlatformTarget() == EditorUserBuildSettings.activeBuildTarget;
@@ -71,7 +71,7 @@ namespace fwp.buildor
         /// <summary>
         /// output builds/ folder (next to Assets/)
         /// </summary>
-        virtual public string getAbsoluteBuildFolderPath(BuildPathFlags flags)
+        virtual public string getAbsoluteBuildFolderPath(BuildPathFlags pathFlags)
         {
             // path/to/Assets/
             string baseProjectPath = Application.dataPath;
@@ -82,10 +82,10 @@ namespace fwp.buildor
 
             string sub = string.Empty;
 
-            if (flags.pathIncludePrefix) sub += build_prefix + path_separator;
-            if (flags.pathIncludeDate) sub += getFullDate() + path_separator;
-            if (flags.pathIncludePlatform) sub += getPlatformUid() + path_separator;
-            if (flags.pathIncludeVersion) sub += VersionManager.getFormatedVersion('-') + path_separator;
+            if (pathFlags.pathIncludePrefix) sub += build_prefix + path_separator;
+            if (pathFlags.pathIncludeDate) sub += getFullDate() + path_separator;
+            if (pathFlags.pathIncludePlatform) sub += getPlatformUid() + path_separator;
+            if (pathFlags.pathIncludeVersion) sub += VersionManager.getFormatedVersion('-') + path_separator;
 
             if (sub.Length > 0)
             {
@@ -139,30 +139,42 @@ namespace fwp.buildor
             }
         }
 
-        public string getZipName()
+        public string getFlagsString()
         {
-            string zipName = getAppName(false);
+            string flags = string.Empty;
 
 #if debug
-    zipName += "_d";
+    flags += "_d";
 #endif
 
 #if novideo
-    zipName += "_nv";
+    flags += "_nv";
 #endif
 
 #if loca_en
-    zipName += "_en";
+    flags += "_en";
 #elif loca_fr
-    zipName += "_fr";
+    flags += "_fr";
 #elif loca_cn
-    zipName += "_cn";
+    flags += "_cn";
 #endif
 
-            if (EditorUserBuildSettings.development)
+            if (developement_build)
             {
-                zipName += "_dbuild";
+                flags += "_dbuild";
             }
+
+            return flags;
+        }
+
+        public string getZipName(BuildPathFlags flags)
+        {
+            string zipName = getAbsoluteBuildFolderPath(flags);
+
+            zipName = zipName.Substring(zipName.LastIndexOf("/") + 1);
+
+            //string zipName = getAppName(false);
+            //zipName += getFlagsString();
 
             zipName += ".zip";
 
@@ -173,31 +185,36 @@ namespace fwp.buildor
 
         virtual public string getProductName() => product_name;
 
+        [MenuItem("Window/Buildor/Apply platform settings (!publish)")]
+        static public void applySettings()
+        {
+            DataBuildSettingProfile data = BuildHelperBase.getActiveProfile();
+            data.applyProfilEditor();
+        }
+
         [ContextMenu("apply to player settings")]
         protected void cmApply()
         {
-            apply(); // contextmenu on profile
+            applyProfilEditor(); // contextmenu on profile
         }
 
-        virtual public void apply(bool publish = false)
+        virtual public void applyProfilEditor(bool usePublishVersion = false)
         {
+
+            //BuildTarget bt = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
+
+            //if (bt == null) Debug.LogError("no build target ?");
+
+            Debug.Log("applying profile : <b>" + name + "</b>");
+            Debug.Log("current platform ? " + GetType());
+
             //Debug.Log("applying " + name);
             //fwp.build.BuildHelperBase.applySettings(this);
-
-            PlayerSettings.companyName = compagny_name;
-            PlayerSettings.productName = getProductName();
-
-            Texture2D[] icons = new Texture2D[1];
-            icons[0] = icon;
-
-            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, icons);
-
-            PlayerSettings.SplashScreen.show = false;
-
-            EditorUserBuildSettings.development = developement_build;
-            //EditorUserBuildSettings.allowDebugging = scriptDebugging;
-
-            if (publish) publishVersion.applyVersionToEditor();
+            BuildHelperBase.applyCompagny(this);
+            BuildHelperBase.applyIcons(this);
+            BuildHelperBase.applyUnity(this);
+            
+            if (usePublishVersion) publishVersion.applyVersionToEditor();
             else internalVersion.applyVersionToEditor();
 
             EditorUtility.SetDirty(this);
