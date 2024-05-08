@@ -113,6 +113,8 @@ namespace fwp.buildor.editor
 
             EditorUserBuildSettings.switchCreateRomFile = build_rom;
 
+#if !UNITY_6000_0_OR_NEWER
+
             if (appId.Length > 0)
             {
                 PlayerSettings.Switch.applicationID = appId;
@@ -139,6 +141,8 @@ namespace fwp.buildor.editor
             appId = _appId;
 
             Debug.Log("switch, app id : " + PlayerSettings.Switch.applicationID);
+#endif
+
         }
 
         char getRndHexDigit()
