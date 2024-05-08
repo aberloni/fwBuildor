@@ -11,7 +11,7 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.BeginHorizontal();
 			WinEdFieldsHelper.drawTextLabel(label, path, true);
-			if (GUILayout.Button("copy")) EditorGUIUtility.systemCopyBuffer = path;
+			if (GUILayout.Button("copy", GUILayout.Width(70f))) EditorGUIUtility.systemCopyBuffer = path;
 			GUILayout.EndHorizontal();
 		}
 

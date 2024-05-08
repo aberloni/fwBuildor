@@ -92,6 +92,8 @@ namespace fwp.buildor.editor
                 sub = sub.Substring(0, sub.Length - path_separator.Length); // remove last "__"
             }
 
+            sub += getFlagsString();
+
             // builds/(sub/)
             baseProjectPath = Path.Combine(baseProjectPath, sub);
 
@@ -104,6 +106,8 @@ namespace fwp.buildor.editor
         public string getAppName(bool includeExtension = true)
         {
             string output = build_prefix;
+
+            //output += getFlagsString();
 
             if (includeExtension) output += "." + getExtension();
 

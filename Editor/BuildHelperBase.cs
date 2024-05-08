@@ -307,6 +307,7 @@ namespace fwp.buildor.editor
             Debug.Log("Build finished");
             Debug.Log("  L version : <b>" + VersionManager.getFormatedVersion() + "</b>");
             Debug.Log("  L result : summary says " + summary.result + " ( success ? " + success + " ) | warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
+            Debug.Log("  L symbols : " + ScriptableSymbolHelper.getGroupSymbols(summary.platformGroup));
             Debug.Log("  L platform : <b>" + summary.platform + "</b>");
             Debug.Log("  L build time : " + summary.totalTime);
 
@@ -319,14 +320,15 @@ namespace fwp.buildor.editor
 
                     int size = (int)(bytes / byteToMo);
 
-                    Debug.Log("  L byte size : " + summary.totalSize + " bytes");
-                    Debug.Log("  L ~ size : " + size + " Mo");
+                    Debug.Log("  L size : " + summary.totalSize + " bytes ; " + size + " Mo");
 
                     Debug.Log("  L path : " + summary.outputPath);
 
                     break;
                 default:
+                    
                     Debug.LogError("Build failed: " + summary.result);
+
                     break;
             }
 

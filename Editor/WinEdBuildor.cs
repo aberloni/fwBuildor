@@ -118,7 +118,7 @@ namespace fwp.buildor.editor
                 }
             }
 
-            GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
+            GUILayout.Label("symbols (#if)", BuildorHelperGuiStyle.getCategoryBold());
 
             string symbols = ScriptableSymbolHelper.getGroupSymbols(prof.getPlatformTargetGroup());
             if(string.IsNullOrEmpty(symbols))
@@ -131,7 +131,6 @@ namespace fwp.buildor.editor
                 //GUILayout.Label("#if "+symbols);
                 string[] split = symbols.Split(';');
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("#if", w);
                 for (int i = 0; i < split.Length; i++)
                 {
                     if (i > 0 && i % 8 == 0)
@@ -143,7 +142,9 @@ namespace fwp.buildor.editor
                 }
                 GUILayout.EndHorizontal();
             }
-            
+
+            GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
+
             buildFlags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
             
             prof.developement_build = GUILayout.Toggle(prof.developement_build, "dev build");
