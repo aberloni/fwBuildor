@@ -23,6 +23,5 @@ namespace fwp.buildor.editor
 
         static public string getPlayerSettingsBuildNumber() => "-";
         static public string getPlayerSettingsVersion() => PlayerSettings.bundleVersion;
-
     }
 }

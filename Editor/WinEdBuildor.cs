@@ -18,6 +18,15 @@ namespace fwp.buildor.editor
             win.titleContent = new GUIContent("Buildor");
         }
 
+        private void OnEnable()
+        {
+            prof = BuildHelperBase.getActiveProfile();
+            if (prof != null && prof.merger != null && merger == null)
+            {
+                merger = prof.merger;
+            }
+        }
+
         BuildPathFlags pathFlags;
         BuildHelperFlags buildFlags;
 
@@ -32,31 +41,27 @@ namespace fwp.buildor.editor
             {
                 string val = EditorPrefs.GetString(_merger_selection, string.Empty);
                 
+                // save new name if changed
                 if (_merger != null && !_merger.name.Contains(val))
                 {
                     _merger = null;
-                    EditorPrefs.SetString(_merger_selection, string.Empty);
                 }
 
+                // if none yet, try to get ppref one
                 if (_merger == null && !string.IsNullOrEmpty(val))
                 {
                     _merger = BuildorHelpers.getScriptableObjectInEditor<DataBuildorScenesMerger>(val);
-
-                    // reset
-                    if(_merger == null)
-                    {
-                        EditorPrefs.SetString(_merger_selection, string.Empty);
-                    }
                 }
 
                 return _merger;
             }
+
             set
             {
                 if(value != _merger)
                 {
                     _merger = value;
-                    EditorPrefs.SetString(_merger_selection, _merger.name);
+                    EditorPrefs.SetString(_merger_selection, _merger != null ? _merger.name : string.Empty);
                 }
             }
         }

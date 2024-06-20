@@ -50,11 +50,9 @@ namespace fwp.buildor.editor
         }
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
 
-        [Header("splashscreen")]
         public Sprite splashscreen;
-
-        [Header("icons")]
         public Texture2D icon;
+        public DataBuildorScenesMerger merger;
 
         virtual protected void OnValidate()
         {
