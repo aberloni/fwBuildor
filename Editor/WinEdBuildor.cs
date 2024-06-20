@@ -10,8 +10,7 @@ namespace fwp.buildor.editor
 {
     public class WinEdBuildor : EditorWindow
     {
-
-        [MenuItem("Window/Buildor/(window) open buildor", false, 0)]
+        [MenuItem(BuildorVerbosity._buildor_menuitem_path + "(window) open buildor", false, 0)]
         static void init()
         {
             var win = EditorWindow.GetWindow(typeof(WinEdBuildor));
@@ -62,6 +61,7 @@ namespace fwp.buildor.editor
                 {
                     _merger = value;
                     EditorPrefs.SetString(_merger_selection, _merger != null ? _merger.name : string.Empty);
+                    if (BuildorVerbosity.verbose) Debug.Log("merger:" + merger, _merger);
                 }
             }
         }
