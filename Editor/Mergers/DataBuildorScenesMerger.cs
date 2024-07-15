@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.SceneManagement;
 #endif
 
 /// <summary>
@@ -31,19 +31,24 @@ namespace fwp.buildor
 
 #if UNITY_EDITOR
 
-        List<EditorBuildSettingsScene> tmp = new List<EditorBuildSettingsScene>();
+        List<EditorBuildSettingsScene> scenesToInject = new List<EditorBuildSettingsScene>();
 
         [ContextMenu("apply")]
-        public void apply()
+        public void apply(bool additive = false)
         {
-            tmp.Clear();
+            scenesToInject.Clear();
+
+            if (additive)
+            {
+                scenesToInject.AddRange(EditorBuildSettings.scenes);
+            }
 
             inject(cores);
             inject(levels);
             inject(debugs);
             inject(menus);
 
-            EditorBuildSettings.scenes = tmp.ToArray();
+            EditorBuildSettings.scenes = scenesToInject.ToArray();
         }
 
         void inject(DataBuildorScenesFilter[] profils)
@@ -55,7 +60,13 @@ namespace fwp.buildor
             {
                 for (int i = 0; i < item.paths.Length; i++)
                 {
-                    tmp.Add(new EditorBuildSettingsScene(item.paths[i], true));
+                    string path = item.paths[i];
+
+                    // no duplicates
+                    if (scenesToInject.Any(x => x.path == path))
+                        continue;
+
+                    scenesToInject.Add(new EditorBuildSettingsScene(path, true));
                 }
             }
 
