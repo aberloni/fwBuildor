@@ -20,9 +20,10 @@ namespace fwp.buildor.editor
             activeProfil = BuildHelperBase.getActiveProfile();
         }
 
-        public DataBuildSettingProfile activeProfil;
-        public BuildPathFlags pathFlags;
-        public BuildHelperFlags buildFlags;
+        public DataBuildSettingProfile activeProfil = null;
+
+        public BuildPathFlags pathFlags = new BuildPathFlags();
+        public BuildHelperFlags buildFlags = new BuildHelperFlags();
 
         Vector2 scroll;
 
