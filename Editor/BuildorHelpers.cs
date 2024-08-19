@@ -7,6 +7,8 @@ namespace fwp.buildor.editor
 {
     static public class BuildorHelpers
     {
+        public const string _menuItem_basepath = "buildor/";
+        public const string _path_merger = _menuItem_basepath + "merger/";
 
         static public ScriptableObject[] getScriptableObjectsInEditor(System.Type scriptableType)
         {

@@ -4,8 +4,6 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 
-using fwp.buildor.version;
-
 namespace fwp.buildor.editor
 {
     public class WinEdBuildor : EditorWindow
@@ -19,73 +17,37 @@ namespace fwp.buildor.editor
 
         private void OnEnable()
         {
-            _activeProfil = BuildHelperBase.getActiveProfile();
-            if (_activeProfil != null && _activeProfil.merger != null && merger == null)
-            {
-                merger = _activeProfil.merger;
-            }
+            activeProfil = BuildHelperBase.getActiveProfile();
         }
 
-        DataBuildSettingProfile _activeProfil;
-
-        BuildPathFlags pathFlags;
-        BuildHelperFlags buildFlags;
+        public DataBuildSettingProfile activeProfil;
+        public BuildPathFlags pathFlags;
+        public BuildHelperFlags buildFlags;
 
         Vector2 scroll;
 
-        const string _merger_selection = "merger_selection";
-
-        DataBuildorScenesMerger _merger;
-        DataBuildorScenesMerger merger
-        {
-            get
-            {
-                string val = EditorPrefs.GetString(_merger_selection, string.Empty);
-
-                // save new name if changed
-                if (_merger != null && !_merger.name.Contains(val))
-                {
-                    _merger = null;
-                }
-
-                // if none yet, try to get ppref one
-                if (_merger == null && !string.IsNullOrEmpty(val))
-                {
-                    _merger = BuildorHelpers.getScriptableObjectInEditor<DataBuildorScenesMerger>(val);
-                }
-
-                return _merger;
-            }
-
-            set
-            {
-                if (value != _merger)
-                {
-                    _merger = value;
-                    EditorPrefs.SetString(_merger_selection, _merger != null ? _merger.name : string.Empty);
-                    if (BuildorVerbosity.verbose) Debug.Log("merger:" + merger, _merger);
-                }
-            }
-        }
-
-        bool foldMerger;
-
-        private void Update()
-        { }
+        WinSubVersion subVersion;
+        WinSubScriptableSymbols subSymbols;
+        WinSubMerger subMergers;
 
         void OnGUI()
         {
+            if (subVersion == null) subVersion = new WinSubVersion();
+            if (subSymbols == null) subSymbols = new WinSubScriptableSymbols(this);
+            if (subMergers == null) subMergers = new WinSubMerger(this);
+
             GUILayout.Label("Buildor", BuildorHelperGuiStyle.getWinTitle());
 
             scroll = GUILayout.BeginScrollView(scroll);
 
             drawProfil();
 
-            if (_activeProfil != null)
+            if (activeProfil != null)
             {
-                drawVersion();
-                drawMerger();
-                drawSymbols();
+                subVersion?.draw(this);
+                subMergers?.draw();
+                subSymbols?.draw();
+
                 drawBuildFlags();
                 drawPathModifiers();
                 drawSuccess();
@@ -97,7 +59,7 @@ namespace fwp.buildor.editor
 
         void drawProfil()
         {
-            if (_activeProfil == null)
+            if (activeProfil == null)
             {
                 GUILayout.Label("this view needs some active profil setup");
                 return;
@@ -107,71 +69,15 @@ namespace fwp.buildor.editor
             // just display
             GUILayout.Label("platform", BuildorHelperGuiStyle.getCategoryBold());
             GUI.enabled = false;
-            EditorGUILayout.ObjectField(_activeProfil, typeof(DataBuildSettingProfile), true);
+            EditorGUILayout.ObjectField(activeProfil, typeof(DataBuildSettingProfile), true);
             GUI.enabled = true;
 
             if (GUILayout.Button(">>"))
             {
-                UnityEditor.Selection.activeObject = _activeProfil;
+                UnityEditor.Selection.activeObject = activeProfil;
             }
 
             GUILayout.EndHorizontal();
-
-        }
-
-
-        void drawMerger()
-        {
-            GUILayout.Label("merger", BuildorHelperGuiStyle.getCategoryBold());
-
-            GUILayout.BeginHorizontal();
-            merger = (DataBuildorScenesMerger)EditorGUILayout.ObjectField(merger, typeof(DataBuildorScenesMerger), true);
-            if (merger != null)
-            {
-                if (GUILayout.Button("apply", GUILayout.Width(50f)))
-                {
-                    merger.apply();
-                }
-            }
-            GUILayout.EndHorizontal();
-
-            foldMerger = EditorGUILayout.Foldout(foldMerger, "scenes in build settings x" + EditorBuildSettings.scenes.Length, true);
-            if (foldMerger)
-            {
-                foreach (var sc in EditorBuildSettings.scenes)
-                {
-                    GUILayout.Label(sc.path);
-                }
-            }
-
-        }
-
-        void drawSymbols()
-        {
-            GUILayout.Label("symbols (#if)", BuildorHelperGuiStyle.getCategoryBold());
-
-            string symbols = ScriptableSymbolHelper.getGroupSymbols(_activeProfil.getPlatformTargetGroup());
-            if (string.IsNullOrEmpty(symbols))
-            {
-                GUILayout.Label("empty scriptable symbols");
-            }
-            else
-            {
-                var w = GUILayout.Width(60f);
-                //GUILayout.Label("#if "+symbols);
-                string[] split = symbols.Split(';');
-                GUILayout.BeginHorizontal();
-                for (int i = 0; i < split.Length; i++)
-                {
-                    if (i > 0 && i % 8 == 0)
-                    {
-                        GUILayout.EndHorizontal();
-                        GUILayout.BeginHorizontal();
-                    }
-                    GUILayout.Label(split[i], w);
-                }
-                GUILayout.EndHorizontal();
-            }
 
         }
 
@@ -182,25 +88,25 @@ namespace fwp.buildor.editor
 
             buildFlags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
 
-            _activeProfil.developement_build = GUILayout.Toggle(_activeProfil.developement_build, "dev build");
-            if (_activeProfil.developement_build != EditorUserBuildSettings.development)
+            activeProfil.developement_build = GUILayout.Toggle(activeProfil.developement_build, "dev build");
+            if (activeProfil.developement_build != EditorUserBuildSettings.development)
             {
-                EditorUserBuildSettings.development = _activeProfil.developement_build;
+                EditorUserBuildSettings.development = activeProfil.developement_build;
                 Debug.LogWarning("changed dev build : " + EditorUserBuildSettings.development);
 
-                UnityEditor.EditorUtility.SetDirty(_activeProfil);
+                UnityEditor.EditorUtility.SetDirty(activeProfil);
             }
 
-            _activeProfil.debugScripting = GUILayout.Toggle(_activeProfil.debugScripting, "debug scripting");
-            if (_activeProfil.debugScripting != EditorUserBuildSettings.allowDebugging)
+            activeProfil.debugScripting = GUILayout.Toggle(activeProfil.debugScripting, "debug scripting");
+            if (activeProfil.debugScripting != EditorUserBuildSettings.allowDebugging)
             {
-                EditorUserBuildSettings.allowDebugging = _activeProfil.debugScripting;
-                UnityEditor.EditorUtility.SetDirty(_activeProfil);
+                EditorUserBuildSettings.allowDebugging = activeProfil.debugScripting;
+                UnityEditor.EditorUtility.SetDirty(activeProfil);
             }
 
-            var level = (DataBuildSettingProfile.ProfilingLevel)EditorGUILayout.EnumPopup("profiling", _activeProfil.debugProfiling);
+            var level = (DataBuildSettingProfile.ProfilingLevel)EditorGUILayout.EnumPopup("profiling", activeProfil.debugProfiling);
 
-            if (level != _activeProfil.debugProfiling)
+            if (level != activeProfil.debugProfiling)
             {
                 switch (level)
                 {
@@ -218,8 +124,8 @@ namespace fwp.buildor.editor
                         break;
 
                 }
-                _activeProfil.debugProfiling = level;
-                UnityEditor.EditorUtility.SetDirty(_activeProfil);
+                activeProfil.debugProfiling = level;
+                UnityEditor.EditorUtility.SetDirty(activeProfil);
             }
 
         }
@@ -249,13 +155,13 @@ namespace fwp.buildor.editor
             GUILayout.Space(20f);
             GUILayout.Label("outputs", BuildorHelperGuiStyle.getCategoryBold());
 
-            string outputFolder = _activeProfil.getAbsoluteBuildFolderPath(pathFlags);
+            string outputFolder = activeProfil.getAbsoluteBuildFolderPath(pathFlags);
 
             WinEdFieldsHelper.drawCopyPastablePath("base path : ", outputFolder);
-            WinEdFieldsHelper.drawCopyPastablePath("app name :", _activeProfil.getAppName());
-            WinEdFieldsHelper.drawCopyPastablePath("zip name :", _activeProfil.getZipName(pathFlags));
+            WinEdFieldsHelper.drawCopyPastablePath("app name :", activeProfil.getAppName());
+            WinEdFieldsHelper.drawCopyPastablePath("zip name :", activeProfil.getZipName(pathFlags));
 
-            string fullPath = Path.Combine(outputFolder, _activeProfil.getAppName());
+            string fullPath = Path.Combine(outputFolder, activeProfil.getAppName());
             WinEdFieldsHelper.drawCopyPastablePath("full path :", fullPath);
 
             GUILayout.BeginHorizontal();
@@ -289,53 +195,10 @@ namespace fwp.buildor.editor
             GUILayout.Space(20f);
             if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
             {
-                merger?.apply();
+                activeProfil.merger?.apply();
                 new BuildHelperBase(buildFlags, pathFlags);
             }
 
-        }
-
-        /// <summary>
-        /// result is stored in flagsBuild
-        /// </summary>
-        void drawVersion()
-        {
-
-            GUILayout.Space(20f);
-            GUILayout.Label("version", BuildorHelperGuiStyle.getCategoryBold());
-
-            BuildSettingVersionType vType = BuildorWinEdHelper.drawEnum<BuildSettingVersionType>("publish type", "publish", 0);
-            buildFlags.isPublishingBuild = vType == BuildSettingVersionType.vPublish;
-
-            GUILayout.BeginHorizontal();
-
-            GUI.enabled = false;
-            var version = vType == BuildSettingVersionType.vPublish ? _activeProfil.publishVersion : _activeProfil.internalVersion;
-            EditorGUILayout.ObjectField(version, typeof(DataBuildSettingVersion), true);
-            GUI.enabled = true;
-
-            if (version != null)
-            {
-                GUILayout.Label(version.getFormated());
-
-                if (GUILayout.Button("MAJOR"))
-                {
-                    version.incrementMajor();
-                }
-                if (GUILayout.Button("MINOR"))
-                {
-                    version.incrementMinor();
-                }
-                if (GUILayout.Button("FIX"))
-                {
-                    version.incrementFix();
-                }
-            }
-            GUILayout.EndHorizontal();
-
-            GUILayout.Label("version manager output : " + VersionManager.getDisplayVersion());
-
-            GUILayout.Space(10f);
         }
 
 

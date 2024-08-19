@@ -5,7 +5,7 @@ using UnityEngine;
 namespace fwp.buildor
 {
     [System.Serializable]
-    public struct BuildHelperFlags
+    public class BuildHelperFlags
     {
         public bool autorun;
         public bool incVersion;
@@ -16,7 +16,7 @@ namespace fwp.buildor
     }
 
     [System.Serializable]
-    public struct BuildPathFlags
+    public class BuildPathFlags
     {
         public bool pathIncludePrefix;
         public bool pathIncludePlatform;

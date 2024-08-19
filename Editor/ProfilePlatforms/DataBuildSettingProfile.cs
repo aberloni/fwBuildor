@@ -52,7 +52,10 @@ namespace fwp.buildor.editor
 
         public Sprite splashscreen;
         public Texture2D icon;
+
+        [Header("buildor features")]
         public DataBuildorScenesMerger merger;
+        public fwp.symbols.ScriptableSymbolProfil scriptSymbols;
 
         virtual protected void OnValidate()
         {
