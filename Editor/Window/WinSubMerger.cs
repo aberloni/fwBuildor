@@ -11,18 +11,8 @@ namespace fwp.buildor.editor
         {
         }
 
-        protected override string getSectionTitle() => "merger";
+        protected override string getSectionTitle() => "override merger";
         protected override string pprefUid() => "buildor.merger";
-
-        override public void fetchInstance()
-        {
-            base.fetchInstance();
-            
-            if (_value == null && win != null)
-            {
-                _value = win.activeProfil.merger;
-            }
-        }
 
         protected override void apply()
         {
@@ -34,6 +24,10 @@ namespace fwp.buildor.editor
         protected override void drawContent()
         {
             base.drawContent();
+            if(win.activeProfil.merger != null)
+            {
+                GUILayout.Label("active profil has merger : " + win.activeProfil.merger.strOneLine());
+            }
         }
 
         protected override void drawDetails()

@@ -29,6 +29,21 @@ namespace fwp.buildor
 
         public DataBuildorScenesFilter[] menus;
 
+        public string strOneLine() => name + " x" + countTotal;
+
+        public int countTotal
+        {
+            get
+            {
+                int cnt = 0;
+                cnt += cores.Length;
+                cnt += levels.Length;
+                cnt += debugs.Length;
+                cnt += menus.Length;
+                return cnt;
+            }
+        }
+
 #if UNITY_EDITOR
 
         List<EditorBuildSettingsScene> scenesToInject = new List<EditorBuildSettingsScene>();

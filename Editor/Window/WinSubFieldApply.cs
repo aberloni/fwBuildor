@@ -78,10 +78,10 @@ namespace fwp.buildor.editor
             }
             GUILayout.EndHorizontal();
 
-            if(value != null)
-            {
-                drawContent();
+            drawContent();
 
+            if (value != null)
+            {
                 _fold = EditorGUILayout.Foldout(_fold, "see details", true);
                 if (_fold)
                 {

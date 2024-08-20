@@ -6,6 +6,8 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
+    using fwp.buildor.version;
+
     public class WinEdBuildor : EditorWindow
     {
         [MenuItem(BuildorVerbosity._buildor_menuitem_path + "(window) open buildor", false, 0)]
@@ -191,15 +193,45 @@ namespace fwp.buildor.editor
 
         }
 
+        DataBuildorScenesMerger getActiveMerger()
+        {
+            if (subMergers.value != null)
+            {
+                return subMergers.value;
+            }
+            else if (activeProfil.merger != null)
+            {
+                return activeProfil.merger;
+            }
+            return null;
+        }
+
         void drawBuildButton()
         {
+            DataBuildSettingVersion version = subVersion.getActiveVersion(this);
+            if(version != null)
+            {
+                GUILayout.Label("+ version : " + version.version);
+            }
+
+            DataBuildorScenesMerger merger = getActiveMerger();
+            if(merger != null)
+            {
+                GUILayout.Label("+ merger : " + merger.strOneLine());
+            }
+
             GUILayout.Space(20f);
             if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
             {
-                activeProfil.merger?.apply();
-                new BuildHelperBase(buildFlags, pathFlags);
+                solveBuild();
             }
 
+        }
+
+        void solveBuild()
+        {
+            
+            new BuildHelperBase(buildFlags, pathFlags);
         }
 
 

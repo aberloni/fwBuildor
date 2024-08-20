@@ -23,7 +23,7 @@ namespace fwp.buildor.editor
             GUILayout.BeginHorizontal();
 
             GUI.enabled = false;
-            var version = vType == BuildSettingVersionType.vPublish ? win.activeProfil.publishVersion : win.activeProfil.internalVersion;
+            var version = getActiveVersion(win);
 
             EditorGUILayout.ObjectField(version, typeof(DataBuildSettingVersion), true);
             GUI.enabled = true;
@@ -50,6 +50,14 @@ namespace fwp.buildor.editor
             GUILayout.Label("version manager output : " + VersionManager.getDisplayVersion());
 
             GUILayout.Space(10f);
+        }
+
+        public DataBuildSettingVersion getActiveVersion(WinEdBuildor win)
+        {
+            var version = win.buildFlags.isPublishingBuild 
+                ? win.activeProfil.publishVersion : win.activeProfil.internalVersion;
+
+            return version;
         }
 
     }
