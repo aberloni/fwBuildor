@@ -40,6 +40,21 @@ namespace fwp.buildor
             return gWinTitle;
         }
 
+        static private GUIStyle gWhiteBold;
+        static public GUIStyle getWhiteBold()
+        {
+            if (gWhiteBold == null)
+            {
+                gWhiteBold = new GUIStyle();
+                gWhiteBold.richText = true;
+                gWhiteBold.fontStyle = FontStyle.Bold;
+                gWhiteBold.padding = new RectOffset(10, 5, 2, 2);
+                gWhiteBold.normal.textColor = Color.white;
+            }
+
+            return gWhiteBold;
+        }
+
         static private GUIStyle gButtonBig;
         static public GUIStyle getButtonBig(float height)
         {
@@ -56,42 +71,25 @@ namespace fwp.buildor
             return gButtonColored;
         }
 
-
-        static private GUIStyle gNormalColored;
-        static public GUIStyle getNormalColored(Color color)
-        {
-            if (gNormalColored == null) gNormalColored = new GUIStyle();
-            gNormalColored.normal.textColor = color;
-            return gNormalColored;
-        }
-
         static private GUIStyle gCategoryBold;
         static public GUIStyle getCategoryBold()
+        {
+            if (gCategoryBold != null) return gCategoryBold;
+            return getCategoryBold(new Color(1f, 0.2f, 0.20f));
+        }
+        static public GUIStyle getCategoryBold(Color color)
         {
             if (gCategoryBold == null)
             {
                 gCategoryBold = new GUIStyle();
-                gCategoryBold.normal.textColor = new Color(1f, 0.5f, 0.5f); // red ish
                 gCategoryBold.padding.left = 10;
                 gCategoryBold.padding.top = 5;
                 gCategoryBold.fontStyle = FontStyle.Bold;
             }
+
+            gCategoryBold.normal.textColor = color;
+
             return gCategoryBold;
-        }
-
-        static private GUIStyle gTitleWhiteBold;
-        static public GUIStyle getTitleWhiteBold()
-        {
-            if (gTitleWhiteBold == null)
-            {
-                gTitleWhiteBold = new GUIStyle();
-                gTitleWhiteBold.richText = true;
-                gTitleWhiteBold.fontStyle = FontStyle.Bold;
-                gTitleWhiteBold.padding = new RectOffset(10, 5, 2, 2);
-                gTitleWhiteBold.normal.textColor = Color.white;
-            }
-
-            return gTitleWhiteBold;
         }
 
         static private GUIStyle gLabelBoldGizmos;
