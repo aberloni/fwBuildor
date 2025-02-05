@@ -6,7 +6,7 @@ namespace fwp.buildor.editor
 {
     public class WinSubMerger : WinSubFieldApply<DataBuildorScenesMerger>
     {
-        
+
         public WinSubMerger(WinEdBuildor win) : base(win)
         {
         }
@@ -24,9 +24,9 @@ namespace fwp.buildor.editor
         protected override void drawContent()
         {
             base.drawContent();
-            if(win.activeProfil.merger != null)
+            if (win.activeProfil.merger != null)
             {
-                GUILayout.Label("active profil has merger : " + win.activeProfil.merger.strOneLine());
+                GUILayout.Label("active profil has merger : " + win.activeProfil.merger.name);
             }
         }
 
@@ -34,9 +34,12 @@ namespace fwp.buildor.editor
         {
             base.drawDetails();
 
-            foreach (var sc in EditorBuildSettings.scenes)
+            GUILayout.Label("merger : " + win.activeProfil.merger.strOneLine());
+
+            for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
             {
-                GUILayout.Label(sc.path);
+                var sc = EditorBuildSettings.scenes[i];
+                GUILayout.Label($"#{i}  {sc.path}");
             }
         }
 
