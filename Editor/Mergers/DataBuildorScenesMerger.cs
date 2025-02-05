@@ -29,9 +29,9 @@ namespace fwp.buildor
 
         public DataBuildorScenesFilter[] menus;
 
-        public string strOneLine() => name + " x" + countTotal;
+        public string strOneLine() => name + " \n    filters x" + countTotalFilters + " \n    scenes x" + countTotalScenes;
 
-        public int countTotal
+        public int countTotalFilters
         {
             get
             {
@@ -40,6 +40,19 @@ namespace fwp.buildor
                 cnt += levels.Length;
                 cnt += debugs.Length;
                 cnt += menus.Length;
+                return cnt;
+            }
+        }
+
+        public int countTotalScenes
+        {
+            get
+            {
+                int cnt = 0;
+                foreach (var c in cores) cnt += c.paths.Length;
+                foreach (var c in levels) cnt += c.paths.Length;
+                foreach (var c in debugs) cnt += c.paths.Length;
+                foreach (var c in menus) cnt += c.paths.Length;
                 return cnt;
             }
         }
