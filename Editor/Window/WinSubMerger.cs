@@ -14,6 +14,9 @@ namespace fwp.buildor.editor
         protected override string getSectionTitle() => "override merger";
         protected override string pprefUid() => "buildor.merger";
 
+        /// <summary>
+        /// click apply in editor
+        /// </summary>
         protected override void apply()
         {
             base.apply();
@@ -24,9 +27,14 @@ namespace fwp.buildor.editor
         protected override void drawContent()
         {
             base.drawContent();
-            if (win.activeProfil.merger != null)
+
+            if (win.activeProfil.merger == null)
             {
-                GUILayout.Label("active profil has merger : " + win.activeProfil.merger.name);
+                GUILayout.Label("profil.merger.empty");
+            }
+            else
+            {
+                GUILayout.Label("profil.merger is " + win.activeProfil.merger.name);
             }
         }
 
@@ -34,13 +42,25 @@ namespace fwp.buildor.editor
         {
             base.drawDetails();
 
-            GUILayout.Label("merger : " + win.activeProfil.merger.strOneLine());
+            var activeMerger = win.getActiveMerger();
+            if (activeMerger != null)
+            {
+                GUILayout.Label("build.merger will use " + activeMerger.strOneLine());
+                GUILayout.Label(activeMerger.stringify());
+            }
+            else
+            {
+                GUILayout.Label("build.merger.empty");
+            }
 
+            /*
+            GUILayout.Label("editor Build Settings scenes");
             for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
             {
                 var sc = EditorBuildSettings.scenes[i];
                 GUILayout.Label($"#{i}  {sc.path}");
             }
+            */
         }
 
     }

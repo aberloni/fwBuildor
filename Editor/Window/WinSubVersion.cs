@@ -18,7 +18,7 @@ namespace fwp.buildor.editor
             GUILayout.Label("version", BuildorHelperGuiStyle.getCategoryBold());
 
             BuildSettingVersionType vType = BuildorWinEdHelper.drawEnum<BuildSettingVersionType>("publish type", "publish", 0);
-            win.buildFlags.isPublishingBuild = vType == BuildSettingVersionType.vPublish;
+            win.parameters.buildFlags.isPublishingBuild = vType == BuildSettingVersionType.vPublish;
 
             GUILayout.BeginHorizontal();
 
@@ -54,7 +54,7 @@ namespace fwp.buildor.editor
 
         public DataBuildSettingVersion getActiveVersion(WinEdBuildor win)
         {
-            var version = win.buildFlags.isPublishingBuild 
+            var version = win.parameters.buildFlags.isPublishingBuild 
                 ? win.activeProfil.publishVersion : win.activeProfil.internalVersion;
 
             return version;

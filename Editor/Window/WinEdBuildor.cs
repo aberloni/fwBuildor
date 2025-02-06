@@ -17,21 +17,20 @@ namespace fwp.buildor.editor
             win.titleContent = new GUIContent("Buildor");
         }
 
-        private void OnEnable()
-        {
-            activeProfil = BuildHelperBase.getActiveProfile();
-        }
-
-        public DataBuildSettingProfile activeProfil = null;
-
-        public BuildPathFlags pathFlags = new BuildPathFlags();
-        public BuildHelperFlags buildFlags = new BuildHelperFlags();
-
         Vector2 scroll;
 
         WinSubVersion subVersion;
         WinSubScriptableSymbols subSymbols;
         WinSubMerger subMergers;
+
+        public BuildHelperBase.BuildParameters parameters;
+        public DataBuildSettingProfile activeProfil => parameters.activeProfil;
+
+        private void OnEnable()
+        {
+            if (parameters == null) parameters = new BuildHelperBase.BuildParameters();
+            parameters.activeProfil = BuildHelperBase.getActiveProfile();
+        }
 
         void OnGUI()
         {
@@ -45,7 +44,7 @@ namespace fwp.buildor.editor
 
             drawProfil();
 
-            if (activeProfil != null)
+            if (parameters.activeProfil != null)
             {
                 subVersion?.draw(this);
                 subMergers?.draw();
@@ -62,7 +61,7 @@ namespace fwp.buildor.editor
 
         void drawProfil()
         {
-            if (activeProfil == null)
+            if (parameters.activeProfil == null)
             {
                 GUILayout.Label("this view needs some active profil setup");
                 return;
@@ -72,12 +71,12 @@ namespace fwp.buildor.editor
             // just display
             GUILayout.Label("platform", BuildorHelperGuiStyle.getCategoryBold());
             GUI.enabled = false;
-            EditorGUILayout.ObjectField(activeProfil, typeof(DataBuildSettingProfile), true);
+            EditorGUILayout.ObjectField(parameters.activeProfil, typeof(DataBuildSettingProfile), true);
             GUI.enabled = true;
 
             if (GUILayout.Button(">>"))
             {
-                UnityEditor.Selection.activeObject = activeProfil;
+                UnityEditor.Selection.activeObject = parameters.activeProfil;
             }
 
             GUILayout.EndHorizontal();
@@ -89,7 +88,7 @@ namespace fwp.buildor.editor
 
             GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
 
-            buildFlags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
+            parameters.buildFlags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
 
             activeProfil.developement_build = GUILayout.Toggle(activeProfil.developement_build, "dev build");
             if (activeProfil.developement_build != EditorUserBuildSettings.development)
@@ -139,10 +138,10 @@ namespace fwp.buildor.editor
             GUILayout.Label("path modifiers", BuildorHelperGuiStyle.getCategoryBold());
 
             GUILayout.BeginHorizontal();
-            pathFlags.pathIncludePrefix = WinEdFieldsHelper.drawToggle("prefix", "pathIncludePrefix");
-            pathFlags.pathIncludePlatform = WinEdFieldsHelper.drawToggle("platform", "pathIncludePlatform");
-            pathFlags.pathIncludeDate = WinEdFieldsHelper.drawToggle("date", "pathIncludeDate");
-            pathFlags.pathIncludeVersion = WinEdFieldsHelper.drawToggle("version", "pathIncludeVersion");
+            parameters.pathFlags.pathIncludePrefix = WinEdFieldsHelper.drawToggle("prefix", "pathIncludePrefix");
+            parameters.pathFlags.pathIncludePlatform = WinEdFieldsHelper.drawToggle("platform", "pathIncludePlatform");
+            parameters.pathFlags.pathIncludeDate = WinEdFieldsHelper.drawToggle("date", "pathIncludeDate");
+            parameters.pathFlags.pathIncludeVersion = WinEdFieldsHelper.drawToggle("version", "pathIncludeVersion");
             GUILayout.EndHorizontal();
 
         }
@@ -151,18 +150,18 @@ namespace fwp.buildor.editor
         {
             GUILayout.Label("on success", BuildorHelperGuiStyle.getCategoryBold());
 
-            buildFlags.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
-            buildFlags.zipOnSuccess = WinEdFieldsHelper.drawToggle("zip", "zip");
-            buildFlags.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
+            parameters.buildFlags.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
+            parameters.buildFlags.zipOnSuccess = WinEdFieldsHelper.drawToggle("zip", "zip");
+            parameters.buildFlags.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
 
             GUILayout.Space(20f);
             GUILayout.Label("outputs", BuildorHelperGuiStyle.getCategoryBold());
 
-            string outputFolder = activeProfil.getAbsoluteBuildFolderPath(pathFlags);
+            string outputFolder = activeProfil.getAbsoluteBuildFolderPath(parameters.pathFlags);
 
             WinEdFieldsHelper.drawCopyPastablePath("base path : ", outputFolder);
             WinEdFieldsHelper.drawCopyPastablePath("app name :", activeProfil.getAppName());
-            WinEdFieldsHelper.drawCopyPastablePath("zip name :", activeProfil.getZipName(pathFlags));
+            WinEdFieldsHelper.drawCopyPastablePath("zip name :", activeProfil.getZipName(parameters.pathFlags));
 
             string fullPath = Path.Combine(outputFolder, activeProfil.getAppName());
             WinEdFieldsHelper.drawCopyPastablePath("full path :", fullPath);
@@ -193,7 +192,11 @@ namespace fwp.buildor.editor
 
         }
 
-        DataBuildorScenesMerger getActiveMerger()
+        /// <summary>
+        /// return override
+        /// or active profil
+        /// </summary>
+        public DataBuildorScenesMerger getActiveMerger()
         {
             if (subMergers.value != null)
             {
@@ -230,8 +233,9 @@ namespace fwp.buildor.editor
 
         void solveBuild()
         {
-            
-            new BuildHelperBase(buildFlags, pathFlags);
+            getActiveMerger()?.apply();
+
+            new BuildHelperBase(parameters);
         }
 
 

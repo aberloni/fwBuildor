@@ -29,8 +29,6 @@ namespace fwp.buildor
 
         public DataBuildorScenesFilter[] menus;
 
-        public string strOneLine() => name + " \n    filters x" + countTotalFilters + " \n    scenes x" + countTotalScenes;
-
         public int countTotalFilters
         {
             get
@@ -57,6 +55,18 @@ namespace fwp.buildor
             }
         }
 
+        public string strOneLine() => name + "  filters x" + countTotalFilters + "   scenes x" + countTotalScenes;
+        public string stringify()
+        {
+            string ret = strOneLine();
+
+            foreach (var c in cores) ret += "\n" + c.stringify();
+            foreach (var c in levels) ret += "\n" + c.stringify();
+            foreach (var c in debugs) ret += "\n" + c.stringify();
+            foreach (var c in menus) ret += "\n" + c.stringify();
+
+            return ret;
+        }
 #if UNITY_EDITOR
 
         List<EditorBuildSettingsScene> scenesToInject = new List<EditorBuildSettingsScene>();

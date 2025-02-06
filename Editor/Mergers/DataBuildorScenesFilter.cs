@@ -34,6 +34,16 @@ public class DataBuildorScenesFilter : ScriptableObject
     [Header("result")]
     public string[] paths; // can't use Scene type :/ (not serializable)
 
+    public string stringify()
+    {
+        string ret = name;
+        foreach(var p in paths)
+        {
+            ret += "\n  " + p;
+        }
+        return ret;
+    }
+
 #if UNITY_EDITOR
 
     [ContextMenu("add")]

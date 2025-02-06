@@ -51,26 +51,29 @@ namespace fwp.buildor.editor
         //float time_at_process = 0f;
 
         DataBuildSettingsBridge data = null;
-        string outputPath = "";
+        
+        BuildParameters _parameters;
 
-        BuildPathFlags _pathFlags;
-        BuildHelperFlags _buildFlags;
-
-        public BuildHelperBase(BuildHelperFlags build, BuildPathFlags path)
+        public class BuildParameters
         {
-            launch(build, path);
+            public BuildPathFlags pathFlags = new BuildPathFlags();
+            public BuildHelperFlags buildFlags = new BuildHelperFlags();
+            public DataBuildSettingProfile activeProfil;
+            public DataBuildorScenesMerger mergerOverride;
         }
 
-        void launch(BuildHelperFlags build, BuildPathFlags path)
+        public BuildHelperBase(BuildParameters param) => launch(param);
+        //public BuildHelperBase(BuildHelperFlags build, BuildPathFlags path) => launch(build, path);
+
+        void launch(BuildParameters param)
         {
-            _buildFlags = build;
-            _pathFlags = path;
+            _parameters = param;
 
             data = getScriptableDataBuildSettings();
 
             //if (data != null) applySettings(data.activeProfile);
 
-            Debug.Log("starting build process");
+            Debug.Log(" <<< <b>starting build process</b> >>>");
 
             preProc = preBuildProcess();
 
@@ -164,7 +167,7 @@ namespace fwp.buildor.editor
 
             if (BuildPipeline.isBuildingPlayer) return;
 
-            Debug.Log("now building app ; inc version ? " + _buildFlags.incVersion);
+            Debug.Log("now building app ; inc version ? " + _parameters.buildFlags.incVersion);
 
             buildPlayerOptions = new BuildPlayerOptions();
 
@@ -176,31 +179,29 @@ namespace fwp.buildor.editor
                 return;
             }
 
-            profile.applyProfilEditor(); // build prep
-
             //DataBuildSettingProfileAndroid pAndroid = profile as DataBuildSettingProfileAndroid;
             //DataBuildSettingProfileIos pIos = profile as DataBuildSettingProfileIos;
             //DataBuildSettingProfileWindows pWindows = profile as DataBuildSettingProfileWindows;
             //DataBuildSettingProfileSwitch pSwitch = profile as DataBuildSettingProfileSwitch;
 
             //this will apply
-            if (_buildFlags.incVersion)
+            if (_parameters.buildFlags.incVersion)
             {
-                if (_buildFlags.isPublishingBuild)
+                if (_parameters.buildFlags.isPublishingBuild)
                     VersionIncrementor.incPublishFix();
                 else
                     VersionIncrementor.incInternalFix();
             }
 
             //apply everything (after inc)
-            profile.applyProfilEditor(_buildFlags.isPublishingBuild);
+            profile.applyProfilEditor(_parameters.buildFlags.isPublishingBuild);
 
             //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
             buildPlayerOptions.scenes = getScenePaths();
 
             // === CREATE SOLVED BUILD PATH
 
-            string absPath = profile.getAbsoluteBuildFolderPath(_pathFlags);
+            string absPath = profile.getAbsoluteBuildFolderPath(_parameters.pathFlags);
 
             bool pathExists = Directory.Exists(absPath);
 
@@ -211,8 +212,6 @@ namespace fwp.buildor.editor
             }
 
             // === INJECTING SOLVED PATH TO BUILD SETTINGS
-
-            outputPath = absPath;
 
             //[project]_[version].[ext]
             absPath = Path.Combine(absPath, profile.getAppName());
@@ -229,7 +228,7 @@ namespace fwp.buildor.editor
                 buildPlayerOptions.options |= BuildOptions.AllowDebugging;
             }
 
-            if (_buildFlags.autorun)
+            if (_parameters.buildFlags.autorun)
             {
                 buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
             }
@@ -268,20 +267,20 @@ namespace fwp.buildor.editor
 
                     onSuccess(summary);
 
-                    if (_buildFlags.openFolderOnSuccess)
+                    if (_parameters.buildFlags.openFolderOnSuccess)
                     {
                         Debug.Log($"OPEN FOLDER @{summary.outputPath}");
                         openBuildFolder(summary.outputPath);
                     }
 
-                    if (_buildFlags.zipOnSuccess)
+                    if (_parameters.buildFlags.zipOnSuccess)
                     {
-                        string zipName = profile.getZipName(_pathFlags);
+                        string zipName = profile.getZipName(_parameters.pathFlags);
                         Debug.Log($"ZIP {summary.outputPath}@{zipName}");
                         zipBuildFolder(summary.outputPath, zipName);
                     }
 
-                    if (_buildFlags.autorun)
+                    if (_parameters.buildFlags.autorun)
                     {
                         Debug.Log("AUTORUN");
                         execAtPath(summary.outputPath);
@@ -326,7 +325,7 @@ namespace fwp.buildor.editor
 
                     break;
                 default:
-                    
+
                     Debug.LogError("Build failed: " + summary.result);
 
                     break;

@@ -4,6 +4,12 @@ namespace fwp.buildor.editor
 {
     using UnityEditor;
 
+    /// <summary>
+    /// wrapper around a scriptable object
+    /// fetch, swap
+    /// 
+    /// ref is stored in editor ppref using string.name
+    /// </summary>
     abstract public class WinSubFieldApply<T> where T : ScriptableObject
     {
         protected WinEdBuildor win;
@@ -67,6 +73,7 @@ namespace fwp.buildor.editor
             if (value != newValue)
             {
                 value = newValue;
+                onValueChanged(value);
             }
 
             if(_value != null)
@@ -80,20 +87,26 @@ namespace fwp.buildor.editor
 
             drawContent();
 
-            if (value != null)
+            _fold = EditorGUILayout.Foldout(_fold, "see details", true);
+            if (_fold)
             {
-                _fold = EditorGUILayout.Foldout(_fold, "see details", true);
-                if (_fold)
-                {
-                    drawDetails();
-                }
+                drawDetails();
             }
-
+            
         }
 
+        virtual protected void onValueChanged(T value)
+        { }
+
+        /// <summary>
+        /// main swap logic
+        /// </summary>
         virtual protected void drawContent()
         { }
 
+        /// <summary>
+        /// if user tick box
+        /// </summary>
         virtual protected void drawDetails()
         { }
 

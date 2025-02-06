@@ -222,6 +222,8 @@ namespace fwp.buildor.editor
             if (usePublishVersion) publishVersion.applyVersionToEditor();
             else internalVersion.applyVersionToEditor();
 
+            if (merger != null) merger.apply();
+
             EditorUtility.SetDirty(this);
         }
 
