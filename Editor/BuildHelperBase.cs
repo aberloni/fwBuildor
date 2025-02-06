@@ -51,7 +51,7 @@ namespace fwp.buildor.editor
         //float time_at_process = 0f;
 
         DataBuildSettingsBridge data = null;
-        
+
         BuildParameters _parameters;
 
         public class BuildParameters
@@ -90,7 +90,7 @@ namespace fwp.buildor.editor
                 {
                     preProc = null;
 
-                    Debug.Log("pre proc done");
+                    Debug.Log("build.preproc.done @ " + Time.realtimeSinceStartup);
 
                     buildProc = buildProcess();
                 }
@@ -101,7 +101,7 @@ namespace fwp.buildor.editor
             {
                 if (!buildProc.MoveNext())
                 {
-                    Debug.Log("build proc done");
+                    Debug.Log("build.done @ " + Time.realtimeSinceStartup);
 
                     buildProc = null;
 
@@ -131,9 +131,9 @@ namespace fwp.buildor.editor
             Debug.Log("BuildHelper, prep building ...");
 
             //if (!BuildPipeline.isBuildingPlayer)
-            
+
             build_prep();
-            
+
             //wait 5 secondes
             float startupTime = Time.realtimeSinceStartup;
             float curTime = Time.realtimeSinceStartup;
@@ -249,8 +249,8 @@ namespace fwp.buildor.editor
 
                     if (_parameters.buildFlags.openFolderOnSuccess)
                     {
-                        Debug.Log($"OPEN FOLDER @{summary.outputPath}");
-                        openBuildFolder(summary.outputPath);
+                        Debug.Log($"OPEN FOLDER of build : {summary.outputPath}");
+                        openBuildFolder(summary.outputPath); // success.open
                     }
 
                     if (_parameters.buildFlags.zipOnSuccess)
@@ -260,11 +260,16 @@ namespace fwp.buildor.editor
                         zipBuildFolder(summary.outputPath, zipName);
                     }
 
+
+                    // autorun will inject a flag, no need to do it by hand
+                    /*
                     if (_parameters.buildFlags.autorun)
                     {
-                        Debug.Log("AUTORUN");
-                        execAtPath(summary.outputPath);
+                        Debug.Log("<color=orange>AUTORUN</color>");
+                        WinEdBuildor.winExecute(summary.outputPath); // autorun flag
                     }
+                    */
+
                     break;
 
                 case BuildResult.Failed:
@@ -272,20 +277,17 @@ namespace fwp.buildor.editor
                 case BuildResult.Unknown:
                 default:
                     Debug.LogError($"BuildResult : Helper Build : {summary.result}");
-                    Debug.Log("options : " + summary.options);
-                    Debug.Log("output path : " + summary.outputPath);
+                    Debug.LogError("options : " + summary.options);
+                    Debug.LogError("output path : " + summary.outputPath);
                     break;
             }
         }
 
         protected void onSuccess(BuildSummary summary)
         {
-
-            bool success = summary.totalErrors <= 0;
-
             Debug.Log("Build finished");
             Debug.Log("  L version : <b>" + VersionManager.getFormatedVersion() + "</b>");
-            Debug.Log("  L result : summary says " + summary.result + " ( success ? " + success + " ) | warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
+            Debug.Log("  L result : warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
             Debug.Log("  L symbols : " + ScriptableSymbolHelper.getGroupSymbols(summary.platformGroup));
             Debug.Log("  L platform : <b>" + summary.platform + "</b>");
             Debug.Log("  L build time : " + summary.totalTime);
@@ -294,6 +296,7 @@ namespace fwp.buildor.editor
             {
                 case BuildResult.Succeeded:
 
+                    Debug.Log("<color=green>build.Success</color>");
                     ulong bytes = summary.totalSize;
                     ulong byteToMo = 1048576;
 
@@ -305,17 +308,12 @@ namespace fwp.buildor.editor
 
                     break;
                 default:
-
+                    Debug.Log("<color=red>build.Failure</color>");
                     Debug.LogError("Build failed: " + summary.result);
 
                     break;
             }
 
-        }
-
-        static public void execAtPath(string path)
-        {
-            WinEdBuildor.os_openFolder(path);
         }
 
         /// <summary>
@@ -373,7 +371,7 @@ namespace fwp.buildor.editor
 
             //var info = new System.Diagnostics.ProcessStartInfo();
             //info.
-            WinEdBuildor.startCmd(command);
+            WinEdBuildor.cmdExecute(command);
             //System.Diagnostics.Process.Start("cmd", command);
         }
 

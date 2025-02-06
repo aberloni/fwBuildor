@@ -180,12 +180,12 @@ namespace fwp.buildor.editor
 
             if (GUILayout.Button("(folder) build output "))
             {
-                BuildHelperBase.openBuildFolder(outputFolder);
+                BuildHelperBase.openBuildFolder(outputFolder); // win.button
             }
 
             if (GUILayout.Button("exe last build"))
             {
-                BuildHelperBase.execAtPath(fullPath);
+                winExecute(fullPath); // win.button
             }
 
             GUILayout.EndHorizontal();
@@ -268,30 +268,27 @@ namespace fwp.buildor.editor
             System.Diagnostics.Process.Start("explorer.exe", argument);
         }
 
-        static public void startCmd(string args)
+        static public void cmdExecute(string args)
         {
-            Debug.Log("cmd :: " + args);
-            startExecute("cmd", args);
+            Debug.Log("cmd " + args);
+
+            winExecute("cmd", args);
         }
 
         /// <summary>
-        /// meant to call cmd on windows
+        /// call of generic windows process
         /// </summary>
-        static public void startExecute(string processPath, string args = "")
+        static public void winExecute(string processPath, string args = "")
         {
-            // string path = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\";
+            var process = new System.Diagnostics.Process();
+            process.StartInfo.FileName = processPath;
+            process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+            if (args.Length > 0) process.StartInfo.Arguments = args;
 
-            var startInfo = new System.Diagnostics.ProcessStartInfo(processPath);
-            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
-            if (args.Length > 0) startInfo.Arguments = args;
-
-            //UnityEngine.Debug.Log(processPath);
-
-            //Debug.Log(Environment.CurrentDirectory);
+            Debug.Log("win.exe : " + processPath);
 
             //https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=netframework-4.7.2#System_Diagnostics_Process_Start_System_String_System_String_
-            //System.Diagnostics.Process.Start(startInfo);
-            System.Diagnostics.Process.Start(processPath, args);
+            process.Start();
         }
 
 
@@ -308,7 +305,7 @@ namespace fwp.buildor.editor
             path = System.IO.Path.Combine(path, Application.companyName, Application.productName);
             path = System.IO.Path.Combine(path, "Player.log");
 
-            startExecute(path); // local
+            winExecute(path); // local
         }
 
         [MenuItem("Window/Buildor/Logs/(folder) editor logs")]
@@ -318,7 +315,7 @@ namespace fwp.buildor.editor
             path = System.IO.Path.Combine(path, "Unity/Editor");
 
             //startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
-            startExecute("C:/Users/lego/AppData/Local/Unity/Editor");
+            os_openFolder("C:/Users/lego/AppData/Local/Unity/Editor");
         }
 
     }
