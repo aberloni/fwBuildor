@@ -62,10 +62,7 @@ namespace fwp.buildor.editor
             public DataBuildorScenesMerger mergerOverride;
         }
 
-        public BuildHelperBase(BuildParameters param) => launch(param);
-        //public BuildHelperBase(BuildHelperFlags build, BuildPathFlags path) => launch(build, path);
-
-        void launch(BuildParameters param)
+        public void launch(BuildParameters param)
         {
             _parameters = param;
 
@@ -108,11 +105,11 @@ namespace fwp.buildor.editor
 
                     buildProc = null;
 
-                    processEnded();
                 }
                 return;
             }
 
+            processEnded();
         }
 
         void processEnded()
@@ -123,7 +120,6 @@ namespace fwp.buildor.editor
         /// <summary>
         /// whatever is needed to do before building
         /// </summary>
-        /// <returns></returns>
         virtual protected IEnumerator preBuildProcess()
         {
             yield return null;
@@ -133,8 +129,11 @@ namespace fwp.buildor.editor
         protected IEnumerator buildProcess()
         {
             Debug.Log("BuildHelper, prep building ...");
-            build_prep();
 
+            //if (!BuildPipeline.isBuildingPlayer)
+            
+            build_prep();
+            
             //wait 5 secondes
             float startupTime = Time.realtimeSinceStartup;
             float curTime = Time.realtimeSinceStartup;
@@ -159,30 +158,15 @@ namespace fwp.buildor.editor
             yield return null;
 
             build_app();
-
         }
 
-        protected void build_prep()
+        virtual protected void build_prep()
         {
-
-            if (BuildPipeline.isBuildingPlayer) return;
-
             Debug.Log("now building app ; inc version ? " + _parameters.buildFlags.incVersion);
 
             buildPlayerOptions = new BuildPlayerOptions();
 
             DataBuildSettingProfile profile = data.getPlatformProfil();
-
-            if (profile == null)
-            {
-                Debug.LogError("no profile for current platform ?");
-                return;
-            }
-
-            //DataBuildSettingProfileAndroid pAndroid = profile as DataBuildSettingProfileAndroid;
-            //DataBuildSettingProfileIos pIos = profile as DataBuildSettingProfileIos;
-            //DataBuildSettingProfileWindows pWindows = profile as DataBuildSettingProfileWindows;
-            //DataBuildSettingProfileSwitch pSwitch = profile as DataBuildSettingProfileSwitch;
 
             //this will apply
             if (_parameters.buildFlags.incVersion)
@@ -234,6 +218,7 @@ namespace fwp.buildor.editor
             }
 
             //BuildPipeline.BuildPlayer(buildPlayerOptions);
+
         }
 
         protected void build_app()
@@ -250,16 +235,11 @@ namespace fwp.buildor.editor
             Debug.Log("build_app() options : " + buildPlayerOptions.options);
             Debug.Log("build_app() @ " + buildPlayerOptions.locationPathName);
 
-            // BUILD
+
+            //      BUILD
+
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             BuildSummary summary = report.summary;
-
-            // path/to/build/build.exe
-            string buildFolderPath = summary.outputPath;
-
-            // remove file.exe at the end
-            //buildFolderPath = buildFolderPath.Replace('\\', '/');
-            //buildFolderPath = buildFolderPath.Substring(0, buildFolderPath.LastIndexOf('/'));
 
             switch (summary.result)
             {

@@ -226,18 +226,24 @@ namespace fwp.buildor.editor
             GUILayout.Space(20f);
             if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
             {
-                solveBuild();
+                getActiveMerger()?.apply();
+
+                var helper = createBuildHelper();
+                if(helper == null)
+                {
+                    Debug.LogError("must provide helper");
+                    return;
+                }
+
+                helper.launch(parameters);
             }
 
         }
 
-        void solveBuild()
+        virtual protected BuildHelperBase createBuildHelper()
         {
-            getActiveMerger()?.apply();
-
-            new BuildHelperBase(parameters);
+            return new BuildHelperBase();
         }
-
 
         /// <summary>
         /// open explorer at path
