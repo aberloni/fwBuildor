@@ -25,13 +25,12 @@ namespace fwp.symbols
 
     enum ScriptSymbolsProfiling
     {
-        profiling,
-        benchmark,
+        profiling, benchmark,
     }
 
     enum ScriptSymbolsExternals
     {
-        festival,
+        festival, demo,
     }
 
     enum ScriptSymbolsVerbosity
