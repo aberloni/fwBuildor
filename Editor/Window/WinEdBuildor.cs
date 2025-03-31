@@ -251,28 +251,65 @@ namespace fwp.buildor.editor
         /// <param name="folderPath"></param>
         static public void os_openFolder(string folderPath, bool selectFolder = false)
         {
-            folderPath = folderPath.Replace(@"/", @"\");   // explorer doesn't like front slashes
+            folderPath = folderPath.Replace(@"\", @"/"); // uniform
+            if (!folderPath.EndsWith("/")) folderPath += "/"; // last /
 
-            string argument = string.Empty;
-
-            if (selectFolder)
+            if (!System.IO.Directory.Exists(folderPath))
             {
-                //https://stackoverflow.com/questions/334630/opening-a-folder-in-explorer-and-selecting-a-file
-                argument = "/select, ";
+                Debug.LogWarning("no folder " + folderPath);
+                return;
             }
 
-            argument += "\"" + folderPath + "\"";
+            string argument = string.Empty;
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                folderPath = folderPath.Replace(@"/", @"\");   // explorer doesn't like front slashes
 
-            UnityEngine.Debug.Log("explorer:opening : " + argument);
+                if (selectFolder)
+                {
+                    //https://stackoverflow.com/questions/334630/opening-a-folder-in-explorer-and-selecting-a-file
+                    argument = "/select, ";
+                }
 
-            System.Diagnostics.Process.Start("explorer.exe", argument);
+                argument += "\"" + folderPath + "\"";
+
+                UnityEngine.Debug.Log("explorer:opening : " + argument);
+
+                System.Diagnostics.Process.Start("explorer.exe", argument);
+            }
+            else if(Application.platform == RuntimePlatform.OSXEditor)
+            {
+                
+
+                UnityEngine.Debug.Log("finder:opening : " + folderPath);
+                EditorUtility.RevealInFinder(folderPath);
+            }
+            else
+            {
+                throw new System.NotImplementedException("platform not implem");
+            }
+
+            
         }
 
-        static public void cmdExecute(string args)
+        static public void osxExecute(string args)
         {
-            Debug.Log("cmd " + args);
+            Debug.Log("osx.bash : " + args);
+            var pStart = new System.Diagnostics.ProcessStartInfo("/bin/bash");
+            //pStart.FileName = "/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal";
+            pStart.WorkingDirectory = "/";
 
-            winExecute("cmd", args);
+            pStart.UseShellExecute = false;
+            pStart.RedirectStandardInput = true;
+            pStart.RedirectStandardOutput = true;
+
+            var proc = new System.Diagnostics.Process();
+            proc.StartInfo = pStart;
+            proc.Start();
+
+            proc.StandardInput.WriteLine(args);
+            proc.StandardInput.Flush();
+            //proc.WaitForExit();
         }
 
         /// <summary>

@@ -340,7 +340,7 @@ namespace fwp.buildor.editor
         {
 
             // path/to/builds/project/zipName.exe
-            if (outputPath.Contains("exe"))
+            if (outputPath.Contains("exe") || outputPath.Contains("app"))
             {
                 outputPath = outputPath.Substring(0, outputPath.LastIndexOf('/'));
             }
@@ -352,7 +352,8 @@ namespace fwp.buildor.editor
 
             // parent folder to project/ (builds/)
             string buildsRoot = outputPath.Substring(0, outputPath.LastIndexOf('/'));
-            Debug.Log("rool : " + buildsRoot + " (from : " + outputPath + ")");
+            Debug.Log("output : " + outputPath);
+            Debug.Log("root : " + buildsRoot);
 
             // get project/
             string projectFolder = outputPath.Substring(outputPath.LastIndexOf('/') + 1);
@@ -361,18 +362,22 @@ namespace fwp.buildor.editor
 
             // cd /D D:/fwProtoss/fw/builds/ && tar.exe -avcf fwp.zip fwp__win__0-0-11
 
-            // https://stackoverflow.com/questions/60904/how-can-i-open-a-cmd-window-in-a-specific-location
+            string folderToZip = $"{buildsRoot}/{projectFolder}";
+            string pathZip = $"{buildsRoot}/{zipName}";
 
-            // /K cd /D {absPathToBuilds} && tar.exe -avcf {zipName} {relativeBuildFolderName}
-            // /K cd /D D:/path/to/builds/ && tar.exe -avcf output.zip game_win_011
-            string command = $"/K cd /D {buildsRoot} && tar.exe -avcf {zipName} {projectFolder}";
-
-            Debug.Log("zip : " + command);
-
-            //var info = new System.Diagnostics.ProcessStartInfo();
-            //info.
-            WinEdBuildor.cmdExecute(command);
-            //System.Diagnostics.Process.Start("cmd", command);
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                // https://stackoverflow.com/questions/60904/how-can-i-open-a-cmd-window-in-a-specific-location
+                string command = $"/K cd /D {buildsRoot} && tar.exe -avcf {zipName} {projectFolder}";
+                Debug.Log("win.zip : " + command);
+                WinEdBuildor.winExecute(command);
+            }
+            else if(Application.platform == RuntimePlatform.OSXEditor)
+            {
+                string command = $"zip -r {pathZip} {folderToZip}";
+                Debug.Log("osx.zip : " + command);
+                WinEdBuildor.osxExecute(command);
+            }
         }
 
         protected string getBuildName()
