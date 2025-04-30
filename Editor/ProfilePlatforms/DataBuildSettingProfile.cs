@@ -11,6 +11,8 @@ using fwp.buildor.version;
 
 namespace fwp.buildor.editor
 {
+    using fwp.version;
+
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
     ///  it's meant to be used as a build flow tool params

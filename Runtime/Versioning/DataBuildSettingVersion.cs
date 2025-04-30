@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using System.Diagnostics.Contracts;
+using System.Linq;
 
 /// <summary>
 /// this is meant to store an abstract of the version number of the app
 /// is base on each platform format and accessor
 /// </summary>
 
-namespace fwp.buildor.version
+namespace fwp.version
 {
 	public enum BuildSettingVersionType
 	{
 		vInternal, vPublish
 	}
 
+	[System.Serializable]
 	abstract public class DataBuildSettingVersion : ScriptableObject
 	{
 		[Header("version")]
@@ -145,6 +148,30 @@ namespace fwp.buildor.version
 #endif
 		}
 
+		static public DataBuildSettingVersion[] getScriptables(string filter = null)
+		{
+			string[] all = AssetDatabase.FindAssets("t:DataBuildSettingVersion");
+			if (all.Length <= 0) return null;
+
+			List<DataBuildSettingVersion> ret = new();
+			for (int i = 0; i < all.Length; i++)
+			{
+				string path = AssetDatabase.GUIDToAssetPath(all[i]);
+
+				if (!string.IsNullOrEmpty(filter))
+				{
+					if (!path.Contains(filter)) continue;
+				}
+
+				Object obj = AssetDatabase.LoadAssetAtPath(path, typeof(DataBuildSettingVersion));
+				DataBuildSettingVersion data = obj as DataBuildSettingVersion;
+				if (data != null) ret.Add(data);
+			}
+			return ret.ToArray();
+		}
+
+		static public DataBuildSettingVersion getScriptable(string filter = null) 
+			=> getScriptables(filter).FirstOrDefault();
 
 	}
 

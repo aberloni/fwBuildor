@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace fwp.buildor.version
+namespace fwp.version
 {
     [CreateAssetMenu(menuName = "buildor/version/new OSX", order = 100)]
     public class DataVersionOsx : DataBuildSettingVersion

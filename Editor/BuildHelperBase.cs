@@ -40,8 +40,10 @@ namespace fwp.buildor.editor
 
     using UnityEditor.Build.Reporting;
     using UnityEditor;
+    using fwp.version.editor;
+	using fwp.version;
 
-    public class BuildHelperBase
+	public class BuildHelperBase
     {
         BuildPlayerOptions buildPlayerOptions;
 

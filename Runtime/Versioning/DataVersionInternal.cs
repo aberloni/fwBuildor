@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace fwp.buildor.version
+namespace fwp.version
 {
     [CreateAssetMenu(menuName = "buildor/version/new Internal", order = 100)]
     public class DataVersionInternal : DataBuildSettingVersion

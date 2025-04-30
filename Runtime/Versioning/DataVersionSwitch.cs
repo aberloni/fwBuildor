@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace fwp.buildor.version
+namespace fwp.version
 {
 #if UNITY_EDITOR
     using UnityEditor;

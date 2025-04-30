@@ -2,7 +2,7 @@
 using UnityEngine;
 
 
-namespace fwp.buildor.version
+namespace fwp.version
 {
     [CreateAssetMenu(menuName = "buildor/version/new windows", order = 100)]
     public class DataVersionWindows : DataBuildSettingVersion

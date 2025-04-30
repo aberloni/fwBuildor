@@ -33,6 +33,8 @@ using fwp.buildor.version;
 
 namespace fwp.buildor.editor
 {
+    using fwp.version;
+
     [CreateAssetMenu(menuName = "buildor/new profil:switch", order = 100)]
     public class DataBuildSettingProfileSwitch : DataBuildSettingProfile
     {

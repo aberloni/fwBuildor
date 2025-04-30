@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace fwp.buildor.version
+namespace fwp.version
 {
     using fwp.buildor.editor;
 

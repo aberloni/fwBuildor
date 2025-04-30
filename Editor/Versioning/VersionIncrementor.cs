@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace fwp.buildor.version
+namespace fwp.version.editor
 {
+    using fwp.version;
     using fwp.buildor.editor;
 
     public class VersionIncrementor
@@ -73,6 +74,7 @@ namespace fwp.buildor.version
             v.applyVersionToEditor();
         }
 
-    }
+
+	}
 
 }

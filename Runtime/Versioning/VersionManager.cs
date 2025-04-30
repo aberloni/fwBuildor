@@ -2,10 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using UnityEditor;
-#endif
-
 /// <summary>
 /// 
 /// PlayerSettings.Android.v
@@ -31,7 +27,7 @@ using UnityEditor;
 ///   
 /// </summary>
 
-namespace fwp.buildor.version
+namespace fwp.version
 {
     public class VersionManager : MonoBehaviour
     {

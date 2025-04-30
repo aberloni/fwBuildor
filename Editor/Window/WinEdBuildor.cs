@@ -6,9 +6,10 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-    using fwp.buildor.version;
+    using fwp.version.editor;
+    using fwp.version;
 
-    public class WinEdBuildor : EditorWindow
+	public class WinEdBuildor : EditorWindow
     {
         [MenuItem(BuildorVerbosity._buildor_menuitem_path + "(window) open buildor", false, 0)]
         static void init()
@@ -19,7 +20,7 @@ namespace fwp.buildor.editor
 
         Vector2 scroll;
 
-        WinSubVersion subVersion;
+        WinSubVersionBuildor subVersion;
         WinSubScriptableSymbols subSymbols;
         WinSubMerger subMergers;
 
@@ -34,7 +35,7 @@ namespace fwp.buildor.editor
 
         void OnGUI()
         {
-            if (subVersion == null) subVersion = new WinSubVersion();
+            if (subVersion == null) subVersion = new();
             if (subSymbols == null) subSymbols = new WinSubScriptableSymbols(this);
             if (subMergers == null) subMergers = new WinSubMerger(this);
 
@@ -211,7 +212,7 @@ namespace fwp.buildor.editor
 
         void drawBuildButton()
         {
-            DataBuildSettingVersion version = subVersion.getActiveVersion(this);
+            DataBuildSettingVersion version = getActiveVersion();
             if(version != null)
             {
                 GUILayout.Label("+ version : " + version.version);
@@ -245,11 +246,19 @@ namespace fwp.buildor.editor
             return new BuildHelperBase();
         }
 
-        /// <summary>
-        /// open explorer at path
-        /// </summary>
-        /// <param name="folderPath"></param>
-        static public void os_openFolder(string folderPath, bool selectFolder = false)
+		public fwp.version.DataBuildSettingVersion getActiveVersion()
+		{
+			var version = parameters.buildFlags.isPublishingBuild
+				? activeProfil.publishVersion : activeProfil.internalVersion;
+
+			return version;
+		}
+
+		/// <summary>
+		/// open explorer at path
+		/// </summary>
+		/// <param name="folderPath"></param>
+		static public void os_openFolder(string folderPath, bool selectFolder = false)
         {
             folderPath = folderPath.Replace(@"\", @"/"); // uniform
             if (!folderPath.EndsWith("/")) folderPath += "/"; // last /
