@@ -1,7 +1,5 @@
 using UnityEngine;
 
-using UnityEditor;
-
 namespace fwp.buildor.editor
 {
     public class WinSubMerger : WinSubFieldApply<DataBuildorScenesMerger>
@@ -11,47 +9,29 @@ namespace fwp.buildor.editor
         {
         }
 
-        protected override string getSectionTitle() => "override merger";
-        protected override string pprefUid() => "buildor.merger";
+        protected override string getSectionTitle() => "Merger";
 
-        /// <summary>
-        /// click apply in editor
-        /// </summary>
-        protected override void apply()
+		protected override DataBuildorScenesMerger fetchProfilInstance()
+		{
+            return win.activeProfil.merger;
+		}
+
+		/// <summary>
+		/// click apply in editor
+		/// </summary>
+		protected override void applyEditor(DataBuildorScenesMerger value)
         {
-            base.apply();
-
-            value?.apply();
+            value.apply();
         }
 
-        protected override void drawContent()
+		protected override void drawHeader(DataBuildorScenesMerger value)
+		{
+            GUILayout.Label(value.strOneLine());
+		}
+
+		protected override void drawDetails(DataBuildorScenesMerger value)
         {
-            base.drawContent();
-
-            if (win.activeProfil.merger == null)
-            {
-                GUILayout.Label("profil.merger.empty");
-            }
-            else
-            {
-                GUILayout.Label("profil.merger is " + win.activeProfil.merger.name);
-            }
-        }
-
-        protected override void drawDetails()
-        {
-            base.drawDetails();
-
-            var activeMerger = win.getActiveMerger();
-            if (activeMerger != null)
-            {
-                GUILayout.Label("build.merger will use " + activeMerger.strOneLine());
-                GUILayout.Label(activeMerger.stringify());
-            }
-            else
-            {
-                GUILayout.Label("build.merger.empty");
-            }
+			GUILayout.Label(value.stringify());
 
             /*
             GUILayout.Label("editor Build Settings scenes");

@@ -6,14 +6,17 @@ namespace fwp.symbols
 {
     using System;
     using UnityEditor;
+	using UnityEditor.Build;
 
-    /// <summary>
-    /// all symbols for a specific platform
-    /// </summary>
-    [System.Serializable]
+	/// <summary>
+	/// all symbols for a specific platform
+	/// </summary>
+	[System.Serializable]
     public class GroupSymbols
     {
-        public BuildTargetGroup group = BuildTargetGroup.Unknown;
+        public BuildTargetGroup group = BuildTargetGroup.Unknown; // deprecated
+        public NamedBuildTarget buildTarget = NamedBuildTarget.Unknown; // u6
+
         public List<string> symbols = new List<string>();
         public string unityPlatformSymbols => ScriptSymbolsView.getPlayerSetSymbols(group);
 

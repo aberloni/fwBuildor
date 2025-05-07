@@ -11,7 +11,8 @@ using fwp.buildor.version;
 
 namespace fwp.buildor.editor
 {
-    using fwp.version;
+	using fwp.logs;
+	using fwp.version;
 
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
@@ -51,6 +52,8 @@ namespace fwp.buildor.editor
             deep,
         }
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
+
+        public ProfilLogLevels logLevels;
 
         public Sprite splashscreen;
         public Texture2D icon;

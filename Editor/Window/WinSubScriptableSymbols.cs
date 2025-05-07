@@ -3,51 +3,40 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-    public class WinSubScriptableSymbols : WinSubFieldApply<fwp.symbols.ScriptableSymbolProfil>
+    using fwp.symbols;
+
+	public class WinSubScriptableSymbols : WinSubFieldApply<ScriptableSymbolProfil>
     {
         public WinSubScriptableSymbols(WinEdBuildor win) : base(win)
         {
         }
 
         protected override string getSectionTitle() => "symbols (#if)";
-        protected override string pprefUid() => "buildor.ssymbols";
 
-        public override void fetchInstance()
+		protected override ScriptableSymbolProfil fetchProfilInstance()
+		{
+            return win.activeProfil.scriptSymbols;
+		}
+
+		protected override void applyEditor(ScriptableSymbolProfil value)
+		{
+            value.data.apply(win.activeProfil.getPlatformTargetGroup());
+		}
+
+        protected override void drawDetails(ScriptableSymbolProfil value)
         {
-            base.fetchInstance();
-
-            if(_value == null && win.activeProfil.scriptSymbols != null)
+            bool changes = value.data.drawToggles(win.activeProfil.getPlatformTargetGroup());
+            if (changes)
             {
-                _value = win.activeProfil.scriptSymbols;
+                EditorUtility.SetDirty(value);
             }
         }
 
-        protected override void drawDetails()
+        protected override void drawHeader(ScriptableSymbolProfil value)
         {
-            base.drawDetails();
-
-            if(value != null)
-            {
-                bool changes = value.data.drawToggles(win.activeProfil.getPlatformTargetGroup());
-                if (changes)
-                {
-                    EditorUtility.SetDirty(value);
-                }
-            }
-            
+            value.data.drawRawStringSymbols(win.activeProfil.getPlatformTargetGroup());
         }
 
-        protected override void drawContent()
-        {
-            base.drawContent();
-
-            value?.data.drawRawStringSymbols(win.activeProfil.getPlatformTargetGroup());
-        }
-
-        protected override void apply()
-        {
-            base.apply();
-        }
     }
 
 }

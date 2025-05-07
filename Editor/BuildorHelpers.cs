@@ -5,54 +5,57 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-    static public class BuildorHelpers
-    {
-        public const string _menuItem_basepath = "buildor/";
-        public const string _path_merger = _menuItem_basepath + "merger/";
+	static public class BuildorHelpers
+	{
+		public const string _menuItem_basepath = "buildor/";
+		public const string _path_merger = _menuItem_basepath + "merger/";
 
-        static public ScriptableObject[] getScriptableObjectsInEditor(System.Type scriptableType)
-        {
-            string[] all = AssetDatabase.FindAssets("t:" + scriptableType.Name);
+		static public ScriptableObject[] getScriptableObjectsInEditor(System.Type scriptableType)
+		{
+			string[] all = AssetDatabase.FindAssets("t:" + scriptableType.Name);
 
-            List<ScriptableObject> output = new List<ScriptableObject>();
-            for (int i = 0; i < all.Length; i++)
-            {
-                Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), scriptableType);
-                ScriptableObject so = obj as ScriptableObject;
-                if (so == null) continue;
-                output.Add(so);
-            }
+			List<ScriptableObject> output = new List<ScriptableObject>();
+			for (int i = 0; i < all.Length; i++)
+			{
+				Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), scriptableType);
+				ScriptableObject so = obj as ScriptableObject;
+				if (so == null) continue;
+				output.Add(so);
+			}
 
-            //Debug.Log(scriptableType + " x"+output.Count+" / x" + all.Length);
+			//Debug.Log(scriptableType + " x"+output.Count+" / x" + all.Length);
 
-            return output.ToArray();
-        }
+			return output.ToArray();
+		}
 
-        static public T getScriptableObjectInEditor<T>(string nameContains = "", bool pingFailure = false) where T : ScriptableObject
-        {
-            string[] all = AssetDatabase.FindAssets("t:" + typeof(T).Name);
-            for (int i = 0; i < all.Length; i++)
-            {
-                Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(T));
-                T data = obj as T;
+		static public T getScriptableObjectInEditor<T>(string filter = "", bool pingFailure = false) where T : ScriptableObject
+		{
+			string[] all = AssetDatabase.FindAssets("t:" + typeof(T).Name);
+			for (int i = 0; i < all.Length; i++)
+			{
+				Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(T));
+				T data = obj as T;
 
-                if (data == null) continue;
-                if (nameContains.Length > 0)
-                {
-                    if (!data.name.Contains(nameContains)) continue;
-                }
+				if (data == null) continue;
 
-                return data;
-            }
+				//Debug.Log(data.name + " vs " + filter, data);
 
-            if(pingFailure)
-            {
-                Debug.LogWarning("can't locate scriptable of type " + typeof(T).Name + " (filter name ? " + nameContains + ")");
-            }
+				if (!string.IsNullOrEmpty(filter))
+				{
+					if (!data.name.Contains(filter)) continue;
+				}
 
-            return null;
-        }
+				return data;
+			}
 
-    }
+			if (pingFailure)
+			{
+				Debug.LogWarning("can't locate scriptable of type " + typeof(T).Name + " (filter name ? " + filter + ") x" + all.Length);
+			}
+
+			return null;
+		}
+
+	}
 
 }
