@@ -3,83 +3,88 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-public class SaveFileSystemWindows : SaveFileSystem
+namespace fwp.buildor
 {
 
-    public override bool checkFolderExists(string path)
-    {
+	public class SaveFileSystemWindows : SaveFileSystem
+	{
 
-        if (path == null)
-        {
-            Debug.LogError("empty path given");
-            return false;
-        }
+		public override bool checkFolderExists(string path)
+		{
 
-        path = path.Trim();
+			if (path == null)
+			{
+				Debug.LogError("empty path given");
+				return false;
+			}
 
-        if (path.Length < 3)
-        {
-            Debug.LogError("path is too small ? " + path.Length);
-            return false;
-        }
+			path = path.Trim();
 
-        //TiniesLogs.logSave(path);
+			if (path.Length < 3)
+			{
+				Debug.LogError("path is too small ? " + path.Length);
+				return false;
+			}
 
-        if (path.Contains("."))
-        {
-            // folder path from full file path
-            path = path.Substring(0, path.LastIndexOf("/"));
-        }
+			//TiniesLogs.logSave(path);
 
-        if (!Directory.Exists(path))
-        {
-            Debug.Log("creating folder (" + path.Length + ") @" + path);
-            Directory.CreateDirectory(path);
-        }
+			if (path.Contains("."))
+			{
+				// folder path from full file path
+				path = path.Substring(0, path.LastIndexOf("/"));
+			}
 
-        return true;
-    }
+			if (!Directory.Exists(path))
+			{
+				Debug.Log("creating folder (" + path.Length + ") @" + path);
+				Directory.CreateDirectory(path);
+			}
 
-    public override bool writeBytes(string path, byte[] bytes)
-    {
-        if (bytes == null)
-        {
-            Debug.LogError("bytes[] is null ?");
-            return false;
-        }
+			return true;
+		}
 
-        checkFolderExists(path);
-        File.WriteAllBytes(path, bytes);
-        return true;
-    }
+		public override bool writeBytes(string path, byte[] bytes)
+		{
+			if (bytes == null)
+			{
+				Debug.LogError("bytes[] is null ?");
+				return false;
+			}
 
-    override public bool readBytes(string path, out byte[] result)
-    {
-        checkFolderExists(path);
+			checkFolderExists(path);
+			File.WriteAllBytes(path, bytes);
+			return true;
+		}
 
-        //result = new byte[];
-        try
-        {
-            result = File.ReadAllBytes(path);
-        }
-        catch
-        {
-            Debug.LogWarning("can't read bytes of " + path);
-            result = null;
-        }
+		override public bool readBytes(string path, out byte[] result)
+		{
+			checkFolderExists(path);
 
-        return result != null;
-    }
+			//result = new byte[];
+			try
+			{
+				result = File.ReadAllBytes(path);
+			}
+			catch
+			{
+				Debug.LogWarning("can't read bytes of " + path);
+				result = null;
+			}
 
-    public override bool delete(string path)
-    {
-        File.Delete(path);
-        return true;
-    }
+			return result != null;
+		}
 
-    public override bool hasPhysicalFile(string absPath)
-    {
-        return System.IO.File.Exists(absPath);
-    }
+		public override bool delete(string path)
+		{
+			File.Delete(path);
+			return true;
+		}
+
+		public override bool hasPhysicalFile(string absPath)
+		{
+			return System.IO.File.Exists(absPath);
+		}
+
+	}
 
 }
