@@ -148,6 +148,7 @@ namespace fwp.version
 #endif
 		}
 
+#if UNITY_EDITOR
 		static public DataBuildSettingVersion[] getScriptables(string filter = null)
 		{
 			string[] all = AssetDatabase.FindAssets("t:DataBuildSettingVersion");
@@ -172,6 +173,7 @@ namespace fwp.version
 
 		static public DataBuildSettingVersion getScriptable(string filter = null) 
 			=> getScriptables(filter).FirstOrDefault();
+#endif
 
 	}
 
