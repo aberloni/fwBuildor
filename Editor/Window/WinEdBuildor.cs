@@ -43,9 +43,9 @@ namespace fwp.buildor.editor
 
 		private void OnFocus()
 		{
-			subLogs.focus();
-			subMergers.focus();
-			subSymbols.focus();
+			subLogs?.focus();
+			subMergers?.focus();
+			subSymbols?.focus();
 		}
 
 		void OnGUI()
