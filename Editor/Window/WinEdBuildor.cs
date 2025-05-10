@@ -6,7 +6,6 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-	using fwp.version.editor;
 	using fwp.version;
 	using fwp.logs.editor;
 	using fwp.logs;
