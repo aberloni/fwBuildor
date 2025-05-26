@@ -46,7 +46,7 @@ public class DataBuildorScenesFilter : ScriptableObject
 
 #if UNITY_EDITOR
 
-    [ContextMenu("add")]
+    [ContextMenu("add to build settings")]
     public void add()
     {
         //keep existing
@@ -73,7 +73,7 @@ public class DataBuildorScenesFilter : ScriptableObject
         EditorBuildSettings.scenes = tmp.ToArray();
     }
 
-    [ContextMenu("record")]
+    [ContextMenu("record from project scenes")]
     public void record()
     {
         List<string> tmp = new List<string>();
@@ -156,3 +156,28 @@ public class DataBuildorScenesFilter : ScriptableObject
 #endif
 
 }
+
+#if UNITY_EDITOR
+[CustomEditor(typeof(DataBuildorScenesFilter))]
+public class DataBuildorScenesFilterCustom : Editor
+{
+    public override void OnInspectorGUI()
+    {
+        var t = target as DataBuildorScenesFilter;
+        
+        if(GUILayout.Button("add to build settings"))
+        {
+            t.add();
+        }
+
+        if (GUILayout.Button("record from project"))
+        {
+            t.record();
+        }
+
+        GUILayout.Space(10f);
+
+        base.OnInspectorGUI();
+    }
+}
+#endif
