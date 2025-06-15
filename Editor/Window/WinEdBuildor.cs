@@ -12,7 +12,7 @@ namespace fwp.buildor.editor
 
 	public class WinEdBuildor : EditorWindow
 	{
-		[MenuItem(BuildorVerbosity._buildor_menuitem_path + "(window) open buildor", false, 0)]
+		[MenuItem(BuildorVerbosity._buildor_menuitem_path + "buildor (win)", false, 0)]
 		static void init()
 		{
 			var win = EditorWindow.GetWindow(typeof(WinEdBuildor));

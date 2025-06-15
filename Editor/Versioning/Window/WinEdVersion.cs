@@ -10,7 +10,7 @@ namespace fwp.version.editor
 	public class WinEdVersion : UnityEditor.EditorWindow
 	{
 
-		[MenuItem(BuildorVerbosity._buildor_menuitem_path + "(win) version", false, 0)]
+		[MenuItem(BuildorVerbosity._buildor_menuitem_path + "version (win)", false, 10)]
 		static void init()
 		{
 			var win = EditorWindow.GetWindow(typeof(WinEdVersion));
