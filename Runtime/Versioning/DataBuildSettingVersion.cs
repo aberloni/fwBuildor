@@ -121,32 +121,11 @@ namespace fwp.version
 			return version + "@" + buildNumber;
 		}
 
+		/// <summary>
+		/// describe how to inject version into editor 
+		/// project settings > player settings
+		/// </summary>
 		abstract public void applyVersionToEditor();
-
-		//temp
-
-		static protected void applyVersionIos(DataBuildSettingVersion v)
-		{
-#if UNITY_EDITOR
-			//version
-			PlayerSettings.iOS.buildNumber = v.version;
-
-			//short version
-			PlayerSettings.bundleVersion = v.version;
-#endif
-		}
-
-
-		static public void applyVersionToEditor(DataBuildSettingVersion v)
-		{
-#if UNITY_EDITOR
-			//version
-			PlayerSettings.Android.bundleVersionCode = v.buildNumber;
-
-			//short version
-			PlayerSettings.bundleVersion = v.version;
-#endif
-		}
 
 #if UNITY_EDITOR
 		static public DataBuildSettingVersion[] getScriptables(string filter = null)
