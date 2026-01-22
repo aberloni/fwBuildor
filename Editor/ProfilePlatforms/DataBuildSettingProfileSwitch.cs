@@ -52,9 +52,9 @@ namespace fwp.buildor.editor
         public int maxControllerCount = 8;
 
         // .../builds/(roms/)app.ext
-        public override string getAbsoluteBuildFolderPath(BuildPathFlags flags)
+        public override string getAbsoluteBuildFolderPath()
         {
-            string output = base.getAbsoluteBuildFolderPath(flags);
+            string output = base.getAbsoluteBuildFolderPath();
 
             if (EditorUserBuildSettings.switchCreateRomFile)
             {

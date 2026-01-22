@@ -146,14 +146,18 @@ namespace fwp.buildor.editor
 
 		void drawPathModifiers()
 		{
-
 			GUILayout.Label("path modifiers", BuildorHelperGuiStyle.getCategoryBold());
 
+			// do not provide current value to drawer, must regen value on opening from ppref
 			GUILayout.BeginHorizontal();
-			parameters.pathFlags.pathIncludePrefix = WinEdFieldsHelper.drawToggle("prefix", "pathIncludePrefix");
-			parameters.pathFlags.pathIncludePlatform = WinEdFieldsHelper.drawToggle("platform", "pathIncludePlatform");
-			parameters.pathFlags.pathIncludeDate = WinEdFieldsHelper.drawToggle("date", "pathIncludeDate");
-			parameters.pathFlags.pathIncludeVersion = WinEdFieldsHelper.drawToggle("version", "pathIncludeVersion");
+			WinEdFieldsHelper.drawToggle("prefix", BuildHelperBase.BuildParameters.pref_include_prefix);
+			WinEdFieldsHelper.drawToggle("platform", BuildHelperBase.BuildParameters.pref_include_platform);
+			WinEdFieldsHelper.drawToggle("date", BuildHelperBase.BuildParameters.pref_include_date);
+			WinEdFieldsHelper.drawToggle("version", BuildHelperBase.BuildParameters.pref_include_version);
+			GUILayout.EndHorizontal();
+
+			GUILayout.BeginHorizontal();
+			WinEdFieldsHelper.editText("suffix", BuildHelperBase.BuildParameters.pref_suffix);
 			GUILayout.EndHorizontal();
 
 		}
@@ -169,11 +173,11 @@ namespace fwp.buildor.editor
 			GUILayout.Space(20f);
 			GUILayout.Label("outputs", BuildorHelperGuiStyle.getCategoryBold());
 
-			string outputFolder = activeProfil.getAbsoluteBuildFolderPath(parameters.pathFlags);
+			string outputFolder = activeProfil.getAbsoluteBuildFolderPath();
 
 			WinEdFieldsHelper.drawCopyPastablePath("base path : ", outputFolder);
 			WinEdFieldsHelper.drawCopyPastablePath("app name :", activeProfil.getAppName());
-			WinEdFieldsHelper.drawCopyPastablePath("zip name :", activeProfil.getZipName(parameters.pathFlags));
+			WinEdFieldsHelper.drawCopyPastablePath("zip name :", activeProfil.getZipName());
 
 			string fullPath = Path.Combine(outputFolder, activeProfil.getAppName());
 			WinEdFieldsHelper.drawCopyPastablePath("full path :", fullPath);
@@ -240,7 +244,7 @@ namespace fwp.buildor.editor
 			return new BuildHelperBase();
 		}
 
-		public fwp.version.DataBuildSettingVersion getActiveVersion()
+		public DataBuildSettingVersion getActiveVersion()
 		{
 			var version = parameters.buildFlags.isPublishingBuild
 				? activeProfil.publishVersion : activeProfil.internalVersion;

@@ -41,9 +41,9 @@ namespace fwp.buildor.editor
     using UnityEditor.Build.Reporting;
     using UnityEditor;
     using fwp.version.editor;
-	using fwp.version;
+    using fwp.version;
 
-	public class BuildHelperBase
+    public class BuildHelperBase
     {
         BuildPlayerOptions buildPlayerOptions;
 
@@ -58,10 +58,22 @@ namespace fwp.buildor.editor
 
         public class BuildParameters
         {
-            public BuildPathFlags pathFlags = new BuildPathFlags();
+            public const string pref_prefix = "buildor_";
+            public const string pref_include_prefix = pref_prefix + "prefix";
+            public const string pref_include_platform = pref_prefix + "platform";
+            public const string pref_include_date = pref_prefix + "date";
+            public const string pref_include_version = pref_prefix + "version";
+            public const string pref_suffix = pref_prefix + "suffix";
+
+            /// <summary>
+            /// all external additionnal process to exec
+            /// </summary>
             public BuildHelperFlags buildFlags = new BuildHelperFlags();
+
+            /// <summary>
+            /// profil to use
+            /// </summary>
             public DataBuildSettingProfile activeProfil;
-            public DataBuildorScenesMerger mergerOverride;
         }
 
         public void launch(BuildParameters param)
@@ -187,7 +199,7 @@ namespace fwp.buildor.editor
 
             // === CREATE SOLVED BUILD PATH
 
-            string absPath = profile.getAbsoluteBuildFolderPath(_parameters.pathFlags);
+            string absPath = profile.getAbsoluteBuildFolderPath();
 
             bool pathExists = Directory.Exists(absPath);
 
@@ -257,7 +269,7 @@ namespace fwp.buildor.editor
 
                     if (_parameters.buildFlags.zipOnSuccess)
                     {
-                        string zipName = profile.getZipName(_parameters.pathFlags);
+                        string zipName = profile.getZipName();
                         Debug.Log($"ZIP {summary.outputPath}@{zipName}");
                         zipBuildFolder(summary.outputPath, zipName);
                     }
@@ -374,7 +386,7 @@ namespace fwp.buildor.editor
                 Debug.Log("win.zip : " + command);
                 WinEdBuildor.winExecute(command);
             }
-            else if(Application.platform == RuntimePlatform.OSXEditor)
+            else if (Application.platform == RuntimePlatform.OSXEditor)
             {
                 string command = $"zip -r {pathZip} {folderToZip}";
                 Debug.Log("osx.zip : " + command);

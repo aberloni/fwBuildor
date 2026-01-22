@@ -11,8 +11,8 @@ using fwp.buildor.version;
 
 namespace fwp.buildor.editor
 {
-	using fwp.logs;
-	using fwp.version;
+    using fwp.logs;
+    using fwp.version;
 
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
@@ -77,7 +77,7 @@ namespace fwp.buildor.editor
         /// <summary>
         /// output builds/ folder (next to Assets/)
         /// </summary>
-        virtual public string getAbsoluteBuildFolderPath(BuildPathFlags pathFlags)
+        virtual public string getAbsoluteBuildFolderPath()
         {
             // path/to/Assets/
             string baseProjectPath = Application.dataPath;
@@ -88,14 +88,16 @@ namespace fwp.buildor.editor
 
             string sub = string.Empty;
 
-            if (pathFlags.pathIncludePrefix) sub += build_prefix + path_separator;
-            if (pathFlags.pathIncludeDate) sub += getFullDate() + path_separator;
-            if (pathFlags.pathIncludePlatform) sub += getPlatformUid() + path_separator;
-            if (pathFlags.pathIncludeVersion) sub += VersionManager.getFormatedVersion('-') + path_separator;
-
-            if (sub.Length > 0)
+            if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_prefix)) sub += build_prefix + path_separator;
+            if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_date)) sub += getFullDate() + path_separator;
+            if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_platform)) sub += getPlatformUid() + path_separator;
+            if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
+            sub += EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_suffix);
+            
+            // remove last "__"
+            if (sub.EndsWith(path_separator))
             {
-                sub = sub.Substring(0, sub.Length - path_separator.Length); // remove last "__"
+                sub = sub.Substring(0, sub.Length - path_separator.Length);
             }
 
             sub += getFlagsString();
@@ -166,7 +168,7 @@ namespace fwp.buildor.editor
 #elif loca_fr
     flags += "_fr";
 #elif loca_cn
-    flags += "_cn";
+            flags += "_cn";
 #endif
 
             if (developement_build)
@@ -177,9 +179,9 @@ namespace fwp.buildor.editor
             return flags;
         }
 
-        public string getZipName(BuildPathFlags flags)
+        public string getZipName()
         {
-            string zipName = getAbsoluteBuildFolderPath(flags);
+            string zipName = getAbsoluteBuildFolderPath();
 
             zipName = zipName.Substring(zipName.LastIndexOf("/") + 1);
 
@@ -223,7 +225,7 @@ namespace fwp.buildor.editor
             BuildHelperBase.applyCompagny(this);
             BuildHelperBase.applyIcons(this);
             BuildHelperBase.applyUnity(this);
-            
+
             if (usePublishVersion) publishVersion.applyVersionToEditor();
             else internalVersion.applyVersionToEditor();
 
