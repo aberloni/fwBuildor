@@ -1,11 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 #if UNITY_EDITOR
 using UnityEditor;
-using UnityEditor.SceneManagement;
 #endif
 
 /// <summary>
@@ -16,7 +14,7 @@ using UnityEditor.SceneManagement;
 /// this will be feed to the ScenesMerger
 /// </summary>
 
-[CreateAssetMenu(menuName = "buildor/merger/new filter", order = 100)]
+[CreateAssetMenu(menuName = "buildor/merger/+filter", order = 100)]
 public class DataBuildorScenesFilter : ScriptableObject
 {
     [Header("params")]
