@@ -212,11 +212,6 @@ namespace fwp.buildor.editor
 
         virtual public void applyProfilEditor(bool usePublishVersion = false)
         {
-
-            //BuildTarget bt = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
-
-            //if (bt == null) Debug.LogError("no build target ?");
-
             Debug.Log("applying profile : <b>" + name + "</b>");
             Debug.Log("current platform ? " + GetType());
 
@@ -229,7 +224,9 @@ namespace fwp.buildor.editor
             if (usePublishVersion) publishVersion.applyVersionToEditor();
             else internalVersion.applyVersionToEditor();
 
-            if (merger != null) merger.apply();
+            // merger might be override
+            // merger is applied before build exec
+            // if (merger != null) merger.apply();
 
             EditorUtility.SetDirty(this);
         }

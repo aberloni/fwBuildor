@@ -55,7 +55,7 @@ namespace fwp.buildor
             }
         }
 
-        public string strOneLine() => name + "  filters x" + countTotalFilters + "   scenes x" + countTotalScenes;
+        public string strOneLine() => name + " filters x" + countTotalFilters + " => scenes x" + countTotalScenes;
         public string stringify()
         {
             string ret = strOneLine();
@@ -69,14 +69,14 @@ namespace fwp.buildor
         }
 #if UNITY_EDITOR
 
-        List<EditorBuildSettingsScene> scenesToInject = new List<EditorBuildSettingsScene>();
+        List<EditorBuildSettingsScene> scenesToInject = new();
 
         [ContextMenu("apply")]
         public void apply(bool additive = false)
         {
             scenesToInject.Clear();
 
-            if (additive)
+            if (additive) // keep whatever is already in
             {
                 scenesToInject.AddRange(EditorBuildSettings.scenes);
             }
@@ -87,6 +87,7 @@ namespace fwp.buildor
             inject(menus);
 
             EditorBuildSettings.scenes = scenesToInject.ToArray();
+            Debug.Log("merger.applied (" + name + ") x" + EditorBuildSettings.scenes.Length, this);
         }
 
         void inject(DataBuildorScenesFilter[] profils)

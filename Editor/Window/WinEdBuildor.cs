@@ -218,13 +218,18 @@ namespace fwp.buildor.editor
 
 			DataBuildorScenesMerger merger = subMergers.Value;
 			if (merger != null) GUILayout.Label("+ merger : " + merger.strOneLine());
+
 			ProfilLogLevels logs = subLogs.Value;
 			if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
 
 			GUILayout.Space(20f);
+
 			if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
 			{
+				Debug.Log("[BUILD] apply.merger:" + merger.strOneLine());
 				merger?.apply();
+
+				Debug.Log("[BUILD] apply.logs:" + logs);
 				logs?.apply();
 
 				var helper = createBuildHelper();

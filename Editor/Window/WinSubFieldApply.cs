@@ -24,8 +24,16 @@ namespace fwp.buildor.editor
 			focus();
 		}
 
-		protected T _valueProfil;
+		/// <summary>
+		/// value injected in buildor window, to override profil
+		/// </summary>
 		protected T _valuePrefs;
+
+		/// <summary>
+		/// value assigned in active profil
+		/// </summary>
+		protected T _valueProfil;
+		
 
 		public T Value
 		{

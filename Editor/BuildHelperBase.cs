@@ -43,6 +43,10 @@ namespace fwp.buildor.editor
     using fwp.version.editor;
     using fwp.version;
 
+    /// <summary>
+    /// regroup all parameters used during build process
+    /// encapsulate the build process
+    /// </summary>
     public class BuildHelperBase
     {
         BuildPlayerOptions buildPlayerOptions;
@@ -50,11 +54,10 @@ namespace fwp.buildor.editor
         IEnumerator preProc = null;
         IEnumerator buildProc = null;
 
-        //float time_at_process = 0f;
-
         DataBuildSettingsBridge data = null;
 
         BuildParameters _parameters;
+        BuildSummary? summary = null;
 
         public class BuildParameters
         {
@@ -81,10 +84,7 @@ namespace fwp.buildor.editor
             _parameters = param;
 
             data = getScriptableDataBuildSettings();
-
-            //if (data != null) applySettings(data.activeProfile);
-
-            Debug.Log(" <<< <b>starting build process</b> >>>");
+            log(" <<< <b>starting build process</b> >>>");
 
             preProc = preBuildProcess();
 
@@ -104,7 +104,7 @@ namespace fwp.buildor.editor
                 {
                     preProc = null;
 
-                    Debug.Log("build.preproc.done @ " + Time.realtimeSinceStartup);
+                    log("build.preproc.done @ " + Time.realtimeSinceStartup);
 
                     buildProc = buildProcess();
                 }
@@ -115,7 +115,7 @@ namespace fwp.buildor.editor
             {
                 if (!buildProc.MoveNext())
                 {
-                    Debug.Log("build.done @ " + Time.realtimeSinceStartup);
+                    log("build.done @ " + Time.realtimeSinceStartup);
 
                     buildProc = null;
 
@@ -142,7 +142,7 @@ namespace fwp.buildor.editor
 
         protected IEnumerator buildProcess()
         {
-            Debug.Log("BuildHelper, prep building ...");
+            log("buildProcess");
 
             //if (!BuildPipeline.isBuildingPlayer)
 
@@ -154,7 +154,7 @@ namespace fwp.buildor.editor
             int psec = Mathf.FloorToInt(startupTime);
 
             float waitTime = 2f;
-            Debug.Log("BuildHelper, waiting " + waitTime + " secondes ...");
+            log("BuildHelper, waiting " + waitTime + " secondes ...");
 
             while (curTime - startupTime < waitTime)
             {
@@ -167,7 +167,7 @@ namespace fwp.buildor.editor
             //curTime = Time.realtimeSinceStartup;
             //Debug.Log(curTime);
 
-            Debug.Log("BuildHelper, building @ " + buildPlayerOptions.locationPathName);
+            log("BuildHelper, building @ " + buildPlayerOptions.locationPathName);
 
             yield return null;
 
@@ -176,11 +176,9 @@ namespace fwp.buildor.editor
 
         virtual protected void build_prep()
         {
-            Debug.Log("now building app ; inc version ? " + _parameters.buildFlags.incVersion);
+            log("now building app ; inc version ? " + _parameters.buildFlags.incVersion);
 
             buildPlayerOptions = new BuildPlayerOptions();
-
-            DataBuildSettingProfile profile = data.getPlatformProfil();
 
             //this will apply
             if (_parameters.buildFlags.incVersion)
@@ -191,11 +189,13 @@ namespace fwp.buildor.editor
                     VersionIncrementor.incInternalFix();
             }
 
+            DataBuildSettingProfile profile = data.getPlatformProfil();
+
             //apply everything (after inc)
             profile.applyProfilEditor(_parameters.buildFlags.isPublishingBuild);
 
             //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
-            buildPlayerOptions.scenes = getScenePaths();
+            buildPlayerOptions.scenes = getBuildSettingsScenePaths();
 
             // === CREATE SOLVED BUILD PATH
 
@@ -206,7 +206,7 @@ namespace fwp.buildor.editor
             if (!pathExists)
             {
                 Directory.CreateDirectory(absPath);
-                Debug.Log("  ... created : " + absPath);
+                log("folder.absPath: " + absPath);
             }
 
             // === INJECTING SOLVED PATH TO BUILD SETTINGS
@@ -214,7 +214,7 @@ namespace fwp.buildor.editor
             //[project]_[version].[ext]
             absPath = Path.Combine(absPath, profile.getAppName());
 
-            Debug.Log("BuildHelper, saving build at : " + absPath);
+            log("BuildHelper, saving build at : " + absPath);
             buildPlayerOptions.locationPathName = absPath;
 
             //will setup android or ios based on unity build settings target platform
@@ -243,35 +243,34 @@ namespace fwp.buildor.editor
 
             if (buildPlayerOptions.options.HasFlag(BuildOptions.AutoRunPlayer))
             {
-                Debug.Log("FLAGS = autorun");
+                log("+AUTORUN");
             }
 
-            Debug.Log("build_app() options : " + buildPlayerOptions.options);
-            Debug.Log("build_app() @ " + buildPlayerOptions.locationPathName);
-
+            log("options: " + buildPlayerOptions.options);
+            log("locationPathName: " + buildPlayerOptions.locationPathName);
 
             //      BUILD
 
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
-            BuildSummary summary = report.summary;
+            summary = report.summary;
 
-            switch (summary.result)
+            switch (summary.Value.result)
             {
                 case BuildResult.Succeeded:
 
-                    onSuccess(summary);
+                    onSuccess(summary.Value);
 
                     if (_parameters.buildFlags.openFolderOnSuccess)
                     {
-                        Debug.Log($"OPEN FOLDER of build : {summary.outputPath}");
-                        openBuildFolder(summary.outputPath); // success.open
+                        log($"OPEN FOLDER of build : {summary.Value.outputPath}");
+                        openBuildFolder(summary.Value.outputPath); // success.open
                     }
 
                     if (_parameters.buildFlags.zipOnSuccess)
                     {
                         string zipName = profile.getZipName();
-                        Debug.Log($"ZIP {summary.outputPath}@{zipName}");
-                        zipBuildFolder(summary.outputPath, zipName);
+                        log($"ZIP {summary.Value.outputPath}@{zipName}");
+                        zipBuildFolder(summary.Value.outputPath, zipName);
                     }
 
 
@@ -290,39 +289,39 @@ namespace fwp.buildor.editor
                 case BuildResult.Cancelled:
                 case BuildResult.Unknown:
                 default:
-                    Debug.LogError($"BuildResult : Helper Build : {summary.result}");
-                    Debug.LogError("options : " + summary.options);
-                    Debug.LogError("output path : " + summary.outputPath);
+                    Debug.LogError($"BuildResult : Helper Build : {summary.Value.result}");
+                    Debug.LogError("options : " + summary.Value.options);
+                    Debug.LogError("output path : " + summary.Value.outputPath);
                     break;
             }
         }
 
         protected void onSuccess(BuildSummary summary)
         {
-            Debug.Log("Build finished");
-            Debug.Log("  L version : <b>" + VersionManager.getFormatedVersion() + "</b>");
-            Debug.Log("  L result : warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
-            Debug.Log("  L symbols : " + ScriptableSymbolHelper.getGroupSymbols(summary.platformGroup));
-            Debug.Log("  L platform : <b>" + summary.platform + "</b>");
-            Debug.Log("  L build time : " + summary.totalTime);
+            log("<b>Build finished</b>");
+            log("  L version : <b>" + VersionManager.getFormatedVersion() + "</b>");
+            log("  L result : warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
+            log("  L symbols : " + ScriptableSymbolHelper.getGroupSymbols(summary.platformGroup));
+            log("  L platform : <b>" + summary.platform + "</b>");
+            log("  L build time : " + summary.totalTime);
 
             switch (summary.result)
             {
                 case BuildResult.Succeeded:
 
-                    Debug.Log("<color=green>build.Success</color>");
+                    log("<color=green>build.Success</color>");
+
                     ulong bytes = summary.totalSize;
                     ulong byteToMo = 1048576;
 
                     int size = (int)(bytes / byteToMo);
 
-                    Debug.Log("  L size : " + summary.totalSize + " bytes ; " + size + " Mo");
-
-                    Debug.Log("  L path : " + summary.outputPath);
+                    log("  L size : " + summary.totalSize + " bytes ; " + size + " Mo");
+                    log("  L path : " + summary.outputPath);
 
                     break;
                 default:
-                    Debug.Log("<color=red>build.Failure</color>");
+                    log("<color=red>build.Failure</color>");
                     Debug.LogError("Build failed: " + summary.result);
 
                     break;
@@ -359,15 +358,15 @@ namespace fwp.buildor.editor
                 outputPath = outputPath.Substring(0, outputPath.LastIndexOf('/'));
             }
 
-            Debug.Log("zip output path @ " + outputPath);
+            log("zip output path @ " + outputPath);
 
             // remove '/' just before exe file name
             if (outputPath.EndsWith("/")) outputPath = outputPath.Substring(0, outputPath.Length - 1);
 
             // parent folder to project/ (builds/)
             string buildsRoot = outputPath.Substring(0, outputPath.LastIndexOf('/'));
-            Debug.Log("output : " + outputPath);
-            Debug.Log("root : " + buildsRoot);
+            log("output : " + outputPath);
+            log("root : " + buildsRoot);
 
             // get project/
             string projectFolder = outputPath.Substring(outputPath.LastIndexOf('/') + 1);
@@ -383,13 +382,13 @@ namespace fwp.buildor.editor
             {
                 // https://stackoverflow.com/questions/60904/how-can-i-open-a-cmd-window-in-a-specific-location
                 string command = $"/K cd /D {buildsRoot} && tar.exe -avcf {zipName} {projectFolder}";
-                Debug.Log("win.zip : " + command);
+                log("win.zip : " + command);
                 WinEdBuildor.winExecute(command);
             }
             else if (Application.platform == RuntimePlatform.OSXEditor)
             {
                 string command = $"zip -r {pathZip} {folderToZip}";
-                Debug.Log("osx.zip : " + command);
+                log("osx.zip : " + command);
                 WinEdBuildor.osxExecute(command);
             }
         }
@@ -400,16 +399,22 @@ namespace fwp.buildor.editor
             return data.getPlatformProfil().build_prefix;
         }
 
-        static protected string[] getScenePaths()
+        protected void log(string msg)
         {
+            string ret = "[BUILD]";
+            if (summary != null) ret += " (" + summary.Value.result + ")";
+            ret += " : " + msg;
+            Debug.Log(ret);
+        }
 
-            List<string> sceneNames = new List<string>();
-            int count = SceneManager.sceneCountInBuildSettings;
-
-            Debug.Log("BuildHelper, adding " + count + " scenes to list");
+        /// <summary>
+        /// return scene.path[] contained in build settings
+        /// </summary>
+        static protected string[] getBuildSettingsScenePaths()
+        {
+            List<string> sceneNames = new();
 
             EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
-
             for (int i = 0; i < scenes.Length; i++)
             {
                 sceneNames.Add(scenes[i].path);
@@ -419,6 +424,9 @@ namespace fwp.buildor.editor
             return sceneNames.ToArray();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
         static public DataBuildSettingsBridge getScriptableDataBuildSettings()
         {
             string[] all = AssetDatabase.FindAssets("t:DataBuildSettingsBridge");
