@@ -24,6 +24,7 @@ namespace fwp.buildor
         public static readonly GUIStyle gButtonBig;
         public static readonly GUIStyle gColoredButtonRed;
         public static readonly GUIStyle gCategoryBold;
+        public static readonly GUIStyle gBold;
         public static readonly GUIStyle gLabelBoldGizmos;
 
         static BuildorHelperGuiStyle()
@@ -50,12 +51,18 @@ namespace fwp.buildor
             gColoredButtonRed = new GUIStyle(GUI.skin.button);
             gColoredButtonRed.normal.textColor = Color.red;
 
-            gCategoryBold = new GUIStyle();
+            gCategoryBold = new();
             gCategoryBold.padding.left = 10;
             gCategoryBold.padding.top = 5;
             gCategoryBold.fontStyle = FontStyle.Bold;
             gCategoryBold.normal.textColor = new Color(1f, 0.2f, 0.20f);
 
+            gBold = new();
+            gBold.padding.left = 10;
+            gBold.padding.top = 5;
+            gBold.fontStyle = FontStyle.Bold;
+            gBold.normal.textColor = Color.white;
+            
             gLabelBoldGizmos = new GUIStyle();
             gLabelBoldGizmos.richText = true;
             gLabelBoldGizmos.fontStyle = FontStyle.Bold;

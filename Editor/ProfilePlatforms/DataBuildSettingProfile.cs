@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.IO;
-using fwp.buildor.version;
 
 /// <summary>
 /// (ratio iphone)
@@ -13,6 +12,7 @@ namespace fwp.buildor.editor
 {
     using fwp.logs;
     using fwp.version;
+    using fwp.buildor.version;
 
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
@@ -74,6 +74,28 @@ namespace fwp.buildor.editor
         abstract public BuildTargetGroup getPlatformTargetGroup();
 #endif
 
+        string SubFolder
+        {
+            get
+            {
+                string ret = string.Empty;
+
+                if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_specific_folder_steam)) ret = "steam";
+                else if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_specific_folder_switch)) ret = "switch";
+                else
+                {
+                    ret = EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_specific_folder);
+                }
+
+                if (string.IsNullOrEmpty(ret))
+                {
+                    ret = build_path;
+                }
+
+                return ret;
+            }
+        }
+
         /// <summary>
         /// output builds/ folder (next to Assets/)
         /// </summary>
@@ -83,17 +105,23 @@ namespace fwp.buildor.editor
             string baseProjectPath = Application.dataPath;
             baseProjectPath = baseProjectPath.Substring(0, baseProjectPath.LastIndexOf('/')); // remove Assets/
 
-            // path/to/builds/
-            baseProjectPath = Path.Combine(baseProjectPath, build_path);
+            // +builds/
+            baseProjectPath = Path.Combine(baseProjectPath, SubFolder);
 
             string sub = string.Empty;
 
             if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_prefix)) sub += build_prefix + path_separator;
-            if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_date)) sub += getFullDate() + path_separator;
             if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_platform)) sub += getPlatformUid() + path_separator;
-            if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
+
+            // anything dynamic
+            if (!BuildHelperBase.BuildParameters.IsFolderOverride)
+            {
+                if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_date)) sub += getFullDate() + path_separator;
+                if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
+            }
+
             sub += EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_suffix);
-            
+
             // remove last "__"
             if (sub.EndsWith(path_separator))
             {

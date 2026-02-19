@@ -46,7 +46,7 @@ namespace fwp.buildor.editor
 		static public bool drawToggle(bool value, string label = null, string ppref = null)
 		{
 			if (ppref == null && !string.IsNullOrEmpty(label)) ppref = label;
-			bool _val = GUILayout.Toggle(value, label);
+			bool _val = GUILayout.Toggle(value, label, GUILayout.Width(100f));
 			if (!string.IsNullOrEmpty(ppref) && _val != value)
 			{
 				EditorPrefs.SetInt(ppref, _val ? 1 : 0);

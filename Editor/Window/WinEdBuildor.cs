@@ -145,22 +145,47 @@ namespace fwp.buildor.editor
 
 		}
 
+		void drawSpecificFolder()
+		{
+			// force to a specific folder
+			// GUILayout.Label("specific build/", BuildorHelperGuiStyle.gBold);
+			GUILayout.BeginHorizontal();
+			if(GUILayout.Button("browse", GUILayout.Width(100f)))
+			{
+				string path = EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_specific_folder);
+				string _path = EditorUtility.OpenFolderPanel("Select export folder", path, "");
+				if(path != _path)
+				{
+					EditorPrefs.SetString(BuildHelperBase.BuildParameters.pref_specific_folder, _path);
+				}
+			}
+			else
+			{
+				WinEdFieldsHelper.editText("custom", BuildHelperBase.BuildParameters.pref_specific_folder);	
+			}
+			GUILayout.EndHorizontal();
+		}
+
 		void drawPathModifiers()
 		{
 			GUILayout.Label("path modifiers", BuildorHelperGuiStyle.gCategoryBold);
 
+			
+			GUILayout.Label("build/ modifiers", BuildorHelperGuiStyle.gBold);
 			// do not provide current value to drawer, must regen value on opening from ppref
 			GUILayout.BeginHorizontal();
 			WinEdFieldsHelper.drawToggle("prefix", BuildHelperBase.BuildParameters.pref_include_prefix);
 			WinEdFieldsHelper.drawToggle("platform", BuildHelperBase.BuildParameters.pref_include_platform);
-			WinEdFieldsHelper.drawToggle("date", BuildHelperBase.BuildParameters.pref_include_date);
-			WinEdFieldsHelper.drawToggle("version", BuildHelperBase.BuildParameters.pref_include_version);
+			if (!BuildHelperBase.BuildParameters.IsFolderOverride)
+			{
+				WinEdFieldsHelper.drawToggle("date", BuildHelperBase.BuildParameters.pref_include_date);
+				WinEdFieldsHelper.drawToggle("version", BuildHelperBase.BuildParameters.pref_include_version);
+			}
 			GUILayout.EndHorizontal();
 
-			GUILayout.BeginHorizontal();
 			WinEdFieldsHelper.editText("suffix", BuildHelperBase.BuildParameters.pref_suffix);
-			GUILayout.EndHorizontal();
 
+			drawSpecificFolder();
 		}
 
 		void drawSuccess()

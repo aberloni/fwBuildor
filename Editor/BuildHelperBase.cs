@@ -67,7 +67,13 @@ namespace fwp.buildor.editor
             public const string pref_include_date = pref_prefix + "date";
             public const string pref_include_version = pref_prefix + "version";
             public const string pref_suffix = pref_prefix + "suffix";
+            
+            public const string pref_specific_folder = pref_prefix + "specific_folder";
+            public const string pref_specific_folder_steam = pref_prefix + "folder_steam";
+            public const string pref_specific_folder_switch = pref_prefix + "folder_switch";
 
+            public static bool IsFolderOverride => EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_specific_folder).Length > 0;
+            
             /// <summary>
             /// all external additionnal process to exec
             /// </summary>
