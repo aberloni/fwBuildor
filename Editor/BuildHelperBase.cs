@@ -62,18 +62,20 @@ namespace fwp.buildor.editor
         public class BuildParameters
         {
             public const string pref_prefix = "buildor_";
-            public const string pref_include_prefix = pref_prefix + "prefix";
-            public const string pref_include_platform = pref_prefix + "platform";
-            public const string pref_include_date = pref_prefix + "date";
-            public const string pref_include_version = pref_prefix + "version";
-            public const string pref_suffix = pref_prefix + "suffix";
-            
-            public const string pref_specific_folder = pref_prefix + "specific_folder";
-            public const string pref_specific_folder_steam = pref_prefix + "folder_steam";
-            public const string pref_specific_folder_switch = pref_prefix + "folder_switch";
+
+            static public readonly string pref_uid = pref_prefix + "." + Application.productName + "." + Application.productName;
+
+            static public readonly string pref_include_prefix = pref_uid + "prefix";
+            static public readonly string pref_include_platform = pref_uid + "platform";
+            static public readonly string pref_include_date = pref_uid + "date";
+            static public readonly string pref_include_version = pref_uid + "version";
+            static public readonly string pref_suffix = pref_uid + "suffix";
+            static public readonly string pref_specific_folder = pref_uid + "specific_folder";
+            static public readonly string pref_specific_folder_steam = pref_uid + "folder_steam";
+            static public readonly string pref_specific_folder_switch = pref_uid + "folder_switch";
 
             public static bool IsFolderOverride => EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_specific_folder).Length > 0;
-            
+
             /// <summary>
             /// all external additionnal process to exec
             /// </summary>

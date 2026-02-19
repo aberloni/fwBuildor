@@ -149,19 +149,25 @@ namespace fwp.buildor.editor
 		{
 			// force to a specific folder
 			// GUILayout.Label("specific build/", BuildorHelperGuiStyle.gBold);
+
+			string path = EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_specific_folder);
+
 			GUILayout.BeginHorizontal();
-			if(GUILayout.Button("browse", GUILayout.Width(100f)))
+			if (GUILayout.Button("browse", GUILayout.Width(100f)))
 			{
-				string path = EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_specific_folder);
 				string _path = EditorUtility.OpenFolderPanel("Select export folder", path, "");
-				if(path != _path)
+				if (path != _path)
 				{
 					EditorPrefs.SetString(BuildHelperBase.BuildParameters.pref_specific_folder, _path);
 				}
 			}
 			else
 			{
-				WinEdFieldsHelper.editText("custom", BuildHelperBase.BuildParameters.pref_specific_folder);	
+				WinEdFieldsHelper.editText("custom", BuildHelperBase.BuildParameters.pref_specific_folder);
+
+				if (path.Length > 0 && GUILayout.Button("clear", GUILayout.Width(100f)))
+					EditorPrefs.SetString(BuildHelperBase.BuildParameters.pref_specific_folder, string.Empty);
+
 			}
 			GUILayout.EndHorizontal();
 		}
@@ -170,7 +176,7 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.Label("path modifiers", BuildorHelperGuiStyle.gCategoryBold);
 
-			
+
 			GUILayout.Label("build/ modifiers", BuildorHelperGuiStyle.gBold);
 			// do not provide current value to drawer, must regen value on opening from ppref
 			GUILayout.BeginHorizontal();
