@@ -10,7 +10,6 @@ namespace fwp.buildor
     static public class BuildorHelperGuiStyle
     {
 
-
         const float refSize = 1280f;
         const float refTextSize = 16f;
 
@@ -20,92 +19,50 @@ namespace fwp.buildor
             return (int)((refTextSize * ratio) * addRatio);
         }
 
-        static private GUIStyle gWinTitle;
-        static public GUIStyle getWinTitle()
+        public static readonly GUIStyle gWinTitle;
+        public static readonly GUIStyle gWhiteBold;
+        public static readonly GUIStyle gButtonBig;
+        public static readonly GUIStyle gColoredButtonRed;
+        public static readonly GUIStyle gCategoryBold;
+        public static readonly GUIStyle gLabelBoldGizmos;
+
+        static BuildorHelperGuiStyle()
         {
-            if (gWinTitle == null)
-            {
-                gWinTitle = new GUIStyle();
+            gWinTitle = new GUIStyle();
+            gWinTitle.richText = true;
+            gWinTitle.alignment = TextAnchor.MiddleCenter;
+            gWinTitle.normal.textColor = Color.white;
+            gWinTitle.fontSize = 20;
+            gWinTitle.fontStyle = FontStyle.Bold;
+            gWinTitle.margin = new RectOffset(10, 10, 10, 10);
 
-                gWinTitle.richText = true;
-                gWinTitle.alignment = TextAnchor.MiddleCenter;
-                gWinTitle.normal.textColor = Color.white;
-                gWinTitle.fontSize = 20;
-                gWinTitle.fontStyle = FontStyle.Bold;
-                gWinTitle.margin = new RectOffset(10, 10, 10, 10);
-                //gWinTitle.padding = new RectOffset(30, 30, 30, 30);
+            gWhiteBold = new GUIStyle();
+            gWhiteBold.richText = true;
+            gWhiteBold.fontStyle = FontStyle.Bold;
+            gWhiteBold.padding = new RectOffset(10, 5, 2, 2);
+            gWhiteBold.normal.textColor = Color.white;
+        
+            gButtonBig = new GUIStyle(GUI.skin.button);
+            gButtonBig.fontSize = 25;
+            gButtonBig.fontStyle = FontStyle.Bold;
+            gButtonBig.fixedHeight = 50f;
 
-            }
+            gColoredButtonRed = new GUIStyle(GUI.skin.button);
+            gColoredButtonRed.normal.textColor = Color.red;
 
-            return gWinTitle;
-        }
+            gCategoryBold = new GUIStyle();
+            gCategoryBold.padding.left = 10;
+            gCategoryBold.padding.top = 5;
+            gCategoryBold.fontStyle = FontStyle.Bold;
+            gCategoryBold.normal.textColor = new Color(1f, 0.2f, 0.20f);
 
-        static private GUIStyle gWhiteBold;
-        static public GUIStyle getWhiteBold()
-        {
-            if (gWhiteBold == null)
-            {
-                gWhiteBold = new GUIStyle();
-                gWhiteBold.richText = true;
-                gWhiteBold.fontStyle = FontStyle.Bold;
-                gWhiteBold.padding = new RectOffset(10, 5, 2, 2);
-                gWhiteBold.normal.textColor = Color.white;
-            }
+            gLabelBoldGizmos = new GUIStyle();
+            gLabelBoldGizmos.richText = true;
+            gLabelBoldGizmos.fontStyle = FontStyle.Bold;
+            //gLabelBoldGizmos.padding = new RectOffset(10, 50, 20, 20);
+            gLabelBoldGizmos.normal.textColor = Color.blue;
+            gLabelBoldGizmos.fontSize = 20;
 
-            return gWhiteBold;
-        }
-
-        static private GUIStyle gButtonBig;
-        static public GUIStyle getButtonBig(float height)
-        {
-            if (gButtonBig == null) gButtonBig = new GUIStyle(GUI.skin.button);
-            gButtonBig.fixedHeight = height;
-            return gButtonBig;
-        }
-
-        static private GUIStyle gButtonColored;
-        static public GUIStyle getButtonColored(Color color)
-        {
-            if (gButtonColored == null) gButtonColored = new GUIStyle(GUI.skin.button);
-            gButtonColored.normal.textColor = color;
-            return gButtonColored;
-        }
-
-        static private GUIStyle gCategoryBold;
-        static public GUIStyle getCategoryBold()
-        {
-            if (gCategoryBold != null) return gCategoryBold;
-            return getCategoryBold(new Color(1f, 0.2f, 0.20f));
-        }
-        static public GUIStyle getCategoryBold(Color color)
-        {
-            if (gCategoryBold == null)
-            {
-                gCategoryBold = new GUIStyle();
-                gCategoryBold.padding.left = 10;
-                gCategoryBold.padding.top = 5;
-                gCategoryBold.fontStyle = FontStyle.Bold;
-            }
-
-            gCategoryBold.normal.textColor = color;
-
-            return gCategoryBold;
-        }
-
-        static private GUIStyle gLabelBoldGizmos;
-        static public GUIStyle getLabelBoldGizmos()
-        {
-            if (gLabelBoldGizmos == null)
-            {
-                gLabelBoldGizmos = new GUIStyle();
-                gLabelBoldGizmos.richText = true;
-                gLabelBoldGizmos.fontStyle = FontStyle.Bold;
-                //gLabelBoldGizmos.padding = new RectOffset(10, 50, 20, 20);
-                gLabelBoldGizmos.normal.textColor = Color.blue;
-                gLabelBoldGizmos.fontSize = 20;
-            }
-
-            return gLabelBoldGizmos;
         }
 
     }

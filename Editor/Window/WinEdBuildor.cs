@@ -47,9 +47,10 @@ namespace fwp.buildor.editor
 			subSymbols?.focus();
 		}
 
+		readonly GUIContent _title = new("Buildor");
 		void OnGUI()
 		{
-			GUILayout.Label("Buildor", BuildorHelperGuiStyle.getWinTitle());
+			GUILayout.Label(_title, BuildorHelperGuiStyle.gWinTitle);
 
 			scroll = GUILayout.BeginScrollView(scroll);
 
@@ -81,7 +82,7 @@ namespace fwp.buildor.editor
 
 			GUILayout.BeginHorizontal();
 			// just display
-			GUILayout.Label("platform", BuildorHelperGuiStyle.getCategoryBold());
+			GUILayout.Label("platform", BuildorHelperGuiStyle.gCategoryBold);
 			GUI.enabled = false;
 			EditorGUILayout.ObjectField(parameters.activeProfil, typeof(DataBuildSettingProfile), true);
 			GUI.enabled = true;
@@ -98,7 +99,7 @@ namespace fwp.buildor.editor
 		void drawBuildFlags()
 		{
 
-			GUILayout.Label("build flags", BuildorHelperGuiStyle.getCategoryBold());
+			GUILayout.Label("build flags", BuildorHelperGuiStyle.gCategoryBold);
 
 			parameters.buildFlags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
 
@@ -146,7 +147,7 @@ namespace fwp.buildor.editor
 
 		void drawPathModifiers()
 		{
-			GUILayout.Label("path modifiers", BuildorHelperGuiStyle.getCategoryBold());
+			GUILayout.Label("path modifiers", BuildorHelperGuiStyle.gCategoryBold);
 
 			// do not provide current value to drawer, must regen value on opening from ppref
 			GUILayout.BeginHorizontal();
@@ -164,14 +165,14 @@ namespace fwp.buildor.editor
 
 		void drawSuccess()
 		{
-			GUILayout.Label("on success", BuildorHelperGuiStyle.getCategoryBold());
+			GUILayout.Label("on success", BuildorHelperGuiStyle.gCategoryBold);
 
 			parameters.buildFlags.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
 			parameters.buildFlags.zipOnSuccess = WinEdFieldsHelper.drawToggle("zip", "zip");
 			parameters.buildFlags.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
 
 			GUILayout.Space(20f);
-			GUILayout.Label("outputs", BuildorHelperGuiStyle.getCategoryBold());
+			GUILayout.Label("outputs", BuildorHelperGuiStyle.gCategoryBold);
 
 			string outputFolder = activeProfil.getAbsoluteBuildFolderPath();
 
@@ -208,6 +209,8 @@ namespace fwp.buildor.editor
 
 		}
 
+		string getBuildLabel() => parameters.buildFlags.autorun ? "SHIPIT" : "BUILD";
+
 		void drawBuildButton()
 		{
 			DataBuildSettingVersion version = getActiveVersion();
@@ -224,7 +227,7 @@ namespace fwp.buildor.editor
 
 			GUILayout.Space(20f);
 
-			if (GUILayout.Button("BUILD", BuildorHelperGuiStyle.getButtonBig(50f)))
+			if (GUILayout.Button(getBuildLabel(), BuildorHelperGuiStyle.gButtonBig))
 			{
 				Debug.Log("[BUILD] apply.merger:" + merger.strOneLine());
 				merger?.apply();

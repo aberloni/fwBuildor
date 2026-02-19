@@ -80,7 +80,7 @@ namespace fwp.buildor.editor
 
 		public void draw()
 		{
-			GUILayout.Label(getSectionTitle(), BuildorHelperGuiStyle.getCategoryBold());
+			GUILayout.Label(getSectionTitle(), BuildorHelperGuiStyle.gCategoryBold);
 
 			GUILayout.BeginHorizontal();
 			var newValue = (T)EditorGUILayout.ObjectField(_valuePrefs, typeof(T), true);

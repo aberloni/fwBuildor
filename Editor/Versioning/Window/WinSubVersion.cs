@@ -16,7 +16,7 @@ namespace fwp.version.editor
         {
 
             GUILayout.Space(20f);
-            GUILayout.Label("version", BuildorHelperGuiStyle.getCategoryBold());
+            GUILayout.Label("version", BuildorHelperGuiStyle.gCategoryBold);
 
             GUILayout.BeginHorizontal();
 
