@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEditor;
 using System.IO;
-using fwp.buildor.version;
 
 /// <summary>
 /// (ratio iphone)
@@ -12,12 +9,13 @@ using fwp.buildor.version;
 /// 
 /// application id
 /// https://developer.nintendo.com/html/online-docs/g1kr9vj6-en/Packages/SDK/NintendoSDK/Documents/Package/contents/Pages/Page_177636769.html#Anchor_177636769_ApplicationId
+/// 
 /// Application ID
 /// A unique ID assigned to each application.
-/// Specified using a value in the range from 0x0100 0000 0001 0000 to 0x01FFF FFFF FFFF FFFF.
-/// For retail applications, the application ID is the value that was specified on the Nintendo Developer Portal.
-/// For development tools and prototypes, use the value 0x0100 XXX0 0348 8000, where XXX is any value between 000 and FFF./// 
 /// 
+/// The Range of Application IDs for NX
+/// Specified using a value in the range from 0x0100 0000 0001 0000 to 0x01FF FFFF FFFF FFFF.
+/// For development tools and prototypes, use the value 0x0100 XXX0 0348 8000, where XXX is any value between 000 and FFF.
 /// 
 /// player settings
 /// https://developer.nintendo.com/html/online-docs/g1kr9vj6-en/Packages/middleware/UnityForNintendoSwitch/Documents/contents-en/Pages/Page_165366622.html

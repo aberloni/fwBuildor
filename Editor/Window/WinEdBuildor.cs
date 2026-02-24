@@ -27,12 +27,12 @@ namespace fwp.buildor.editor
 		WinSubLogs subLogs;
 
 		public BuildHelperBase.BuildParameters parameters;
-		public DataBuildSettingProfile activeProfil => parameters.activeProfil;
+		public DataBuildSettingProfile activeProfil => parameters.buildProfil;
 
 		private void OnEnable()
 		{
 			if (parameters == null) parameters = new BuildHelperBase.BuildParameters();
-			parameters.activeProfil = BuildHelperBase.getActiveProfile();
+			parameters.buildProfil = BuildHelperBase.getActiveProfile();
 
 			if (subVersion == null) subVersion = new();
 			if (subSymbols == null) subSymbols = new WinSubScriptableSymbols(this);
@@ -45,6 +45,11 @@ namespace fwp.buildor.editor
 			subLogs?.focus();
 			subMergers?.focus();
 			subSymbols?.focus();
+
+			if (parameters != null && parameters.buildProfil == null)
+			{
+				parameters.buildProfil = BuildHelperBase.getActiveProfile();
+			}
 		}
 
 		readonly GUIContent _title = new("Buildor");
@@ -56,7 +61,7 @@ namespace fwp.buildor.editor
 
 			drawProfil();
 
-			if (parameters.activeProfil != null)
+			if (parameters.buildProfil != null)
 			{
 				subVersion?.draw(this);
 				subMergers?.draw();
@@ -74,7 +79,7 @@ namespace fwp.buildor.editor
 
 		void drawProfil()
 		{
-			if (parameters.activeProfil == null)
+			if (parameters.buildProfil == null)
 			{
 				GUILayout.Label("this view needs some active profil setup");
 				return;
@@ -84,12 +89,12 @@ namespace fwp.buildor.editor
 			// just display
 			GUILayout.Label("platform", BuildorHelperGuiStyle.gCategoryBold);
 			GUI.enabled = false;
-			EditorGUILayout.ObjectField(parameters.activeProfil, typeof(DataBuildSettingProfile), true);
+			EditorGUILayout.ObjectField(parameters.buildProfil, typeof(DataBuildSettingProfile), true);
 			GUI.enabled = true;
 
 			if (GUILayout.Button(">>"))
 			{
-				UnityEditor.Selection.activeObject = parameters.activeProfil;
+				UnityEditor.Selection.activeObject = parameters.buildProfil;
 			}
 
 			GUILayout.EndHorizontal();

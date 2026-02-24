@@ -19,7 +19,7 @@ namespace fwp.buildor.editor
     {
         public enum BuildorBuildState
         {
-            RELEASE,DEBUG,FEST
+            RELEASE, DEBUG, FEST
         }
 
         [Header("desktop")]
@@ -30,10 +30,10 @@ namespace fwp.buildor.editor
         [Header("mobile")]
         public DataBuildSettingsBridgeCouple android;
         public DataBuildSettingsBridgeCouple ios;
-        
+
         [Header("console")]
         public DataBuildSettingsBridgeCouple switcheu;
-        
+
         public DataBuildSettingProfile getPlatformProfil(BuildorBuildState? tarState = null)
         {
             BuildTarget target = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
@@ -82,27 +82,28 @@ namespace fwp.buildor.editor
         public DataBuildSettingProfile festival;
         public DataBuildSettingProfile debug;
 
-        public DataBuildSettingProfile getActive(DataBuildSettingsBridge.BuildorBuildState? tarState)
+        public DataBuildSettingProfile getActive(DataBuildSettingsBridge.BuildorBuildState? tarState = null)
         {
-            if(tarState != null)
+            if (tarState == null)
             {
-                switch (tarState)
-                {
-                    case DataBuildSettingsBridge.BuildorBuildState.DEBUG:       return debug;
-                    case DataBuildSettingsBridge.BuildorBuildState.RELEASE:     return release;
-                    case DataBuildSettingsBridge.BuildorBuildState.FEST:        return festival;
-                    default: Debug.LogError("nop"); break;
-                }
+#if debug
+                tarState = DataBuildSettingsBridge.BuildorBuildState.DEBUG;
+#elif fest
+                tarState = DataBuildSettingsBridge.BuildorBuildState.FEST;
+#else
+                tarState = DataBuildSettingsBridge.BuildorBuildState.RELEASE; // default
+#endif
             }
 
-#if debug
-            return debug;
-#elif fest
-            return festival;
-#else
-            return release;
-#endif
+            switch (tarState)
+            {
+                case DataBuildSettingsBridge.BuildorBuildState.DEBUG: return debug;
+                case DataBuildSettingsBridge.BuildorBuildState.RELEASE: return release;
+                case DataBuildSettingsBridge.BuildorBuildState.FEST: return festival;
+                default: Debug.LogError("nop"); break;
+            }
 
+            return null;
         }
 
     }

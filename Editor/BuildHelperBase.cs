@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using System.IO;
 using fwp.buildor.version;
+using UnityEditor.Build;
 
 /// <summary>
 /// 
@@ -84,7 +84,7 @@ namespace fwp.buildor.editor
             /// <summary>
             /// profil to use
             /// </summary>
-            public DataBuildSettingProfile activeProfil;
+            public DataBuildSettingProfile buildProfil;
         }
 
         public void launch(BuildParameters param)
@@ -481,7 +481,7 @@ namespace fwp.buildor.editor
             Texture2D[] icons = new Texture2D[1];
             icons[0] = profil.icon;
 
-            PlayerSettings.SetIconsForTargetGroup(BuildTargetGroup.Unknown, icons);
+            PlayerSettings.SetIcons(NamedBuildTarget.Unknown, icons, IconKind.Any);
 
             Debug.Log(" L icons updated");
         }

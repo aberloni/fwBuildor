@@ -1,13 +1,7 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
-
+﻿using UnityEngine;
 
 namespace fwp.version
 {
-#if UNITY_EDITOR
-    using UnityEditor;
-#endif
-
     [CreateAssetMenu(menuName = "buildor/version/new switch", order = 100)]
     public class DataVersionSwitch : DataBuildSettingVersion
     {
