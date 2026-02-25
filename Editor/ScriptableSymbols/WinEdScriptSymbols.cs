@@ -21,7 +21,7 @@ namespace fwp.symbols
     public class WinEdScriptSymbols : UnityEditor.EditorWindow
     {
 
-        [UnityEditor.MenuItem("Tools/(window) scriptable symbols editor")]
+        [UnityEditor.MenuItem("Window/Buildor/scriptable symbols editor (win)")]
         static public void init() => UnityEditor.EditorWindow.GetWindow(typeof(WinEdScriptSymbols));
 
         Vector2 scroll;
@@ -50,7 +50,7 @@ namespace fwp.symbols
                 curTarget = ScriptSymbols.evaluateCurrentTargetPlatform();
             }
 
-            if(sGroups == null || force)
+            if (sGroups == null || force)
             {
                 sGroups = new ScriptableSymbolsGroups();
                 sGroups.fetch(BuildTargetGroup.Standalone);
@@ -102,9 +102,9 @@ namespace fwp.symbols
 
                 var curGroup = (BuildTargetGroup)i;
                 GUILayout.Label(curGroup.ToString(), GUILayout.Width(250f));
-                
+
                 string symbols = ScriptSymbolsView.getPlayerSetSymbols(curGroup);
-                if(!string.IsNullOrEmpty(symbols)) GUILayout.Label(symbols);
+                if (!string.IsNullOrEmpty(symbols)) GUILayout.Label(symbols);
 
                 GUILayout.EndHorizontal();
             }

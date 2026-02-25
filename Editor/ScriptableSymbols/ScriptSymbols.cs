@@ -35,9 +35,7 @@ namespace fwp.symbols
 
     enum ScriptSymbolsVerbosity
     {
-
-        logs, verbose,
-
+        logs, verbosity,
     }
 
     enum ScriptSymbolsLocalization
