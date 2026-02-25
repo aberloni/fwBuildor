@@ -62,7 +62,9 @@ namespace fwp.version
 			buildNumber++;
 			applyInts(v);
 
+#if UNITY_EDITOR
 			applyVersionToEditor();
+#endif
 		}
 
 		public void incrementMinor()
@@ -83,7 +85,9 @@ namespace fwp.version
 			buildNumber++;
 			applyInts(v);
 
+#if UNITY_EDITOR
 			applyVersionToEditor();
+#endif
 		}
 
 		public void incrementFix()
@@ -103,7 +107,9 @@ namespace fwp.version
 			buildNumber++;
 			applyInts(v);
 
+#if UNITY_EDITOR
 			applyVersionToEditor();
+#endif
 		}
 
 		void applyInts(int[] vs)
@@ -121,11 +127,13 @@ namespace fwp.version
 			return version + "@" + buildNumber;
 		}
 
+#if UNITY_EDITOR
 		/// <summary>
 		/// describe how to inject version into editor 
 		/// project settings > player settings
 		/// </summary>
 		abstract public void applyVersionToEditor();
+#endif
 
 #if UNITY_EDITOR
 		static public DataBuildSettingVersion[] getScriptables(string filter = null)

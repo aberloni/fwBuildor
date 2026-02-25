@@ -5,9 +5,10 @@ namespace fwp.version
 	[CreateAssetMenu(menuName = "buildor/version/new Internal", order = 100)]
 	public class DataVersionInternal : DataBuildSettingVersion
 	{
+		
+#if UNITY_EDITOR
 		public override void applyVersionToEditor()
 		{
-#if UNITY_EDITOR
 			//ios specific version
 			UnityEditor.PlayerSettings.iOS.buildNumber = version;
 
@@ -17,8 +18,9 @@ namespace fwp.version
 			//version under compagny name & product name
 			UnityEditor.PlayerSettings.bundleVersion = version;
 			//Debug.Log("+bundleVersion=" + UnityEditor.PlayerSettings.bundleVersion);
-#endif
 		}
+#endif
+
 	}
 
 }

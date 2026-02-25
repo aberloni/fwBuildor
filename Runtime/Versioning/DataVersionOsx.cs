@@ -7,13 +7,15 @@ namespace fwp.version
     [CreateAssetMenu(menuName = "buildor/version/new OSX", order = 100)]
     public class DataVersionOsx : DataBuildSettingVersion
     {
+        
+#if UNITY_EDITOR
         public override void applyVersionToEditor()
         {
-#if UNITY_EDITOR
             //short version
             UnityEditor.PlayerSettings.bundleVersion = version;
-#endif
         }
+#endif
+
     }
 
 }
