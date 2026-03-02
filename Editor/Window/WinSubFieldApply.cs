@@ -33,7 +33,7 @@ namespace fwp.buildor.editor
 		/// value assigned in active profil
 		/// </summary>
 		protected T _valueProfil;
-		
+
 
 		public T Value
 		{
@@ -45,7 +45,13 @@ namespace fwp.buildor.editor
 			}
 		}
 
-		string pprefUid() => win.activeProfil.name + "_" + typeof(T).ToString();
+		string pprefUid()
+		{
+			string ppref = typeof(T).ToString();
+			var profil = BuildHelperBase.getActiveProfile();
+			if (profil != null) ppref = profil.name + "_" + ppref;
+			return ppref;
+		}
 
 		public void focus()
 		{

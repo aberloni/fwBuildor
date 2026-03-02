@@ -15,7 +15,7 @@ namespace fwp.logs.editor
 
 		protected override ProfilLogLevels fetchProfilInstance()
 		{
-			return win.activeProfil.logLevels;
+			return win.ActiveProfil.logLevels;
 		}
 
 		protected override void applyEditor(ProfilLogLevels value)

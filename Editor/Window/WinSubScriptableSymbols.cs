@@ -15,17 +15,17 @@ namespace fwp.buildor.editor
 
 		protected override ScriptableSymbolProfil fetchProfilInstance()
 		{
-            return win.activeProfil.scriptSymbols;
+            return win.ActiveProfil.scriptSymbols;
 		}
 
 		protected override void applyEditor(ScriptableSymbolProfil value)
 		{
-            value.data.apply(win.activeProfil.getPlatformTargetGroup());
+            value.data.apply(win.ActiveProfil.getPlatformTargetGroup());
 		}
 
         protected override void drawDetails(ScriptableSymbolProfil value)
         {
-            bool changes = value.data.drawToggles(win.activeProfil.getPlatformTargetGroup());
+            bool changes = value.data.drawToggles(win.ActiveProfil.getPlatformTargetGroup());
             if (changes)
             {
                 EditorUtility.SetDirty(value);
@@ -34,7 +34,7 @@ namespace fwp.buildor.editor
 
         protected override void drawHeader(ScriptableSymbolProfil value)
         {
-            value.data.drawRawStringSymbols(win.activeProfil.getPlatformTargetGroup());
+            value.data.drawRawStringSymbols(win.ActiveProfil.getPlatformTargetGroup());
         }
 
     }

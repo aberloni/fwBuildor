@@ -13,7 +13,7 @@ namespace fwp.buildor.editor
 
 		protected override DataBuildorScenesMerger fetchProfilInstance()
 		{
-            return win.activeProfil.merger;
+            return win.ActiveProfil.merger;
 		}
 
 		/// <summary>
