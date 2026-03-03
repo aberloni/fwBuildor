@@ -5,7 +5,7 @@ namespace fwp.buildor.editor
 {
     using fwp.symbols;
 
-	public class WinSubScriptableSymbols : WinSubFieldApply<ScriptableSymbolProfil>
+    public class WinSubScriptableSymbols : WinSubFieldApply<ScriptableSymbolProfil>
     {
         public WinSubScriptableSymbols(WinEdBuildor win) : base(win)
         {
@@ -13,15 +13,21 @@ namespace fwp.buildor.editor
 
         protected override string getSectionTitle() => "symbols (#if)";
 
-		protected override ScriptableSymbolProfil fetchProfilInstance()
-		{
+        protected override ScriptableSymbolProfil fetchProfilInstance()
+        {
+            if (win == null) return null;
+            if (win.ActiveProfil == null) return null;
+            
             return win.ActiveProfil.scriptSymbols;
-		}
+        }
 
-		protected override void applyEditor(ScriptableSymbolProfil value)
-		{
+        protected override void applyEditor(ScriptableSymbolProfil value)
+        {
+            if (win == null) return;
+            if (win.ActiveProfil == null) return;
+
             value.data.apply(win.ActiveProfil.getPlatformTargetGroup());
-		}
+        }
 
         protected override void drawDetails(ScriptableSymbolProfil value)
         {
