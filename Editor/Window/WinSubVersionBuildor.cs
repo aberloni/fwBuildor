@@ -1,6 +1,3 @@
-using UnityEngine;
-
-using fwp.version.editor;
 using fwp.version;
 using fwp.buildor.editor;
 

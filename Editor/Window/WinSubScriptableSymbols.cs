@@ -1,4 +1,3 @@
-using UnityEngine;
 using UnityEditor;
 
 namespace fwp.buildor.editor
@@ -15,23 +14,24 @@ namespace fwp.buildor.editor
 
         protected override ScriptableSymbolProfil fetchProfilInstance()
         {
-            if (win == null) return null;
-            if (win.ActiveProfil == null) return null;
-            
-            return win.ActiveProfil.scriptSymbols;
+            var profil = BuildHelperBase.getActiveProfile();
+            if (profil == null) return null;
+            return profil.scriptSymbols;
         }
 
         protected override void applyEditor(ScriptableSymbolProfil value)
         {
-            if (win == null) return;
-            if (win.ActiveProfil == null) return;
+            var profil = BuildHelperBase.getActiveProfile();
+            if (profil == null) return;
 
-            value.data.apply(win.ActiveProfil.getPlatformTargetGroup());
+            value.data.apply(profil.getPlatformTargetGroup());
         }
 
         protected override void drawDetails(ScriptableSymbolProfil value)
         {
-            bool changes = value.data.drawToggles(win.ActiveProfil.getPlatformTargetGroup());
+            var profil = BuildHelperBase.getActiveProfile();
+            if (profil == null) return;
+            bool changes = value.data.drawToggles(profil.getPlatformTargetGroup());
             if (changes)
             {
                 EditorUtility.SetDirty(value);
@@ -40,7 +40,9 @@ namespace fwp.buildor.editor
 
         protected override void drawHeader(ScriptableSymbolProfil value)
         {
-            value.data.drawRawStringSymbols(win.ActiveProfil.getPlatformTargetGroup());
+            var profil = BuildHelperBase.getActiveProfile();
+            if (profil == null) return;
+            value.data.drawRawStringSymbols(profil.getPlatformTargetGroup());
         }
 
     }

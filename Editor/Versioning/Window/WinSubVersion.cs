@@ -6,7 +6,7 @@ namespace fwp.version.editor
     using fwp.buildor;
     using System.IO;
 
-	public class WinSubVersion
+    public class WinSubVersion
     {
 
         /// <summary>
@@ -14,9 +14,14 @@ namespace fwp.version.editor
         /// </summary>
         virtual public void draw(DataBuildSettingVersion version)
         {
-
             GUILayout.Space(20f);
             GUILayout.Label("version", BuildorHelperGuiStyle.gCategoryBold);
+
+            if (version == null)
+            {
+                GUILayout.Label("no version");
+                return;
+            }
 
             GUILayout.BeginHorizontal();
 
@@ -53,16 +58,16 @@ namespace fwp.version.editor
         //[MenuItem("Test/dump version")]
         //static void dumpTest() => dumpVersion(Application.dataPath);
 
-		/// <summary>
-		/// https://learn.microsoft.com/en-us/dotnet/standard/io/how-to-write-text-to-a-file
-		/// </summary>
-		/// <param name="path"></param>
-		static public void dumpVersion(string path = null)
+        /// <summary>
+        /// https://learn.microsoft.com/en-us/dotnet/standard/io/how-to-write-text-to-a-file
+        /// </summary>
+        /// <param name="path"></param>
+        static public void dumpVersion(string path = null)
         {
             if (path == null) path = Application.dataPath;
 
             var item = DataBuildSettingVersion.getScriptable();
-            if(item == null)
+            if (item == null)
             {
                 Debug.LogWarning("no version present");
                 return;
@@ -73,7 +78,7 @@ namespace fwp.version.editor
             Debug.Log(path);
 
             File.WriteAllText(path, item.getFormated());
-            
+
             /*
 			byte[] output = null;
             try

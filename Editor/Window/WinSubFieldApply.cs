@@ -34,7 +34,6 @@ namespace fwp.buildor.editor
 		/// </summary>
 		protected T _valueProfil;
 
-
 		public T Value
 		{
 			get
@@ -108,7 +107,9 @@ namespace fwp.buildor.editor
 				}
 
 				if (GUILayout.Button("?", GUILayout.Width(20f)))
+				{
 					UnityEditor.Selection.activeObject = _valuePrefs;
+				}
 			}
 			GUILayout.EndHorizontal();
 
@@ -120,7 +121,9 @@ namespace fwp.buildor.editor
 			{
 				GUILayout.Label("profil has :		" + _valueProfil.name);
 				if (GUILayout.Button("?", GUILayout.Width(40f)))
+				{
 					UnityEditor.Selection.activeObject = _valueProfil;
+				}
 			}
 			GUILayout.EndHorizontal();
 
@@ -141,7 +144,6 @@ namespace fwp.buildor.editor
 		virtual protected void onValueChanged(T value)
 		{
 			string uid = value != null ? value.name : string.Empty;
-			//Debug.Log(uid);
 			EditorPrefs.SetString(pprefUid(), uid);
 			_valuePrefs = fetchPrefsInstance();
 		}

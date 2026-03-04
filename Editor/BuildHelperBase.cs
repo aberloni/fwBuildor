@@ -74,17 +74,12 @@ namespace fwp.buildor.editor
             static public readonly string pref_specific_folder_steam = pref_uid + "folder_steam";
             static public readonly string pref_specific_folder_switch = pref_uid + "folder_switch";
 
-            public static bool IsFolderOverride => EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_specific_folder).Length > 0;
+            public static bool IsFolderOverride => EditorPrefs.GetString(pref_specific_folder).Length > 0;
 
             /// <summary>
             /// all external additionnal process to exec
             /// </summary>
             public BuildHelperFlags buildFlags = new BuildHelperFlags();
-
-            /// <summary>
-            /// profil to use
-            /// </summary>
-            public DataBuildSettingProfile buildProfil;
         }
 
         public void launch(BuildParameters param)
@@ -454,13 +449,17 @@ namespace fwp.buildor.editor
             return null;
         }
 
+        static DataBuildSettingProfile _active;
         static public DataBuildSettingProfile getActiveProfile()
         {
+            if (_active != null) return _active;
+
             var settings = getScriptableDataBuildSettings();
 
             if (settings == null) return null;
 
-            return settings.getPlatformProfil();
+            _active = settings.getPlatformProfil();
+            return _active;
         }
 
         static public void applyUnity(DataBuildSettingProfile profil)

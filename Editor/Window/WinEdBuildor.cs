@@ -27,12 +27,10 @@ namespace fwp.buildor.editor
 		WinSubLogs subLogs;
 
 		public BuildHelperBase.BuildParameters parameters;
-		public DataBuildSettingProfile ActiveProfil => parameters.buildProfil;
 
 		private void OnEnable()
 		{
 			if (parameters == null) parameters = new BuildHelperBase.BuildParameters();
-			parameters.buildProfil = BuildHelperBase.getActiveProfile();
 
 			if (subVersion == null) subVersion = new();
 			if (subSymbols == null) subSymbols = new WinSubScriptableSymbols(this);
@@ -45,11 +43,6 @@ namespace fwp.buildor.editor
 			subLogs?.focus();
 			subMergers?.focus();
 			subSymbols?.focus();
-
-			if (parameters != null && parameters.buildProfil == null)
-			{
-				parameters.buildProfil = BuildHelperBase.getActiveProfile();
-			}
 		}
 
 		readonly GUIContent _title = new("Buildor");
@@ -61,7 +54,8 @@ namespace fwp.buildor.editor
 
 			drawProfil();
 
-			if (parameters.buildProfil != null)
+			var profil = BuildHelperBase.getActiveProfile();
+			if (profil != null)
 			{
 				subVersion?.draw(this);
 				subMergers?.draw();
@@ -79,23 +73,25 @@ namespace fwp.buildor.editor
 
 		void drawProfil()
 		{
-			if (parameters.buildProfil == null)
+			var profil = BuildHelperBase.getActiveProfile();
+			if (profil == null)
 			{
 				GUILayout.Label("this view needs some active profil setup");
 				return;
 			}
 
 			GUILayout.BeginHorizontal();
+
+			if (GUILayout.Button("?"))
+			{
+				UnityEditor.Selection.activeObject = profil;
+			}
+
 			// just display
 			GUILayout.Label("platform", BuildorHelperGuiStyle.gCategoryBold);
 			GUI.enabled = false;
-			EditorGUILayout.ObjectField(parameters.buildProfil, typeof(DataBuildSettingProfile), true);
+			EditorGUILayout.ObjectField(profil, typeof(DataBuildSettingProfile), true);
 			GUI.enabled = true;
-
-			if (GUILayout.Button(">>"))
-			{
-				UnityEditor.Selection.activeObject = parameters.buildProfil;
-			}
 
 			GUILayout.EndHorizontal();
 
@@ -103,30 +99,32 @@ namespace fwp.buildor.editor
 
 		void drawBuildFlags()
 		{
-
 			GUILayout.Label("build flags", BuildorHelperGuiStyle.gCategoryBold);
 
 			parameters.buildFlags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
 
-			ActiveProfil.developement_build = GUILayout.Toggle(ActiveProfil.developement_build, "dev build");
-			if (ActiveProfil.developement_build != EditorUserBuildSettings.development)
+			var profil = BuildHelperBase.getActiveProfile();
+			if (profil == null) return;
+
+			profil.developement_build = GUILayout.Toggle(profil.developement_build, "dev build");
+			if (profil.developement_build != EditorUserBuildSettings.development)
 			{
-				EditorUserBuildSettings.development = ActiveProfil.developement_build;
+				EditorUserBuildSettings.development = profil.developement_build;
 				Debug.LogWarning("changed dev build : " + EditorUserBuildSettings.development);
 
-				UnityEditor.EditorUtility.SetDirty(ActiveProfil);
+				UnityEditor.EditorUtility.SetDirty(profil);
 			}
 
-			ActiveProfil.debugScripting = GUILayout.Toggle(ActiveProfil.debugScripting, "debug scripting");
-			if (ActiveProfil.debugScripting != EditorUserBuildSettings.allowDebugging)
+			profil.debugScripting = GUILayout.Toggle(profil.debugScripting, "debug scripting");
+			if (profil.debugScripting != EditorUserBuildSettings.allowDebugging)
 			{
-				EditorUserBuildSettings.allowDebugging = ActiveProfil.debugScripting;
-				UnityEditor.EditorUtility.SetDirty(ActiveProfil);
+				EditorUserBuildSettings.allowDebugging = profil.debugScripting;
+				UnityEditor.EditorUtility.SetDirty(profil);
 			}
 
-			var level = (DataBuildSettingProfile.ProfilingLevel)EditorGUILayout.EnumPopup("profiling", ActiveProfil.debugProfiling);
+			var level = (DataBuildSettingProfile.ProfilingLevel)EditorGUILayout.EnumPopup("profiling", profil.debugProfiling);
 
-			if (level != ActiveProfil.debugProfiling)
+			if (level != profil.debugProfiling)
 			{
 				switch (level)
 				{
@@ -144,8 +142,8 @@ namespace fwp.buildor.editor
 						break;
 
 				}
-				ActiveProfil.debugProfiling = level;
-				UnityEditor.EditorUtility.SetDirty(ActiveProfil);
+				profil.debugProfiling = level;
+				UnityEditor.EditorUtility.SetDirty(profil);
 			}
 
 		}
@@ -210,13 +208,14 @@ namespace fwp.buildor.editor
 			GUILayout.Space(20f);
 			GUILayout.Label("outputs", BuildorHelperGuiStyle.gCategoryBold);
 
-			string outputFolder = ActiveProfil.getAbsoluteBuildFolderPath();
+			var profil = BuildHelperBase.getActiveProfile();
+			string outputFolder = profil.getAbsoluteBuildFolderPath();
 
 			WinEdFieldsHelper.drawCopyPastablePath("base path : ", outputFolder);
-			WinEdFieldsHelper.drawCopyPastablePath("app name :", ActiveProfil.getAppName());
-			WinEdFieldsHelper.drawCopyPastablePath("zip name :", ActiveProfil.getZipName());
+			WinEdFieldsHelper.drawCopyPastablePath("app name :", profil.getAppName());
+			WinEdFieldsHelper.drawCopyPastablePath("zip name :", profil.getZipName());
 
-			string fullPath = Path.Combine(outputFolder, ActiveProfil.getAppName());
+			string fullPath = Path.Combine(outputFolder, profil.getAppName());
 			WinEdFieldsHelper.drawCopyPastablePath("full path :", fullPath);
 
 			GUILayout.BeginHorizontal();
@@ -290,8 +289,13 @@ namespace fwp.buildor.editor
 
 		public DataBuildSettingVersion getActiveVersion()
 		{
-			var version = parameters.buildFlags.isPublishingBuild
-				? ActiveProfil.publishVersion : ActiveProfil.internalVersion;
+			DataBuildSettingVersion version = null;
+
+			var profil = BuildHelperBase.getActiveProfile();
+			if (profil != null)
+			{
+				version = parameters.buildFlags.isPublishingBuild ? profil.publishVersion : profil.internalVersion;
+			}
 
 			return version;
 		}

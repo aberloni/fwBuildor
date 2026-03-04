@@ -11,36 +11,29 @@ namespace fwp.buildor.editor
 
         protected override string getSectionTitle() => "Merger";
 
-		protected override DataBuildorScenesMerger fetchProfilInstance()
-		{
-            return win.ActiveProfil.merger;
-		}
+        protected override DataBuildorScenesMerger fetchProfilInstance()
+        {
+            var profil = BuildHelperBase.getActiveProfile();
+            if (profil != null) return profil.merger;
+            return null;
+        }
 
-		/// <summary>
-		/// click apply in editor
-		/// </summary>
-		protected override void applyEditor(DataBuildorScenesMerger value)
+        /// <summary>
+        /// click apply in editor
+        /// </summary>
+        protected override void applyEditor(DataBuildorScenesMerger value)
         {
             value.apply();
         }
 
-		protected override void drawHeader(DataBuildorScenesMerger value)
-		{
-            GUILayout.Label(value.strOneLine());
-		}
-
-		protected override void drawDetails(DataBuildorScenesMerger value)
+        protected override void drawHeader(DataBuildorScenesMerger value)
         {
-			GUILayout.Label(value.stringify());
+            GUILayout.Label(value.strOneLine());
+        }
 
-            /*
-            GUILayout.Label("editor Build Settings scenes");
-            for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
-            {
-                var sc = EditorBuildSettings.scenes[i];
-                GUILayout.Label($"#{i}  {sc.path}");
-            }
-            */
+        protected override void drawDetails(DataBuildorScenesMerger value)
+        {
+            GUILayout.Label(value.stringify());
         }
 
     }
