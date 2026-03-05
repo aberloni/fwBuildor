@@ -450,13 +450,17 @@ namespace fwp.buildor.editor
         }
 
         static DataBuildSettingProfile _active;
-        static public DataBuildSettingProfile getActiveProfile()
+        static public DataBuildSettingProfile getActiveProfile(bool force = false)
         {
-            if (_active != null) return _active;
+            if (!force && _active != null) return _active;
 
             var settings = getScriptableDataBuildSettings();
 
-            if (settings == null) return null;
+            if (settings == null)
+            {
+                if (settings == null) Debug.LogWarning("could not locate any bridge: DataBuildSettingsBridge");
+                return null;
+            }
 
             _active = settings.getPlatformProfil();
             return _active;

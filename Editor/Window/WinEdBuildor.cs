@@ -36,6 +36,10 @@ namespace fwp.buildor.editor
 			if (subSymbols == null) subSymbols = new WinSubScriptableSymbols(this);
 			if (subMergers == null) subMergers = new WinSubMerger(this);
 			if (subLogs == null) subLogs = new WinSubLogs(this);
+
+			var profil = BuildHelperBase.getActiveProfile();
+			if (profil == null) Debug.LogWarning("profil.missing");
+			else Debug.Log("profil:" + profil.name, profil);
 		}
 
 		private void OnFocus()
@@ -77,6 +81,10 @@ namespace fwp.buildor.editor
 			if (profil == null)
 			{
 				GUILayout.Label("this view needs some active profil setup");
+				if (GUILayout.Button("refresh"))
+				{
+					BuildHelperBase.getActiveProfile(true);
+				}
 				return;
 			}
 
