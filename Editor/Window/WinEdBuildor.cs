@@ -162,13 +162,17 @@ namespace fwp.buildor.editor
 
 		void drawSpecificFolder()
 		{
-			string ppref = BuildHelperBase.BuildParameters.pref_specific_folder + "_" + Application.platform;
+			var profil = BuildHelperBase.getActiveProfile();
+
+			string platform = profil.getPlatformUid();
+
+			string ppref = BuildHelperBase.BuildParameters.pref_specific_folder + "_" + platform;
 
 			// force to a specific folder
 			// GUILayout.Label("specific build/", BuildorHelperGuiStyle.gBold);
 
 			string path = EditorPrefs.GetString(ppref);
-			
+
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button(btn_browse, GUILayout.Width(100f)))
 			{
@@ -180,7 +184,7 @@ namespace fwp.buildor.editor
 			}
 			else
 			{
-				WinEdFieldsHelper.editText(Application.platform.ToString(), ppref);
+				WinEdFieldsHelper.editText("platform:" + platform, ppref);
 
 				if (path.Length > 0 && GUILayout.Button("clear", GUILayout.Width(100f)))
 					EditorPrefs.SetString(ppref, string.Empty);
