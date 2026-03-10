@@ -4,12 +4,12 @@ using System.IO;
 using UnityEngine;
 using UnityEditor;
 
+using fwp.version;
+using fwp.logs.editor;
+using fwp.logs;
+
 namespace fwp.buildor.editor
 {
-	using fwp.version;
-	using fwp.logs.editor;
-	using fwp.logs;
-
 	public class WinEdBuildor : EditorWindow
 	{
 		[MenuItem(BuildorVerbosity._buildor_menuitem_path + "buildor (win)", false, 0)]
@@ -107,6 +107,8 @@ namespace fwp.buildor.editor
 
 		void drawBuildFlags()
 		{
+			if (parameters == null) return;
+
 			GUILayout.Label("build flags", BuildorHelperGuiStyle.gCategoryBold);
 
 			parameters.buildFlags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
@@ -156,28 +158,32 @@ namespace fwp.buildor.editor
 
 		}
 
+		readonly GUIContent btn_browse = new GUIContent("browse");
+
 		void drawSpecificFolder()
 		{
+			string ppref = BuildHelperBase.BuildParameters.pref_specific_folder + "_" + Application.platform;
+
 			// force to a specific folder
 			// GUILayout.Label("specific build/", BuildorHelperGuiStyle.gBold);
 
-			string path = EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_specific_folder);
-
+			string path = EditorPrefs.GetString(ppref);
+			
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("browse", GUILayout.Width(100f)))
+			if (GUILayout.Button(btn_browse, GUILayout.Width(100f)))
 			{
-				string _path = EditorUtility.OpenFolderPanel("Select export folder", path, "");
+				string _path = EditorUtility.OpenFolderPanel("Select export folder", path, string.Empty);
 				if (path != _path)
 				{
-					EditorPrefs.SetString(BuildHelperBase.BuildParameters.pref_specific_folder, _path);
+					EditorPrefs.SetString(ppref, _path);
 				}
 			}
 			else
 			{
-				WinEdFieldsHelper.editText("custom", BuildHelperBase.BuildParameters.pref_specific_folder);
+				WinEdFieldsHelper.editText(Application.platform.ToString(), ppref);
 
 				if (path.Length > 0 && GUILayout.Button("clear", GUILayout.Width(100f)))
-					EditorPrefs.SetString(BuildHelperBase.BuildParameters.pref_specific_folder, string.Empty);
+					EditorPrefs.SetString(ppref, string.Empty);
 
 			}
 			GUILayout.EndHorizontal();
