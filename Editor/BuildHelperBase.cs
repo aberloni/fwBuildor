@@ -77,6 +77,8 @@ namespace fwp.buildor.editor
 
         public string Platform => profil.getPlatformUid();
 
+        public DataBuildSettingVersion Version => flags.isPublishingBuild ? profil.publishVersion : profil.internalVersion;
+
         /// <summary>
         /// path where exe is dumped
         /// </summary>

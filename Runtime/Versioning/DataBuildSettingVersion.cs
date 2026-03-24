@@ -1,9 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
+
 using UnityEditor;
-using System.Diagnostics.Contracts;
-using System.Linq;
+using System.Runtime.ExceptionServices;
 
 /// <summary>
 /// this is meant to store an abstract of the version number of the app
@@ -23,6 +24,11 @@ namespace fwp.version
 		[Header("version")]
 		public string version = "0.0.1";
 		public int buildNumber = 1;
+
+		[Header("timestamp")]
+
+		public string timestamp_incr = "-never-";
+		public string timestamp_build = "-never-";
 
 		/// <summary>
 		/// x.y.z
@@ -51,6 +57,30 @@ namespace fwp.version
 			return output.ToArray();
 		}
 
+		virtual public string getFormated()
+		{
+			return version + "@" + buildNumber;
+		}
+
+		public string getTimestamps()
+		{
+			return "incr? " + timestamp_incr + " & build? " + timestamp_build;
+		}
+
+#if UNITY_EDITOR
+		public void event_build()
+		{
+			timestamp_build = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+			EditorUtility.SetDirty(this);
+		}
+
+		void event_incr()
+		{
+			timestamp_incr = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+			EditorUtility.SetDirty(this);
+		}
+
 		public void incrementMajor()
 		{
 			int[] v = getDataVersionInts();
@@ -60,11 +90,10 @@ namespace fwp.version
 			if (v.Length > 2) v[2] = 0;
 
 			buildNumber++;
-			applyInts(v);
+			injectInts(v);
 
-#if UNITY_EDITOR
 			applyVersionToEditor();
-#endif
+			event_incr(); // +dirty
 		}
 
 		public void incrementMinor()
@@ -83,11 +112,10 @@ namespace fwp.version
 			if (v.Length > 2) v[2] = 0;
 
 			buildNumber++;
-			applyInts(v);
+			injectInts(v);
 
-#if UNITY_EDITOR
 			applyVersionToEditor();
-#endif
+			event_incr(); // +dirty
 		}
 
 		public void incrementFix()
@@ -105,37 +133,23 @@ namespace fwp.version
 			v[2]++;
 
 			buildNumber++;
-			applyInts(v);
+			injectInts(v);
 
-#if UNITY_EDITOR
 			applyVersionToEditor();
-#endif
+			event_incr(); // +dirty
 		}
 
-		void applyInts(int[] vs)
+		void injectInts(int[] vs)
 		{
 			version = vs[0] + "." + vs[1] + "." + vs[2];
-
-#if UNITY_EDITOR
-			//make that scriptable dirty to be saved
-			EditorUtility.SetDirty(this);
-#endif
 		}
 
-		virtual public string getFormated()
-		{
-			return version + "@" + buildNumber;
-		}
-
-#if UNITY_EDITOR
 		/// <summary>
 		/// describe how to inject version into editor 
 		/// project settings > player settings
 		/// </summary>
 		abstract public void applyVersionToEditor();
-#endif
 
-#if UNITY_EDITOR
 		static public DataBuildSettingVersion[] getScriptables(string filter = null)
 		{
 			string[] all = AssetDatabase.FindAssets("t:DataBuildSettingVersion");
@@ -151,15 +165,19 @@ namespace fwp.version
 					if (!path.Contains(filter)) continue;
 				}
 
-				Object obj = AssetDatabase.LoadAssetAtPath(path, typeof(DataBuildSettingVersion));
+				UnityEngine.Object obj = AssetDatabase.LoadAssetAtPath(path, typeof(DataBuildSettingVersion));
 				DataBuildSettingVersion data = obj as DataBuildSettingVersion;
 				if (data != null) ret.Add(data);
 			}
 			return ret.ToArray();
 		}
 
-		static public DataBuildSettingVersion getScriptable(string filter = null) 
-			=> getScriptables(filter).FirstOrDefault();
+		static public DataBuildSettingVersion getScriptable(string filter = null)
+		{
+			var ret = getScriptables(filter);
+			if (ret.Length > 0) return ret[0];
+			return null;
+		}
 #endif
 
 	}

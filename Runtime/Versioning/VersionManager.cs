@@ -132,18 +132,26 @@ namespace fwp.version
 
 
         /// <summary>
-        /// ce qui est dans les champs correspondant / platforms
-        /// PAS dans les scriptables
+        /// logs data from unity version setup
+        /// notbuildor version scriptables
         /// </summary>
-        static public void logPlayerSettingsVersion() => logXYZVersion(getPlayerSettingsVersion(), getPlayerSettingsBuildNumber());
+        static public void logPlayerSettingsVersion()
+        {
+            logXYZVersion(getPlayerSettingsVersion(), getPlayerSettingsBuildNumber());
+        }
 
         static public void logXYZVersion(DataBuildSettingVersion v) => logXYZVersion(v.version, v.buildNumber.ToString());
-        static public void logXYZVersion(string XYZ, string inc = "")
+        static void logXYZVersion(string XYZ, string inc = "")
         {
             string output = getFormatedVersion(splitVersion(XYZ));
             if (inc.Length > 0) output += ":" + inc;
 
             Debug.Log($"<b>{output}</b>");
+        }
+
+        static public void logVersionStamps(DataBuildSettingVersion v)
+        {
+            Debug.Log("v.timestamps " + v.getTimestamps());
         }
 
         /// <summary>

@@ -311,6 +311,8 @@ namespace fwp.buildor.editor
 					return;
 				}
 
+				helper.Version.event_build();
+
 				helper.launch();
 			}
 
@@ -318,15 +320,9 @@ namespace fwp.buildor.editor
 
 		public DataBuildSettingVersion getActiveVersion()
 		{
-			DataBuildSettingVersion version = null;
-
 			var profil = BuildHelperBase.getActiveProfile();
-			if (profil != null)
-			{
-				version = helper.flags.isPublishingBuild ? profil.publishVersion : profil.internalVersion;
-			}
-
-			return version;
+			if (profil != null) return helper.Version;
+			return null;
 		}
 
 		/// <summary>

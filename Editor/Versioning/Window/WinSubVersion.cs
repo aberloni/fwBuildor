@@ -50,6 +50,9 @@ namespace fwp.version.editor
             }
             GUILayout.EndHorizontal();
 
+            GUILayout.Label("last incremented: " + version.timestamp_incr);
+            GUILayout.Label("last built: " + version.timestamp_build);
+
             GUILayout.Label("version manager output : " + VersionManager.getDisplayVersion());
 
             GUILayout.Space(10f);
@@ -78,23 +81,6 @@ namespace fwp.version.editor
             Debug.Log(path);
 
             File.WriteAllText(path, item.getFormated());
-
-            /*
-			byte[] output = null;
-            try
-            {
-				output = SaveFileSystem.serializeObject(item);
-
-				path = System.IO.Path.Combine(path, "version.md");
-				Debug.Log(path);
-
-				SaveFileSystemWindows.fsys.writeBytes(path, output);
-			}
-            catch
-            {
-                Debug.LogError("cant serialize : " + item, item);
-            }
-            */
         }
     }
 
