@@ -19,18 +19,25 @@ namespace fwp.buildor.editor
 			win.titleContent = new GUIContent("Buildor");
 		}
 
-		Vector2 scroll;
+		Vector2 _scroll;
+
+		public BuildHelperBase helper;
 
 		WinSubVersionBuildor subVersion;
 		WinSubScriptableSymbols subSymbols;
 		WinSubMerger subMergers;
 		WinSubLogs subLogs;
 
-		public BuildHelperBase.BuildParameters parameters;
+		/// <summary>
+		/// this helper manage process during building
+		/// </summary>
+		virtual protected BuildHelperBase createBuildHelper()
+		{
+			return new BuildHelperBase();
+		}
 
 		private void OnEnable()
 		{
-			if (parameters == null) parameters = new BuildHelperBase.BuildParameters();
 
 			if (subVersion == null) subVersion = new();
 			if (subSymbols == null) subSymbols = new WinSubScriptableSymbols(this);
@@ -40,6 +47,8 @@ namespace fwp.buildor.editor
 			var profil = BuildHelperBase.getActiveProfile();
 			if (profil == null) Debug.LogWarning("profil.missing");
 			else Debug.Log("profil:" + profil.name, profil);
+
+			if (helper == null) helper = createBuildHelper();
 		}
 
 		private void OnFocus()
@@ -54,7 +63,7 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.Label(_title, BuildorHelperGuiStyle.gWinTitle);
 
-			scroll = GUILayout.BeginScrollView(scroll);
+			_scroll = GUILayout.BeginScrollView(_scroll);
 
 			drawProfil();
 
@@ -107,11 +116,11 @@ namespace fwp.buildor.editor
 
 		void drawBuildFlags()
 		{
-			if (parameters == null) return;
+			if (helper == null) return;
 
 			GUILayout.Label("build flags", BuildorHelperGuiStyle.gCategoryBold);
 
-			parameters.buildFlags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
+			helper.flags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
 
 			var profil = BuildHelperBase.getActiveProfile();
 			if (profil == null) return;
@@ -158,15 +167,42 @@ namespace fwp.buildor.editor
 
 		}
 
-		readonly GUIContent btn_browse = new GUIContent("browse");
+		/// <summary>
+		/// change destination folder
+		/// </summary>
+		void drawPathModifiers()
+		{
+			GUILayout.Label("path modifiers", BuildorHelperGuiStyle.gCategoryBold);
 
+			GUILayout.Label("build/ modifiers", BuildorHelperGuiStyle.gBold);
+			// do not provide current value to drawer, must regen value on opening from ppref
+			GUILayout.BeginHorizontal();
+			WinEdFieldsHelper.drawToggle("prefix", BuildHelperBase.pref_include_prefix);
+			WinEdFieldsHelper.drawToggle("platform", BuildHelperBase.pref_include_platform);
+			if (!BuildHelperBase.IsFolderOverride)
+			{
+				WinEdFieldsHelper.drawToggle("date", BuildHelperBase.pref_include_date);
+				WinEdFieldsHelper.drawToggle("version", BuildHelperBase.pref_include_version);
+			}
+			GUILayout.EndHorizontal();
+
+			WinEdFieldsHelper.editText("suffix", BuildHelperBase.pref_suffix);
+
+			drawSpecificFolder();
+		}
+
+		readonly GUIContent gui_btn_browse = new GUIContent("browse");
+
+		/// <summary>
+		/// browse for specific folder
+		/// </summary>
 		void drawSpecificFolder()
 		{
 			var profil = BuildHelperBase.getActiveProfile();
 
 			string platform = profil.getPlatformUid();
 
-			string ppref = BuildHelperBase.BuildParameters.pref_specific_folder + "_" + platform;
+			string ppref = BuildHelperBase.pref_specific_folder + "_" + platform;
 
 			// force to a specific folder
 			// GUILayout.Label("specific build/", BuildorHelperGuiStyle.gBold);
@@ -174,12 +210,12 @@ namespace fwp.buildor.editor
 			string path = EditorPrefs.GetString(ppref);
 
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button(btn_browse, GUILayout.Width(100f)))
+			if (GUILayout.Button(gui_btn_browse, GUILayout.Width(100f)))
 			{
-				string _path = EditorUtility.OpenFolderPanel("Select export folder", path, string.Empty);
+				string _path = EditorUtility.OpenFolderPanel("Select export folder", helper.BuildPath, string.Empty);
 				if (path != _path)
 				{
-					EditorPrefs.SetString(ppref, _path);
+					helper.BuildPath = _path;
 				}
 			}
 			else
@@ -187,54 +223,32 @@ namespace fwp.buildor.editor
 				WinEdFieldsHelper.editText("platform:" + platform, ppref);
 
 				if (path.Length > 0 && GUILayout.Button("clear", GUILayout.Width(100f)))
-					EditorPrefs.SetString(ppref, string.Empty);
-
+				{
+					helper.BuildPath = string.Empty;
+				}
 			}
 			GUILayout.EndHorizontal();
-		}
-
-		void drawPathModifiers()
-		{
-			GUILayout.Label("path modifiers", BuildorHelperGuiStyle.gCategoryBold);
-
-
-			GUILayout.Label("build/ modifiers", BuildorHelperGuiStyle.gBold);
-			// do not provide current value to drawer, must regen value on opening from ppref
-			GUILayout.BeginHorizontal();
-			WinEdFieldsHelper.drawToggle("prefix", BuildHelperBase.BuildParameters.pref_include_prefix);
-			WinEdFieldsHelper.drawToggle("platform", BuildHelperBase.BuildParameters.pref_include_platform);
-			if (!BuildHelperBase.BuildParameters.IsFolderOverride)
-			{
-				WinEdFieldsHelper.drawToggle("date", BuildHelperBase.BuildParameters.pref_include_date);
-				WinEdFieldsHelper.drawToggle("version", BuildHelperBase.BuildParameters.pref_include_version);
-			}
-			GUILayout.EndHorizontal();
-
-			WinEdFieldsHelper.editText("suffix", BuildHelperBase.BuildParameters.pref_suffix);
-
-			drawSpecificFolder();
 		}
 
 		void drawSuccess()
 		{
 			GUILayout.Label("on success", BuildorHelperGuiStyle.gCategoryBold);
 
-			parameters.buildFlags.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
-			parameters.buildFlags.zipOnSuccess = WinEdFieldsHelper.drawToggle("zip", "zip");
-			parameters.buildFlags.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
+			helper.flags.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
+			helper.flags.zipOnSuccess = WinEdFieldsHelper.drawToggle("zip", "zip");
+			helper.flags.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
 
 			GUILayout.Space(20f);
 			GUILayout.Label("outputs", BuildorHelperGuiStyle.gCategoryBold);
 
-			var profil = BuildHelperBase.getActiveProfile();
-			string outputFolder = profil.getAbsoluteBuildFolderPath();
+			GUILayout.BeginHorizontal();
+			WinEdFieldsHelper.drawCopyPastablePath("app subpath : ", helper.profil.getRelativeBuildFolderPath(), false);
+			WinEdFieldsHelper.drawCopyPastablePath("app name :", helper.profil.getAppName(), false);
+			GUILayout.EndHorizontal();
 
-			WinEdFieldsHelper.drawCopyPastablePath("base path : ", outputFolder);
-			WinEdFieldsHelper.drawCopyPastablePath("app name :", profil.getAppName());
-			WinEdFieldsHelper.drawCopyPastablePath("zip name :", profil.getZipName());
+			WinEdFieldsHelper.drawCopyPastablePath("export path :", helper.BuildPath);
 
-			string fullPath = Path.Combine(outputFolder, profil.getAppName());
-			WinEdFieldsHelper.drawCopyPastablePath("full path :", fullPath);
+			WinEdFieldsHelper.drawCopyPastablePath("zip name :", helper.profil.getZipName());
 
 			GUILayout.BeginHorizontal();
 
@@ -250,19 +264,19 @@ namespace fwp.buildor.editor
 
 			if (GUILayout.Button("(folder) build output "))
 			{
-				BuildHelperBase.openBuildFolder(outputFolder); // win.button
+				BuildHelperBase.openBuildFolder(helper.FullPath); // win.button
 			}
 
 			if (GUILayout.Button("exe last build"))
 			{
-				winExecute(fullPath); // win.button
+				winExecute(helper.FullPath); // win.button
 			}
 
 			GUILayout.EndHorizontal();
 
 		}
 
-		string getBuildLabel() => parameters.buildFlags.autorun ? "SHIPIT" : "BUILD";
+		string getBuildLabel() => helper.flags.autorun ? "SHIPIT" : "BUILD";
 
 		void drawBuildButton()
 		{
@@ -272,6 +286,8 @@ namespace fwp.buildor.editor
 				GUILayout.Label("+ version : " + version.version);
 			}
 
+			GUILayout.Label("+ path : " + helper.FullPath);
+
 			DataBuildorScenesMerger merger = subMergers.Value;
 			if (merger != null) GUILayout.Label("+ merger : " + merger.strOneLine());
 
@@ -280,6 +296,7 @@ namespace fwp.buildor.editor
 
 			GUILayout.Space(20f);
 
+			/// BUILD
 			if (GUILayout.Button(getBuildLabel(), BuildorHelperGuiStyle.gButtonBig))
 			{
 				Debug.Log("[BUILD] apply.merger:" + merger.strOneLine());
@@ -288,21 +305,15 @@ namespace fwp.buildor.editor
 				Debug.Log("[BUILD] apply.logs:" + logs);
 				logs?.apply();
 
-				var helper = createBuildHelper();
 				if (helper == null)
 				{
 					Debug.LogError("must provide helper");
 					return;
 				}
 
-				helper.launch(parameters);
+				helper.launch();
 			}
 
-		}
-
-		virtual protected BuildHelperBase createBuildHelper()
-		{
-			return new BuildHelperBase();
 		}
 
 		public DataBuildSettingVersion getActiveVersion()
@@ -312,7 +323,7 @@ namespace fwp.buildor.editor
 			var profil = BuildHelperBase.getActiveProfile();
 			if (profil != null)
 			{
-				version = parameters.buildFlags.isPublishingBuild ? profil.publishVersion : profil.internalVersion;
+				version = helper.flags.isPublishingBuild ? profil.publishVersion : profil.internalVersion;
 			}
 
 			return version;
@@ -395,7 +406,7 @@ namespace fwp.buildor.editor
 			process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
 			if (args.Length > 0) process.StartInfo.Arguments = args;
 
-			Debug.Log("win.exe : " + processPath);
+			Debug.Log("winExecute @ " + processPath);
 
 			//https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=netframework-4.7.2#System_Diagnostics_Process_Start_System_String_System_String_
 			process.Start();

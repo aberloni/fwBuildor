@@ -80,11 +80,11 @@ namespace fwp.buildor.editor
             {
                 string ret = string.Empty;
 
-                if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_specific_folder_steam)) ret = "steam";
-                else if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_specific_folder_switch)) ret = "switch";
+                if (EditorPrefs.GetBool(BuildHelperBase.pref_specific_folder_steam)) ret = "steam";
+                else if (EditorPrefs.GetBool(BuildHelperBase.pref_specific_folder_switch)) ret = "switch";
                 else
                 {
-                    ret = EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_specific_folder);
+                    ret = EditorPrefs.GetString(BuildHelperBase.pref_specific_folder);
                 }
 
                 if (string.IsNullOrEmpty(ret))
@@ -97,30 +97,23 @@ namespace fwp.buildor.editor
         }
 
         /// <summary>
-        /// output builds/ folder (next to Assets/)
+        /// solve subfolder
         /// </summary>
-        virtual public string getAbsoluteBuildFolderPath()
+        virtual public string getRelativeBuildFolderPath()
         {
-            // path/to/Assets/
-            string baseProjectPath = Application.dataPath;
-            baseProjectPath = baseProjectPath.Substring(0, baseProjectPath.LastIndexOf('/')); // remove Assets/
-
-            // +builds/
-            baseProjectPath = Path.Combine(baseProjectPath, SubFolder);
-
             string sub = string.Empty;
 
-            if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_prefix)) sub += build_prefix + path_separator;
-            if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_platform)) sub += getPlatformUid() + path_separator;
+            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_prefix)) sub += build_prefix + path_separator;
+            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_platform)) sub += getPlatformUid() + path_separator;
 
             // anything dynamic
-            if (!BuildHelperBase.BuildParameters.IsFolderOverride)
+            if (!BuildHelperBase.IsFolderOverride)
             {
-                if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_date)) sub += getFullDate() + path_separator;
-                if (EditorPrefs.GetBool(BuildHelperBase.BuildParameters.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
+                if (EditorPrefs.GetBool(BuildHelperBase.pref_include_date)) sub += getFullDate() + path_separator;
+                if (EditorPrefs.GetBool(BuildHelperBase.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
             }
 
-            sub += EditorPrefs.GetString(BuildHelperBase.BuildParameters.pref_suffix);
+            sub += EditorPrefs.GetString(BuildHelperBase.pref_suffix);
 
             // remove last "__"
             if (sub.EndsWith(path_separator))
@@ -131,9 +124,7 @@ namespace fwp.buildor.editor
             sub += getFlagsString();
 
             // builds/(sub/)
-            baseProjectPath = Path.Combine(baseProjectPath, sub);
-
-            return baseProjectPath;
+            return Path.Combine(SubFolder, sub);
         }
 
         /// <summary>
@@ -209,7 +200,7 @@ namespace fwp.buildor.editor
 
         public string getZipName()
         {
-            string zipName = getAbsoluteBuildFolderPath();
+            string zipName = getRelativeBuildFolderPath();
 
             zipName = zipName.Substring(zipName.LastIndexOf("/") + 1);
 

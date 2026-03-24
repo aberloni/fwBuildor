@@ -43,53 +43,96 @@ namespace fwp.buildor.editor
     using fwp.version.editor;
     using fwp.version;
 
+    [System.Serializable]
+    public struct BuildHelperFlags
+    {
+        public bool autorun;
+        public bool incVersion;
+        public bool isPublishingBuild;
+
+        public bool openFolderOnSuccess;
+        public bool zipOnSuccess;
+    }
+
     /// <summary>
     /// regroup all parameters used during build process
     /// encapsulate the build process
     /// </summary>
     public class BuildHelperBase
     {
-        BuildPlayerOptions buildPlayerOptions;
+        public const string pref_prefix = "buildor_";
 
-        IEnumerator preProc = null;
-        IEnumerator buildProc = null;
+        static public readonly string pref_uid = pref_prefix + "." + Application.productName + "." + Application.productName;
 
-        DataBuildSettingsBridge data = null;
+        static public readonly string pref_include_prefix = pref_uid + "prefix";
+        static public readonly string pref_include_platform = pref_uid + "platform";
+        static public readonly string pref_include_date = pref_uid + "date";
+        static public readonly string pref_include_version = pref_uid + "version";
+        static public readonly string pref_suffix = pref_uid + "suffix";
+        static public readonly string pref_specific_folder = pref_uid + "specific_folder";
+        static public readonly string pref_specific_folder_steam = pref_uid + "folder_steam";
+        static public readonly string pref_specific_folder_switch = pref_uid + "folder_switch";
 
-        BuildParameters _parameters;
-        BuildSummary? summary = null;
+        public static bool IsFolderOverride => EditorPrefs.GetString(pref_specific_folder).Length > 0;
 
-        public class BuildParameters
+        public string Platform => profil.getPlatformUid();
+
+        /// <summary>
+        /// path where exe is dumped
+        /// </summary>
+        public string BuildPath
         {
-            public const string pref_prefix = "buildor_";
+            get
+            {
+                string path = EditorPrefs.GetString(pref_specific_folder + "_" + Platform, string.Empty);
+                if (!string.IsNullOrEmpty(path)) return path;
 
-            static public readonly string pref_uid = pref_prefix + "." + Application.productName + "." + Application.productName;
-
-            static public readonly string pref_include_prefix = pref_uid + "prefix";
-            static public readonly string pref_include_platform = pref_uid + "platform";
-            static public readonly string pref_include_date = pref_uid + "date";
-            static public readonly string pref_include_version = pref_uid + "version";
-            static public readonly string pref_suffix = pref_uid + "suffix";
-            static public readonly string pref_specific_folder = pref_uid + "specific_folder";
-            static public readonly string pref_specific_folder_steam = pref_uid + "folder_steam";
-            static public readonly string pref_specific_folder_switch = pref_uid + "folder_switch";
-
-            public static bool IsFolderOverride => EditorPrefs.GetString(pref_specific_folder).Length > 0;
-
-            /// <summary>
-            /// all external additionnal process to exec
-            /// </summary>
-            public BuildHelperFlags buildFlags = new BuildHelperFlags();
+                return Path.Combine(
+                    Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/")),
+                    profil.getRelativeBuildFolderPath());
+            }
+            set
+            {
+                EditorPrefs.SetString(pref_specific_folder + "_" + Platform, value);
+            }
         }
 
-        public void launch(BuildParameters param)
-        {
-            _parameters = param;
+        /// <summary>
+        /// root/path/build.ext
+        /// </summary>
+        public string FullPath => Path.Combine(BuildPath, profil.getAppName());
 
-            data = getScriptableDataBuildSettings();
+        struct Building
+        {
+            public IEnumerator preProc;
+            public IEnumerator buildProc;
+            public BuildSummary? summary;
+        }
+
+        Building build;
+
+        /// <summary>
+        /// various bools that will setup building
+        /// </summary>
+        public BuildHelperFlags flags;
+        public BuildPlayerOptions buildPlayerOptions;
+        public DataBuildSettingProfile profil;
+
+        public BuildHelperBase()
+        {
+            profil = BuildHelperBase.getActiveProfile();
+            if (profil == null)
+            {
+                Debug.LogError("no active profil fetched ?");
+            }
+        }
+
+        public void launch()
+        {
+            // data = getScriptableDataBuildSettings();
             log(" <<< <b>starting build process</b> >>>");
 
-            preProc = preBuildProcess();
+            build.preProc = preBuildProcess();
 
             EditorApplication.update += update_check_process;
         }
@@ -101,26 +144,26 @@ namespace fwp.buildor.editor
         {
             //Debug.Log("it " + Time.realtimeSinceStartup);
 
-            if (preProc != null)
+            if (build.preProc != null)
             {
-                if (!preProc.MoveNext())
+                if (!build.preProc.MoveNext())
                 {
-                    preProc = null;
+                    build.preProc = null;
 
                     log("build.preproc.done @ " + Time.realtimeSinceStartup);
 
-                    buildProc = buildProcess();
+                    build.buildProc = buildProcess();
                 }
                 return;
             }
 
-            if (buildProc != null)
+            if (build.buildProc != null)
             {
-                if (!buildProc.MoveNext())
+                if (!build.buildProc.MoveNext())
                 {
-                    log("build.done @ " + Time.realtimeSinceStartup);
+                    log("build.yield.done @ " + Time.realtimeSinceStartup);
 
-                    buildProc = null;
+                    build.buildProc = null;
 
                 }
                 return;
@@ -179,57 +222,49 @@ namespace fwp.buildor.editor
 
         virtual protected void build_prep()
         {
-            log("now building app ; inc version ? " + _parameters.buildFlags.incVersion);
+            log("now building app ; inc version ? " + flags.incVersion);
 
             buildPlayerOptions = new BuildPlayerOptions();
 
             //this will apply
-            if (_parameters.buildFlags.incVersion)
+            if (flags.incVersion)
             {
-                if (_parameters.buildFlags.isPublishingBuild)
+                if (flags.isPublishingBuild)
                     VersionIncrementor.incPublishFix();
                 else
                     VersionIncrementor.incInternalFix();
             }
 
-            DataBuildSettingProfile profile = data.getPlatformProfil();
-
             //apply everything (after inc)
-            profile.applyProfilEditor(_parameters.buildFlags.isPublishingBuild);
+            profil.applyProfilEditor(flags.isPublishingBuild);
 
             //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
             buildPlayerOptions.scenes = getBuildSettingsScenePaths();
 
             // === CREATE SOLVED BUILD PATH
 
-            string absPath = profile.getAbsoluteBuildFolderPath();
-
-            bool pathExists = Directory.Exists(absPath);
-
-            if (!pathExists)
+            if (!Directory.Exists(BuildPath))
             {
-                Directory.CreateDirectory(absPath);
-                log("folder.absPath: " + absPath);
+                Directory.CreateDirectory(BuildPath);
+                log("folder: " + BuildPath);
             }
 
             // === INJECTING SOLVED PATH TO BUILD SETTINGS
 
             //[project]_[version].[ext]
-            absPath = Path.Combine(absPath, profile.getAppName());
-
-            log("BuildHelper, saving build at : " + absPath);
-            buildPlayerOptions.locationPathName = absPath;
+            buildPlayerOptions.locationPathName = FullPath;
+            log("BuildHelper, saving build at : " + buildPlayerOptions.locationPathName);
 
             //will setup android or ios based on unity build settings target platform
             buildPlayerOptions.target = EditorUserBuildSettings.activeBuildTarget;
 
-            if (profile.developement_build) buildPlayerOptions.options |= BuildOptions.Development;
-            if (profile.debugScripting)
+            if (profil.developement_build) buildPlayerOptions.options |= BuildOptions.Development;
+            if (profil.debugScripting)
             {
                 buildPlayerOptions.options |= BuildOptions.AllowDebugging;
             }
 
-            if (_parameters.buildFlags.autorun)
+            if (flags.autorun)
             {
                 buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
             }
@@ -242,8 +277,6 @@ namespace fwp.buildor.editor
         {
             // https://docs.unity3d.com/ScriptReference/Build.Reporting.BuildSummary.html
 
-            DataBuildSettingProfile profile = data.getPlatformProfil();
-
             if (buildPlayerOptions.options.HasFlag(BuildOptions.AutoRunPlayer))
             {
                 log("+AUTORUN");
@@ -255,25 +288,25 @@ namespace fwp.buildor.editor
             //      BUILD
 
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
-            summary = report.summary;
+            build.summary = report.summary;
 
-            switch (summary.Value.result)
+            switch (build.summary.Value.result)
             {
                 case BuildResult.Succeeded:
 
-                    onSuccess(summary.Value);
+                    onSuccess(build.summary.Value);
 
-                    if (_parameters.buildFlags.openFolderOnSuccess)
+                    if (flags.openFolderOnSuccess)
                     {
-                        log($"OPEN FOLDER of build : {summary.Value.outputPath}");
-                        openBuildFolder(summary.Value.outputPath); // success.open
+                        log($"+OPEN FOLDER of build : {build.summary.Value.outputPath}");
+                        openBuildFolder(build.summary.Value.outputPath); // success.open
                     }
 
-                    if (_parameters.buildFlags.zipOnSuccess)
+                    if (flags.zipOnSuccess)
                     {
-                        string zipName = profile.getZipName();
-                        log($"ZIP {summary.Value.outputPath}@{zipName}");
-                        zipBuildFolder(summary.Value.outputPath, zipName);
+                        string zipName = profil.getZipName();
+                        log($"+ZIP {build.summary.Value.outputPath}@{zipName}");
+                        zipBuildFolder(build.summary.Value.outputPath, zipName);
                     }
 
 
@@ -292,9 +325,9 @@ namespace fwp.buildor.editor
                 case BuildResult.Cancelled:
                 case BuildResult.Unknown:
                 default:
-                    Debug.LogError($"BuildResult : Helper Build : {summary.Value.result}");
-                    Debug.LogError("options : " + summary.Value.options);
-                    Debug.LogError("output path : " + summary.Value.outputPath);
+                    Debug.LogError($"BuildResult : Helper Build : {build.summary.Value.result}");
+                    Debug.LogError("options : " + build.summary.Value.options);
+                    Debug.LogError("output path : " + build.summary.Value.outputPath);
                     break;
             }
         }
@@ -405,7 +438,7 @@ namespace fwp.buildor.editor
         protected void log(string msg)
         {
             string ret = "[BUILD]";
-            if (summary != null) ret += " (" + summary.Value.result + ")";
+            if (build.summary != null) ret += " (" + build.summary.Value.result + ")";
             ret += " : " + msg;
             Debug.Log(ret);
         }

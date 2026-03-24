@@ -7,11 +7,11 @@ namespace fwp.buildor.editor
 {
 	static public class WinEdFieldsHelper
 	{
-		static public void drawCopyPastablePath(string label, string path)
+		static public void drawCopyPastablePath(string label, string path, bool useCopy = true)
 		{
 			GUILayout.BeginHorizontal();
+			if (useCopy && GUILayout.Button("copy", GUILayout.Width(70f))) EditorGUIUtility.systemCopyBuffer = path;
 			drawDisabledText(label, path); // read only fields
-			if (GUILayout.Button("copy", GUILayout.Width(70f))) EditorGUIUtility.systemCopyBuffer = path;
 			GUILayout.EndHorizontal();
 		}
 
