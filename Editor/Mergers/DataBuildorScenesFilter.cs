@@ -17,6 +17,16 @@ using UnityEditor;
 [CreateAssetMenu(menuName = "buildor/merger/+filter", order = 100)]
 public class DataBuildorScenesFilter : ScriptableObject
 {
+    /// <summary>
+    /// only scenes within Assets/
+    /// </summary>
+    static public bool only_assets = true;
+
+    /// <summary>
+    /// exclude scenes from Packages/
+    /// </summary>
+    static public bool exclude_packages = true;
+
     [Header("params")]
 
     public bool recordFromBuildSettings;
@@ -35,7 +45,7 @@ public class DataBuildorScenesFilter : ScriptableObject
     public string stringify()
     {
         string ret = name;
-        foreach(var p in paths)
+        foreach (var p in paths)
         {
             ret += "\n  " + p;
         }
@@ -77,7 +87,7 @@ public class DataBuildorScenesFilter : ScriptableObject
         List<string> tmp = new List<string>();
 
         List<string> scenesPaths = new List<string>();
-        if(recordFromBuildSettings)
+        if (recordFromBuildSettings)
         {
             var edScenes = EditorBuildSettings.scenes;
             foreach (var sc in edScenes)
@@ -95,20 +105,20 @@ public class DataBuildorScenesFilter : ScriptableObject
             bool toAdd = includesAND;
 
             // must include ALL
-            if(includesFilter != null)
+            if (includesFilter != null)
             {
-                foreach(string filter in includesFilter)
+                foreach (string filter in includesFilter)
                 {
                     if (filter.Length <= 0) continue;
-                    
-                    if(includesAND && !path.Contains(filter)) toAdd = false;
-                    else if(!includesAND && path.Contains(filter)) toAdd = true;
+
+                    if (includesAND && !path.Contains(filter)) toAdd = false;
+                    else if (!includesAND && path.Contains(filter)) toAdd = true;
                 }
             }
 
             bool toExclude = excludesAND;
 
-            if(excludesFilter != null)
+            if (excludesFilter != null)
             {
                 foreach (string exclude in excludesFilter)
                 {
@@ -143,13 +153,32 @@ public class DataBuildorScenesFilter : ScriptableObject
             Debug.LogWarning("asking for scene but none ?");
         }
 
+        const string path_assets = "Assets/";
+        const string path_packages = "Packages/";
+
+        List<string> ret = new();
         //replace GUID by full path
         for (int i = 0; i < paths.Length; i++)
         {
-            paths[i] = AssetDatabase.GUIDToAssetPath(paths[i]);
+            string _path = AssetDatabase.GUIDToAssetPath(paths[i]);
+
+            if (only_assets && !_path.StartsWith(path_assets))
+            {
+                Debug.LogWarning($"skipped: include:{path_assets} ? {_path}");
+                continue;
+            }
+
+            if (exclude_packages && _path.StartsWith(path_packages))
+            {
+                Debug.LogWarning($"skipped: exclude:{path_packages} ? {_path}");
+                continue;
+            }
+
+            Debug.Log("+" + _path);
+            ret.Add(_path);
         }
 
-        return paths;
+        return ret.ToArray();
     }
 #endif
 
@@ -162,8 +191,8 @@ public class DataBuildorScenesFilterCustom : Editor
     public override void OnInspectorGUI()
     {
         var t = target as DataBuildorScenesFilter;
-        
-        if(GUILayout.Button("add to build settings"))
+
+        if (GUILayout.Button("add to build settings"))
         {
             t.add();
         }
