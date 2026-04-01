@@ -9,15 +9,17 @@ namespace fwp.buildor.editor
 {
 	public class WinEdBuildor : EditorWindow
 	{
+		const string ppref_publish = "publish";
+
 		static public PublishLevel PublishLevel
 		{
 			get
 			{
-				return (PublishLevel)EditorPrefs.GetInt("publish", (int)PublishLevel.intern);
+				return (PublishLevel)PlayerPrefs.GetInt(ppref_publish, (int)PublishLevel.intern);
 			}
 			set
 			{
-				EditorPrefs.SetInt("publish", (int)value);
+				PlayerPrefs.SetInt(ppref_publish, (int)value);
 			}
 		}
 
@@ -102,7 +104,7 @@ namespace fwp.buildor.editor
 
 		void drawProfilSelector()
 		{
-			if (PublishLevel != BuildorWinEdHelper.drawEnum<PublishLevel>("publish target", "publish", (int)PublishLevel.intern))
+			if (PublishLevel != BuildorWinEdHelper.drawEnum<PublishLevel>("publish target", ppref_publish, (int)PublishLevel.intern))
 			{
 				aProfil = Profile;
 				subMergers.focus();
@@ -325,7 +327,7 @@ namespace fwp.buildor.editor
 					Debug.LogError("must provide helper");
 					return;
 				}
-				
+
 				aProfil.versionInternal?.event_build();
 				aProfil.versionPublish?.event_build();
 

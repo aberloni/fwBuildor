@@ -19,7 +19,7 @@ static public class BuildorWinEdHelper
 
     static public T drawEnum<T>(string label, string pprefUid, int defaultValue = 0) where T : System.Enum
     {
-        int value = UnityEditor.EditorPrefs.GetInt(pprefUid, defaultValue);
+        int value = PlayerPrefs.GetInt(pprefUid, defaultValue);
         T enumValue = (T)System.Enum.ToObject(typeof(T), value);
 
         GUILayout.BeginHorizontal();
@@ -29,7 +29,7 @@ static public class BuildorWinEdHelper
 
         if (enumOutput.CompareTo(enumValue) != 0)
         {
-            UnityEditor.EditorPrefs.SetInt(pprefUid, (int)System.Enum.Parse(typeof(T), enumOutput.ToString()));
+            PlayerPrefs.SetInt(pprefUid, (int)System.Enum.Parse(typeof(T), enumOutput.ToString()));
         }
 
         return enumOutput;
