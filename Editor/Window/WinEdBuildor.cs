@@ -300,8 +300,11 @@ namespace fwp.buildor.editor
 
 		void drawBuildButton()
 		{
-			var v = aProfil.Version;
-			if (v != null) GUILayout.Label("+ version : " + v.version);
+			if (helper.flags.incVersion)
+			{
+				if (aProfil.versionInternal != null) GUILayout.Label("+ v.internal : " + aProfil.versionInternal.version);
+				if (aProfil.versionPublish != null) GUILayout.Label("+ v.publish : " + aProfil.versionPublish.version);
+			}
 
 			GUILayout.Label("+ path : " + helper.FullPath);
 
