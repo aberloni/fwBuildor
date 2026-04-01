@@ -107,9 +107,9 @@ namespace fwp.buildor.editor
             return bn + " (" + VersionManager.getFormatedVersion('.') + ")";
         }
 
-        public override void applyProfilEditor(bool publish = false)
+        public override void applyProfilEditor()
         {
-            base.applyProfilEditor(publish);
+            base.applyProfilEditor();
 
             EditorUserBuildSettings.switchCreateRomFile = build_rom;
 

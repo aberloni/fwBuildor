@@ -5,6 +5,6 @@ public class WinSubVersionBuildor : fwp.version.editor.WinSubVersion
 {
 	public void draw(WinEdBuildor win)
 	{
-		draw(win.getActiveVersion());
+		draw(WinEdBuildor.Profile.Version);
 	}
 }

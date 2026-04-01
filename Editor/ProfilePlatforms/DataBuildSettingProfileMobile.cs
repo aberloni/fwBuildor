@@ -29,9 +29,9 @@ namespace fwp.buildor.editor
         [Header("archi")]
         public bool sixtyFourBits = true;
 
-        public override void applyProfilEditor(bool usePublishVersion = false)
+        public override void applyProfilEditor()
         {
-            base.applyProfilEditor(usePublishVersion);
+            base.applyProfilEditor();
 
             Debug.Log("~Mobile");
 

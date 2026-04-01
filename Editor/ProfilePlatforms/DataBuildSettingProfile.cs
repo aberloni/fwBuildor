@@ -4,7 +4,7 @@ using System.IO;
 
 using fwp.version;
 using fwp.buildor.version;
-    
+
 /// <summary>
 /// (ratio iphone)
 /// 562x1000 
@@ -13,7 +13,7 @@ using fwp.buildor.version;
 
 namespace fwp.buildor.editor
 {
-    
+
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
     ///  it's meant to be used as a build flow tool params
@@ -30,6 +30,15 @@ namespace fwp.buildor.editor
 
         public DataVersionInternal versionInternal;     // local iterations
         public DataBuildSettingVersion versionPublish;  // can be null, alternate wat to count versions
+
+        public DataBuildSettingVersion Version
+        {
+            get
+            {
+                if (versionPublish != null) return versionPublish;
+                return versionInternal;
+            }
+        }
 
         public PublishLevel releaseLevel = PublishLevel.intern;
         public BuildPhase phase = BuildPhase.none;
@@ -201,7 +210,7 @@ namespace fwp.buildor.editor
             applyProfilEditor(); // contextmenu on profile
         }
 
-        virtual public void applyProfilEditor(bool usePublishVersion = false)
+        virtual public void applyProfilEditor()
         {
             Debug.Log("applying profile : <b>" + name + "</b>");
             Debug.Log("current platform ? " + GetType());
@@ -212,7 +221,7 @@ namespace fwp.buildor.editor
             BuildHelperBase.applyIcons(this);
             BuildHelperBase.applyUnity(this);
 
-            if (usePublishVersion) versionPublish.applyVersionToEditor();
+            if (versionPublish != null) versionPublish.applyVersionToEditor();
             else versionInternal.applyVersionToEditor();
 
             // merger might be override

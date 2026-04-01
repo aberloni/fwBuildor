@@ -48,7 +48,6 @@ namespace fwp.buildor.editor
     {
         public bool autorun;
         public bool incVersion;
-        public bool isPublishingBuild;
 
         public bool openFolderOnSuccess;
         public bool zipOnSuccess;
@@ -77,16 +76,6 @@ namespace fwp.buildor.editor
 
         static public DataBuildSettingProfile Profile => WinEdBuildor.Profile;
         static public string Platform => Profile?.getPlatformUid();
-
-        public DataBuildSettingVersion Version
-        {
-            get
-            {
-                if (Profile != null) return flags.isPublishingBuild ? Profile.versionPublish : Profile.versionInternal;
-                return null;
-            }
-
-        }
 
         /// <summary>
         /// path where exe is dumped
@@ -229,14 +218,12 @@ namespace fwp.buildor.editor
             //this will apply
             if (flags.incVersion)
             {
-                if (flags.isPublishingBuild)
-                    VersionIncrementor.incPublishFix();
-                else
-                    VersionIncrementor.incInternalFix();
+                Profile.versionInternal?.incrementFix();
+                Profile.versionPublish?.incrementFix();
             }
 
             //apply everything (after inc)
-            Profile.applyProfilEditor(flags.isPublishingBuild);
+            Profile.applyProfilEditor();
 
             //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
             buildPlayerOptions.scenes = getBuildSettingsScenePaths();

@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 using UnityEditor;
 
-using fwp.version;
 using fwp.logs.editor;
 using fwp.logs;
 using fwp.buildor.version;
@@ -109,6 +105,9 @@ namespace fwp.buildor.editor
 			if (PublishLevel != BuildorWinEdHelper.drawEnum<PublishLevel>("publish target", "publish", (int)PublishLevel.intern))
 			{
 				aProfil = Profile;
+				subMergers.focus();
+				subSymbols.focus();
+				subLogs.focus();
 				Debug.Log("*new* " + aProfil, aProfil);
 			}
 
@@ -240,7 +239,7 @@ namespace fwp.buildor.editor
 			else
 			{
 				GUILayout.Label(aProfil.build.build_folder_specific);
-				
+
 				if (aProfil.build.build_folder_specific.Length > 0 && GUILayout.Button("clear", GUILayout.Width(100f)))
 				{
 					aProfil.build.build_folder_specific = string.Empty;
@@ -299,11 +298,8 @@ namespace fwp.buildor.editor
 
 		void drawBuildButton()
 		{
-			DataBuildSettingVersion version = getActiveVersion();
-			if (version != null)
-			{
-				GUILayout.Label("+ version : " + version.version);
-			}
+			var v = aProfil.Version;
+			if (v != null) GUILayout.Label("+ version : " + v.version);
 
 			GUILayout.Label("+ path : " + helper.FullPath);
 
@@ -329,18 +325,13 @@ namespace fwp.buildor.editor
 					Debug.LogError("must provide helper");
 					return;
 				}
-
-				helper.Version.event_build();
+				
+				aProfil.versionInternal?.event_build();
+				aProfil.versionPublish?.event_build();
 
 				helper.launch();
 			}
 
-		}
-
-		public DataBuildSettingVersion getActiveVersion()
-		{
-			if (aProfil != null) return helper.Version;
-			return null;
 		}
 
 		/// <summary>

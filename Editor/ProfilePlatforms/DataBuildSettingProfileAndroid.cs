@@ -25,9 +25,9 @@ namespace fwp.buildor.editor
 
         public override string getExtension() => "apk";
 
-        public override void applyProfilEditor(bool usePublishVersion = false)
+        public override void applyProfilEditor()
         {
-            base.applyProfilEditor(usePublishVersion);
+            base.applyProfilEditor();
 
             PlayerSettings.Android.minSdkVersion = minSdk;
             Debug.Log(" L android min sdk : " + minSdk);
