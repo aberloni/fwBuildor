@@ -2,6 +2,9 @@
 using UnityEditor;
 using System.IO;
 
+using fwp.version;
+using fwp.buildor.version;
+    
 /// <summary>
 /// (ratio iphone)
 /// 562x1000 
@@ -10,10 +13,7 @@ using System.IO;
 
 namespace fwp.buildor.editor
 {
-    using fwp.logs;
-    using fwp.version;
-    using fwp.buildor.version;
-
+    
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
     ///  it's meant to be used as a build flow tool params
@@ -21,46 +21,25 @@ namespace fwp.buildor.editor
     /// .../builds/.../prefix_X-Y-Z.app
     /// .../builds/.../Y-m-d/...
     /// </summary>
-    abstract public class DataBuildSettingProfile : ScriptableObject
+    abstract public class DataBuildSettingProfile : BuildorScriptable
     {
         const string build_path = "builds/"; // next to Assets/
         const string path_separator = "__";
 
         [Header("version")]
-        public DataBuildSettingVersion publishVersion; // shown on marketplace and used by build
-        public DataVersionInternal internalVersion; // local iterations
+
+        public DataVersionInternal versionInternal;     // local iterations
+        public DataBuildSettingVersion versionPublish;  // can be null, alternate wat to count versions
+
+        public PublishLevel releaseLevel = PublishLevel.intern;
         public BuildPhase phase = BuildPhase.none;
 
         [Header("identification")]
         public string compagny_name = "*";
         public string product_name = "*";
 
-        [Tooltip("project name used to generate output file")]
-        public string build_prefix = "";
-
-        [Header("misc")]
-        public bool developement_build = false; // match : EditorUserBuildSettings.development
-        public bool addVersionInBuildPath = true;
-
-        [Tooltip("activate all profiler stuff")]
-        public bool debugScripting = false;
-
-        public enum ProfilingLevel
-        {
-            none,
-            profiling,
-            deep,
-        }
-        public ProfilingLevel debugProfiling = ProfilingLevel.none;
-
-        public ProfilLogLevels logLevels;
-
-        public Sprite splashscreen;
-        public Texture2D icon;
-
-        [Header("buildor features")]
-        public DataBuildorScenesMerger merger;
-        public fwp.symbols.ScriptableSymbolProfil scriptSymbols;
+        public DataProfilBuildParameters build;
+        public DataProfilDebugParameters debug;
 
         virtual protected void OnValidate()
         {
@@ -103,7 +82,7 @@ namespace fwp.buildor.editor
         {
             string sub = string.Empty;
 
-            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_prefix)) sub += build_prefix + path_separator;
+            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_prefix)) sub += build.build_prefix + path_separator;
             if (EditorPrefs.GetBool(BuildHelperBase.pref_include_platform)) sub += getPlatformUid() + path_separator;
 
             // anything dynamic
@@ -132,7 +111,7 @@ namespace fwp.buildor.editor
         /// </summary>
         public string getAppName(bool includeExtension = true)
         {
-            string output = build_prefix;
+            string output = build.build_prefix;
 
             //output += getFlagsString();
 
@@ -190,7 +169,7 @@ namespace fwp.buildor.editor
             flags += "_cn";
 #endif
 
-            if (developement_build)
+            if (debug.developement_build)
             {
                 flags += "_dbuild";
             }
@@ -216,13 +195,6 @@ namespace fwp.buildor.editor
 
         virtual public string getProductName() => product_name;
 
-        [MenuItem("Window/Buildor/Apply platform settings (!publish)")]
-        static public void applySettings()
-        {
-            DataBuildSettingProfile data = BuildHelperBase.getActiveProfile();
-            data.applyProfilEditor();
-        }
-
         [ContextMenu("apply to player settings")]
         protected void cmApply()
         {
@@ -240,8 +212,8 @@ namespace fwp.buildor.editor
             BuildHelperBase.applyIcons(this);
             BuildHelperBase.applyUnity(this);
 
-            if (usePublishVersion) publishVersion.applyVersionToEditor();
-            else internalVersion.applyVersionToEditor();
+            if (usePublishVersion) versionPublish.applyVersionToEditor();
+            else versionInternal.applyVersionToEditor();
 
             // merger might be override
             // merger is applied before build exec
@@ -254,11 +226,11 @@ namespace fwp.buildor.editor
         {
             if (publish)
             {
-                PlayerSettings.bundleVersion = publishVersion.version;
+                PlayerSettings.bundleVersion = versionPublish.version;
             }
             else
             {
-                PlayerSettings.bundleVersion = internalVersion.version;
+                PlayerSettings.bundleVersion = versionInternal.version;
             }
         }
 

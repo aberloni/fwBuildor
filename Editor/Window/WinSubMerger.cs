@@ -13,8 +13,8 @@ namespace fwp.buildor.editor
 
         protected override DataBuildorScenesMerger fetchProfilInstance()
         {
-            var profil = BuildHelperBase.getActiveProfile();
-            if (profil != null) return profil.merger;
+            var profil = WinEdBuildor.Profile;
+            if (profil != null) return profil.build.merger;
             return null;
         }
 

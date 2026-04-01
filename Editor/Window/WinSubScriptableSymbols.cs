@@ -14,14 +14,14 @@ namespace fwp.buildor.editor
 
         protected override ScriptableSymbolProfil fetchProfilInstance()
         {
-            var profil = BuildHelperBase.getActiveProfile();
+            var profil = WinEdBuildor.Profile;
             if (profil == null) return null;
-            return profil.scriptSymbols;
+            return profil.build.scriptSymbols;
         }
 
         protected override void applyEditor(ScriptableSymbolProfil value)
         {
-            var profil = BuildHelperBase.getActiveProfile();
+            var profil = WinEdBuildor.Profile;
             if (profil == null) return;
 
             value.data.apply(profil.getPlatformTargetGroup());
@@ -29,7 +29,7 @@ namespace fwp.buildor.editor
 
         protected override void drawDetails(ScriptableSymbolProfil value)
         {
-            var profil = BuildHelperBase.getActiveProfile();
+            var profil = WinEdBuildor.Profile;
             if (profil == null) return;
             bool changes = value.data.drawToggles(profil.getPlatformTargetGroup());
             if (changes)
@@ -40,7 +40,7 @@ namespace fwp.buildor.editor
 
         protected override void drawHeader(ScriptableSymbolProfil value)
         {
-            var profil = BuildHelperBase.getActiveProfile();
+            var profil = WinEdBuildor.Profile;
             if (profil == null) return;
             value.data.drawRawStringSymbols(profil.getPlatformTargetGroup());
         }

@@ -47,7 +47,7 @@ namespace fwp.buildor.editor
 		string pprefUid()
 		{
 			string ppref = typeof(T).ToString();
-			var profil = BuildHelperBase.getActiveProfile();
+			var profil = WinEdBuildor.Profile;
 			if (profil != null) ppref = profil.name + "_" + ppref;
 			return ppref;
 		}

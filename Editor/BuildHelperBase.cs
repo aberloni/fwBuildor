@@ -75,9 +75,18 @@ namespace fwp.buildor.editor
 
         public static bool IsFolderOverride => EditorPrefs.GetString(pref_specific_folder).Length > 0;
 
-        public string Platform => profil.getPlatformUid();
+        static public DataBuildSettingProfile Profile => WinEdBuildor.Profile;
+        static public string Platform => Profile?.getPlatformUid();
 
-        public DataBuildSettingVersion Version => flags.isPublishingBuild ? profil.publishVersion : profil.internalVersion;
+        public DataBuildSettingVersion Version
+        {
+            get
+            {
+                if (Profile != null) return flags.isPublishingBuild ? Profile.versionPublish : Profile.versionInternal;
+                return null;
+            }
+
+        }
 
         /// <summary>
         /// path where exe is dumped
@@ -86,23 +95,19 @@ namespace fwp.buildor.editor
         {
             get
             {
-                string path = EditorPrefs.GetString(pref_specific_folder + "_" + Platform, string.Empty);
-                if (!string.IsNullOrEmpty(path)) return path;
+                if (!string.IsNullOrEmpty(Profile.build.build_folder_specific))
+                    return Profile.build.build_folder_specific;
 
                 return Path.Combine(
                     Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/")),
-                    profil.getRelativeBuildFolderPath());
-            }
-            set
-            {
-                EditorPrefs.SetString(pref_specific_folder + "_" + Platform, value);
+                    Profile.getRelativeBuildFolderPath());
             }
         }
 
         /// <summary>
         /// root/path/build.ext
         /// </summary>
-        public string FullPath => Path.Combine(BuildPath, profil.getAppName());
+        public string FullPath => Path.Combine(BuildPath, Profile.getAppName());
 
         struct Building
         {
@@ -118,16 +123,9 @@ namespace fwp.buildor.editor
         /// </summary>
         public BuildHelperFlags flags;
         public BuildPlayerOptions buildPlayerOptions;
-        public DataBuildSettingProfile profil;
 
         public BuildHelperBase()
-        {
-            profil = BuildHelperBase.getActiveProfile();
-            if (profil == null)
-            {
-                Debug.LogError("no active profil fetched ?");
-            }
-        }
+        { }
 
         public void launch()
         {
@@ -238,7 +236,7 @@ namespace fwp.buildor.editor
             }
 
             //apply everything (after inc)
-            profil.applyProfilEditor(flags.isPublishingBuild);
+            Profile.applyProfilEditor(flags.isPublishingBuild);
 
             //buildPlayerOptions.scenes = new[] { "Assets/Scene1.unity", "Assets/Scene2.unity" };
             buildPlayerOptions.scenes = getBuildSettingsScenePaths();
@@ -260,8 +258,8 @@ namespace fwp.buildor.editor
             //will setup android or ios based on unity build settings target platform
             buildPlayerOptions.target = EditorUserBuildSettings.activeBuildTarget;
 
-            if (profil.developement_build) buildPlayerOptions.options |= BuildOptions.Development;
-            if (profil.debugScripting)
+            if (Profile.debug.developement_build) buildPlayerOptions.options |= BuildOptions.Development;
+            if (Profile.debug.debugScripting)
             {
                 buildPlayerOptions.options |= BuildOptions.AllowDebugging;
             }
@@ -306,7 +304,7 @@ namespace fwp.buildor.editor
 
                     if (flags.zipOnSuccess)
                     {
-                        string zipName = profil.getZipName();
+                        string zipName = Profile.getZipName();
                         log($"+ZIP {build.summary.Value.outputPath}@{zipName}");
                         zipBuildFolder(build.summary.Value.outputPath, zipName);
                     }
@@ -373,8 +371,7 @@ namespace fwp.buildor.editor
         static public void openBuildFolder(string path)
         {
             // remove file name from path
-            var profil = getActiveProfile();
-            if (path.Contains(profil.getExtension()))
+            if (path.Contains(BuildHelperBase.Profile.getExtension()))
             {
                 path = path.Substring(0, path.LastIndexOf("/"));
             }
@@ -434,7 +431,7 @@ namespace fwp.buildor.editor
         protected string getBuildName()
         {
             DataBuildSettingsBridge data = getScriptableDataBuildSettings();
-            return data.getPlatformProfil().build_prefix;
+            return data.getPlatformProfil().build.build_prefix;
         }
 
         protected void log(string msg)
@@ -484,10 +481,13 @@ namespace fwp.buildor.editor
             return null;
         }
 
+        /// <summary>
+        /// buffed
+        /// </summary>
         static DataBuildSettingProfile _active;
-        static public DataBuildSettingProfile getActiveProfile(bool force = false)
+        static public DataBuildSettingProfile getActiveProfile(PublishLevel pl)
         {
-            if (!force && _active != null) return _active;
+            if (_active != null && _active.releaseLevel == pl) return _active;
 
             var settings = getScriptableDataBuildSettings();
 
@@ -497,7 +497,7 @@ namespace fwp.buildor.editor
                 return null;
             }
 
-            _active = settings.getPlatformProfil();
+            _active = settings.getPlatformProfil(pl);
             return _active;
         }
 
@@ -508,7 +508,7 @@ namespace fwp.buildor.editor
             Debug.Log(" L splash show (auto false under licence) : " + PlayerSettings.SplashScreen.show);
 
             //dev build
-            EditorUserBuildSettings.development = profil.developement_build;
+            EditorUserBuildSettings.development = profil.debug.developement_build;
             Debug.Log(" L dev build : " + EditorUserBuildSettings.development);
 
         }
@@ -517,7 +517,7 @@ namespace fwp.buildor.editor
         {
 
             Texture2D[] icons = new Texture2D[1];
-            icons[0] = profil.icon;
+            icons[0] = profil.build.icon;
 
             PlayerSettings.SetIcons(NamedBuildTarget.Unknown, icons, IconKind.Any);
 

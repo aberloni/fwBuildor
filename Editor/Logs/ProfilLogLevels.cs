@@ -3,7 +3,7 @@ using UnityEngine;
 namespace fwp.logs
 {
 
-	[CreateAssetMenu(menuName = "buildor/+profil logs", order = 100)]
+	[CreateAssetMenu(menuName = "buildor/profil/+logs", order = 100)]
 	public class ProfilLogLevels : ScriptableObject
 	{
 		[System.Serializable]

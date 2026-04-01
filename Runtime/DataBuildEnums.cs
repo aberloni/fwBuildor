@@ -5,6 +5,15 @@ using UnityEngine;
 namespace fwp.buildor.version
 {
     [System.Serializable]
+    public enum PublishLevel
+    {
+        intern = 0,
+        festival,
+        demo,
+        release,
+    }
+
+    [System.Serializable]
     public enum BuildPhase
     {
         none,
@@ -13,4 +22,5 @@ namespace fwp.buildor.version
         β, // beta
         Ω  // gold
     }
+
 }

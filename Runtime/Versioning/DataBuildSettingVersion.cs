@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 
 using UnityEditor;
-using System.Runtime.ExceptionServices;
 
 /// <summary>
 /// this is meant to store an abstract of the version number of the app
@@ -13,11 +12,6 @@ using System.Runtime.ExceptionServices;
 
 namespace fwp.version
 {
-	public enum BuildSettingVersionType
-	{
-		vInternal, vPublish
-	}
-
 	[System.Serializable]
 	abstract public class DataBuildSettingVersion : ScriptableObject
 	{

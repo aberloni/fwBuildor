@@ -1,8 +1,11 @@
 ﻿using UnityEngine;
+using System.Linq;
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
+
+using fwp.buildor.version;
 
 /// <summary>
 /// (ratio iphone)
@@ -17,92 +20,48 @@ namespace fwp.buildor.editor
     [CreateAssetMenu(menuName = "buildor/new brdge settings", order = 100)]
     public class DataBuildSettingsBridge : ScriptableObject
     {
-        public enum BuildorBuildState
-        {
-            RELEASE, DEBUG, FEST
-        }
-
         [Header("desktop")]
-        public DataBuildSettingsBridgeCouple windows;
-        public DataBuildSettingsBridgeCouple osx;
-        public DataBuildSettingsBridgeCouple linux;
+        public DataBuildSettingProfile[] windows;
+        public DataBuildSettingProfile[] linux;
+        public DataBuildSettingProfile[] osx;
 
         [Header("mobile")]
-        public DataBuildSettingsBridgeCouple android;
-        public DataBuildSettingsBridgeCouple ios;
+        public DataBuildSettingProfile[] android;
+        public DataBuildSettingProfile[] ios;
 
         [Header("console")]
-        public DataBuildSettingsBridgeCouple switcheu;
+        public DataBuildSettingProfile[] ninSwitch;
 
-        public DataBuildSettingProfile getPlatformProfil(BuildorBuildState? tarState = null)
+        public DataBuildSettingProfile getPlatformProfil(PublishLevel tarState = PublishLevel.intern)
         {
-            BuildTarget target = UnityEditor.EditorUserBuildSettings.activeBuildTarget;
-
-            DataBuildSettingsBridgeCouple couple = new DataBuildSettingsBridgeCouple();
+            var target = EditorUserBuildSettings.activeBuildTarget;
 
             switch (target)
             {
                 case BuildTarget.StandaloneWindows64:
                 case BuildTarget.StandaloneWindows:
-                    couple = windows;
-                    break;
-                case BuildTarget.iOS:
-                    couple = ios;
-                    break;
-                case BuildTarget.Android:
-                    couple = android;
-                    break;
-                case BuildTarget.StandaloneLinux64:
-                    couple = linux;
-                    break;
-                case BuildTarget.Switch:
-                    couple = switcheu;
-                    break;
+                    return windows.FirstOrDefault(x => x.releaseLevel == tarState);
                 case BuildTarget.StandaloneOSX:
-                    couple = osx;
-                    break;
+                    return osx.FirstOrDefault(x => x.releaseLevel == tarState);
+                case BuildTarget.StandaloneLinux64:
+                case BuildTarget.EmbeddedLinux:
+                    return linux.FirstOrDefault(x => x.releaseLevel == tarState);
+
+                case BuildTarget.iOS:
+                    return ios.FirstOrDefault(x => x.releaseLevel == tarState);
+                case BuildTarget.Android:
+                    return android.FirstOrDefault(x => x.releaseLevel == tarState);
+
+                case BuildTarget.Switch:
+                    return ninSwitch.FirstOrDefault(x => x.releaseLevel == tarState);
+
                 case BuildTarget.NoTarget:
                 default:
-                    Debug.LogError("not implem for " + target);
+                    Debug.LogWarning(" ? active build target is : NoTarget");
                     break;
             }
 
-            return couple.getActive(tarState);
-        }
-
-    }
-
-    /// <summary>
-    /// default will be release
-    /// </summary>
-    [System.Serializable]
-    public struct DataBuildSettingsBridgeCouple
-    {
-        public DataBuildSettingProfile release;
-        public DataBuildSettingProfile festival;
-        public DataBuildSettingProfile debug;
-
-        public DataBuildSettingProfile getActive(DataBuildSettingsBridge.BuildorBuildState? tarState = null)
-        {
-            if (tarState == null)
-            {
-#if debug
-                tarState = DataBuildSettingsBridge.BuildorBuildState.DEBUG;
-#elif fest
-                tarState = DataBuildSettingsBridge.BuildorBuildState.FEST;
-#else
-                tarState = DataBuildSettingsBridge.BuildorBuildState.RELEASE; // default
-#endif
-            }
-
-            switch (tarState)
-            {
-                case DataBuildSettingsBridge.BuildorBuildState.DEBUG: return debug;
-                case DataBuildSettingsBridge.BuildorBuildState.RELEASE: return release;
-                case DataBuildSettingsBridge.BuildorBuildState.FEST: return festival;
-                default: Debug.LogError("nop"); break;
-            }
-
+            Debug.LogWarning("no profil possible for " + tarState);
             return null;
         }
 
