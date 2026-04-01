@@ -15,7 +15,7 @@ namespace fwp.buildor.editor
         public Texture2D icon;
 
         public DataBuildorScenesMerger merger;
-        public fwp.symbols.ScriptableSymbolProfil scriptSymbols;
+        public fwp.symbols.editor.ScriptableSymbolProfil scriptSymbols;
 
     }
 

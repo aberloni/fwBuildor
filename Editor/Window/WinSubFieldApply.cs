@@ -124,6 +124,10 @@ namespace fwp.buildor.editor
 				{
 					UnityEditor.Selection.activeObject = _valueProfil;
 				}
+				if (_valueProfil != null && GUILayout.Button("apply", GUILayout.Width(50f)))
+				{
+					applyEditor(_valueProfil);
+				}
 			}
 			GUILayout.EndHorizontal();
 

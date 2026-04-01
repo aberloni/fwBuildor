@@ -2,7 +2,7 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-    using fwp.symbols;
+    using fwp.symbols.editor;
 
     public class WinSubScriptableSymbols : WinSubFieldApply<ScriptableSymbolProfil>
     {

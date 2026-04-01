@@ -3,13 +3,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 
-namespace fwp.symbols
+namespace fwp.symbols.editor
 {
     [CreateAssetMenu(
         menuName = fwp.buildor.editor.BuildorHelpers._menuItem_basepath + "(profil) scriptables symbols", order = 100)]
     public class ScriptableSymbolProfil : ScriptableObject
     {
         public ScriptableSymbolsGroups data;
+
+        [ContextMenu("apply")]
+        void cmApply()
+        {
+            var profil = fwp.buildor.editor.WinEdBuildor.Profile;
+            data.apply(profil.getPlatformTargetGroup());
+        }
 
         [ContextMenu("record    : defined platforms")]
         protected void cmExtracts()
