@@ -1,8 +1,8 @@
 using UnityEngine;
+using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-	using UnityEditor;
 
 	/// <summary>
 	/// wrapper around a scriptable object
@@ -34,6 +34,9 @@ namespace fwp.buildor.editor
 		/// </summary>
 		protected T _valueProfil;
 
+		/// <summary>
+		/// whichever is != null
+		/// </summary>
 		public T Value
 		{
 			get
@@ -87,58 +90,72 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.Label(getSectionTitle(), BuildorHelperGuiStyle.gCategoryBold);
 
-			GUILayout.BeginHorizontal();
-			var newValue = (T)EditorGUILayout.ObjectField(_valuePrefs, typeof(T), true);
-			if (_valuePrefs != newValue)
+			T _val;
+
+			_val = drawInstance("override", _valuePrefs, true);
+			if (_val != _valuePrefs)
 			{
-				onValueChanged(newValue);
+				onValueChanged(_val);
 			}
 
-			if (_valuePrefs != null)
+			if (_valuePrefs == null)
 			{
-				if (Value != null && GUILayout.Button("apply", GUILayout.Width(50f)))
-				{
-					applyEditor(Value);
-				}
-
-				if (GUILayout.Button("clear", GUILayout.Width(50f)))
-				{
-					onValueChanged(null);
-				}
-
-				if (GUILayout.Button("?", GUILayout.Width(20f)))
-				{
-					UnityEditor.Selection.activeObject = _valuePrefs;
-				}
+				drawInstance("profil", _valueProfil, false);
 			}
-			GUILayout.EndHorizontal();
+
 
 			if (Value != null) drawHeader(Value);
-
-			GUILayout.BeginHorizontal();
-			if (_valueProfil == null) GUILayout.Label("profil has :		none");
-			else
-			{
-				GUILayout.Label("profil has :		" + _valueProfil.name);
-				if (GUILayout.Button("?", GUILayout.Width(40f)))
-				{
-					UnityEditor.Selection.activeObject = _valueProfil;
-				}
-				if (_valueProfil != null && GUILayout.Button("apply", GUILayout.Width(50f)))
-				{
-					applyEditor(_valueProfil);
-				}
-			}
-			GUILayout.EndHorizontal();
 
 			if (Value != null)
 			{
 				_fold = EditorGUILayout.Foldout(_fold, "see details of injection", true);
-				if (_fold)
-				{
-					drawDetails(Value);
-				}
+				if (_fold) drawDetails(Value);
 			}
+
+
+		}
+
+		T drawInstance(string label, T val, bool drawSelector)
+		{
+			GUILayout.BeginHorizontal();
+
+			if (val != null && GUILayout.Button("?", GUILayout.Width(20f)))
+			{
+				UnityEditor.Selection.activeObject = val;
+			}
+
+			if (val != null && GUILayout.Button("apply", GUILayout.Width(50f)))
+			{
+				applyEditor(val);
+			}
+
+			GUILayout.Label(label, GUILayout.Width(100f));
+
+
+			if (drawSelector)
+			{
+				val = (T)EditorGUILayout.ObjectField(val, typeof(T), true);
+				if (val != null && GUILayout.Button("clear", GUILayout.Width(50f))) val = null;
+			}
+			else if (val != null)
+			{
+				GUILayout.Label(val.ToString());
+			}
+			else GUILayout.Label("-none-");
+
+
+			GUILayout.EndHorizontal();
+
+			/*
+			if (val != null)
+			{
+				_fold = EditorGUILayout.Foldout(_fold, "see details", true);
+				if (_fold) drawDetails(val);
+			}
+			*/
+
+
+			return val;
 		}
 
 		/// <summary>
@@ -156,7 +173,9 @@ namespace fwp.buildor.editor
 		/// major info of currently selected item
 		/// </summary>
 		virtual protected void drawHeader(T value)
-		{ }
+		{
+			GUILayout.Label("focus: " + value.name);
+		}
 
 		/// <summary>
 		/// detail dropdown section
