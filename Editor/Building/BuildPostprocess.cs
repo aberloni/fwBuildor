@@ -1,11 +1,10 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
-using UnityEditor.Build.Reporting;
-using Codice.LogWrapper;
 
 namespace fwp.buildor.editor
 {
+    using UnityEditor.Build.Reporting;
 
     public class BuildPostprocess : BuildProcess
     {
