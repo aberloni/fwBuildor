@@ -31,8 +31,9 @@ namespace fwp.version
 {
     public class VersionManager : MonoBehaviour
     {
-
-        [RuntimeInitializeOnLoadMethod]
+        /// <summary>
+        /// must be explicitly called
+        /// </summary>
         static public void displayOnStartup()
         {
             logPlayerSettingsVersion();
@@ -83,12 +84,8 @@ namespace fwp.version
         float _sWidth;
         Rect rec = new Rect();
 
-        private void OnGUI()
+        void OnEnable()
         {
-            //string v = Application.version;
-            string v = getDisplayVersion();
-
-
             if (guis == null)
             {
                 guis = new GUIStyle();
@@ -98,7 +95,7 @@ namespace fwp.version
 
                 //updateFontSize();
             }
-
+            
             if (_sWidth != Screen.width)
             {
                 _sWidth = Screen.width;
@@ -106,10 +103,33 @@ namespace fwp.version
                 updateFontSize();
                 updateRect();
             }
+        }
 
-            // must be safe from rounded angle on mobile
-
+        private void OnGUI()
+        {
+            //string v = Application.version;
+            string v = formatVersion();
             GUI.Label(rec, v, guis);
+        }
+
+        /// <summary>
+        /// this can only access PlayerSettings version
+        /// with context #if and debug indicator
+        /// </summary>
+        virtual public string formatVersion()
+        {
+            string output = getFormatedVersion();
+
+            if (Debug.isDebugBuild)
+            {
+                output += " (devb)";
+            }
+
+#if debug
+            output += " (debug)";
+#endif
+
+            return output;
         }
 
         void updateRect()
@@ -171,26 +191,6 @@ namespace fwp.version
         }
 
         /// <summary>
-        /// with context #if and debug indicator
-        /// </summary>
-        /// <returns></returns>
-        static public string getDisplayVersion()
-        {
-            string output = getFormatedVersion();
-
-            if (Debug.isDebugBuild)
-            {
-                output += "(devb)";
-            }
-
-#if debug
-    output += "(debug)";
-#endif
-
-            return output;
-        }
-
-        /// <summary>
         /// x.y.z , no dash
         /// </summary>
         static private int[] getPlayerSettingsVersionInts()
@@ -227,6 +227,8 @@ namespace fwp.version
             }
             return output;
         }
+
+        static public string getDisplayVersion() => getFormatedVersion();
 
         static public string getPlayerSettingsVersion()
         {

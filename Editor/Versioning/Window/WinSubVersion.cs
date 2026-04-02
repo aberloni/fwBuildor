@@ -53,7 +53,7 @@ namespace fwp.version.editor
             GUILayout.Label("last incremented: " + version.timestamp_incr);
             GUILayout.Label("last built: " + version.timestamp_build);
 
-            GUILayout.Label("version manager output : " + VersionManager.getDisplayVersion());
+            GUILayout.Label("unity pSettings output : " + VersionManager.getPlayerSettingsVersion());
 
             GUILayout.Space(10f);
         }
