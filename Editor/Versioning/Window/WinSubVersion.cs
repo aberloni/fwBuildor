@@ -9,6 +9,10 @@ namespace fwp.version.editor
     public class WinSubVersion
     {
 
+        readonly GUILayoutOption bS = GUILayout.Width(75f);
+        readonly GUILayoutOption bSM = GUILayout.Width(90f);
+        readonly GUILayoutOption bM = GUILayout.Width(105f);
+        
         /// <summary>
         /// result is stored in flagsBuild
         /// </summary>
@@ -33,27 +37,29 @@ namespace fwp.version.editor
 
             if (version != null)
             {
-                GUILayout.Label(version.getFormated());
+                GUILayout.Label(version.getFormated(), bS);
 
-                if (GUILayout.Button("MAJOR"))
+                if (GUILayout.Button("MAJOR", bS))
                 {
                     version.incrementMajor();
                 }
-                if (GUILayout.Button("MINOR"))
+                if (GUILayout.Button("MINOR", bSM))
                 {
                     version.incrementMinor();
                 }
-                if (GUILayout.Button("FIX"))
+                if (GUILayout.Button("FIX", bM))
                 {
                     version.incrementFix();
                 }
             }
             GUILayout.EndHorizontal();
 
+            GUILayout.BeginHorizontal();
             GUILayout.Label("last incremented: " + version.timestamp_incr);
             GUILayout.Label("last built: " + version.timestamp_build);
+            GUILayout.EndHorizontal();
 
-            GUILayout.Label("unity pSettings output : " + VersionManager.getPlayerSettingsVersion());
+            GUILayout.Label("PlayerSettings: " + VersionManager.getPlayerSettingsVersion());
 
             GUILayout.Space(10f);
         }

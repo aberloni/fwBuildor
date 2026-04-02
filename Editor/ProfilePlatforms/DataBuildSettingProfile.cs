@@ -50,6 +50,28 @@ namespace fwp.buildor.editor
         public DataProfilBuildParameters build;
         public DataProfilDebugParameters debug;
 
+        /// <summary>
+        /// root/path/build.ext
+        /// </summary>
+        public string FullPath => Path.Combine(BuildPath, getAppName());
+
+        /// <summary>
+        /// path where exe is dumped
+        /// </summary>
+        public string BuildPath
+        {
+            get
+            {
+                
+                if (!string.IsNullOrEmpty(build.build_folder_specific))
+                    return build.build_folder_specific;
+
+                return Path.Combine(
+                    Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/")),
+                    getRelativeBuildFolderPath());
+            }
+        }
+
         virtual protected void OnValidate()
         {
             if (isSelectedPlatform()) applyProfilEditor(); // on validate

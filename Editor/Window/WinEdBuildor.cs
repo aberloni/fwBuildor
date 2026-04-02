@@ -132,16 +132,16 @@ namespace fwp.buildor.editor
 			}
 			else
 			{
-				if (GUILayout.Button("?", GUILayout.Width(75f)))
-				{
-					UnityEditor.Selection.activeObject = aProfil;
-				}
-
 				// just display
 				GUILayout.Label("platform", BuildorHelperGuiStyle.gCategoryBold);
 				GUI.enabled = false;
 				EditorGUILayout.ObjectField(aProfil, typeof(DataBuildSettingProfile), true);
 				GUI.enabled = true;
+
+				if (GUILayout.Button(">>", GUILayout.Width(40f)))
+				{
+					UnityEditor.Selection.activeObject = aProfil;
+				}
 
 			}
 
@@ -156,7 +156,7 @@ namespace fwp.buildor.editor
 
 			GUILayout.Label("build flags", BuildorHelperGuiStyle.gCategoryBold);
 
-			helper.flags.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
+			helper.build_prepro.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
 
 			aProfil.debug.developement_build = GUILayout.Toggle(aProfil.debug.developement_build, "dev build");
 			if (aProfil.debug.developement_build != EditorUserBuildSettings.development)
@@ -261,9 +261,9 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.Label("on success", BuildorHelperGuiStyle.gCategoryBold);
 
-			helper.flags.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
-			helper.flags.zipOnSuccess = WinEdFieldsHelper.drawToggle("zip", "zip");
-			helper.flags.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
+			helper.build_postpro.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
+			helper.build_postpro.zipOnSuccess = WinEdFieldsHelper.drawToggle("zip", "zip");
+			helper.build_prepro.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
 
 			GUILayout.Space(20f);
 			GUILayout.Label("outputs", BuildorHelperGuiStyle.gCategoryBold);
@@ -273,7 +273,7 @@ namespace fwp.buildor.editor
 			WinEdFieldsHelper.drawCopyPastablePath("app name :", aProfil.getAppName(), false);
 			GUILayout.EndHorizontal();
 
-			WinEdFieldsHelper.drawCopyPastablePath("export path :", helper.BuildPath);
+			WinEdFieldsHelper.drawCopyPastablePath("export path :", aProfil.BuildPath);
 
 			WinEdFieldsHelper.drawCopyPastablePath("zip name :", aProfil.getZipName());
 
@@ -291,29 +291,29 @@ namespace fwp.buildor.editor
 
 			if (GUILayout.Button("(folder) build output "))
 			{
-				BuildHelperBase.openBuildFolder(helper.FullPath); // win.button
+				BuildPostprocess.openBuildFolder(aProfil.FullPath); // win.button
 			}
 
 			if (GUILayout.Button("exe last build"))
 			{
-				winExecute(helper.FullPath); // win.button
+				winExecute(aProfil.FullPath); // win.button
 			}
 
 			GUILayout.EndHorizontal();
 
 		}
 
-		string getBuildLabel() => helper.flags.autorun ? "SHIPIT" : "BUILD";
+		string getBuildLabel() => helper.build_prepro.autorun ? "SHIPIT" : "BUILD";
 
 		void drawBuildButton()
 		{
-			if (helper.flags.incVersion)
+			if (helper.build_prepro.incVersion)
 			{
 				if (aProfil.versionInternal != null) GUILayout.Label("+ v.internal : " + aProfil.versionInternal.version);
 				if (aProfil.versionPublish != null) GUILayout.Label("+ v.publish : " + aProfil.versionPublish.version);
 			}
 
-			GUILayout.Label("+ path : " + helper.FullPath);
+			GUILayout.Label("+ path : " + aProfil.FullPath);
 
 			DataBuildorScenesMerger merger = subMergers.Value;
 			if (merger != null) GUILayout.Label("+ merger : " + merger.strOneLine());

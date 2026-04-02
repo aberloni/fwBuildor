@@ -5,6 +5,9 @@ namespace fwp.buildor.editor
     [CreateAssetMenu(menuName = "buildor/profil/+build.params", order = 100)]
     public class DataProfilBuildParameters : ScriptableObject
     {
+        [Tooltip("remove any folder from buidl matching given pattern(s)")]
+        public string[] clearFolders = new string[0];
+
         [Tooltip("project name used to generate output file")]
         public string build_prefix = "";
 

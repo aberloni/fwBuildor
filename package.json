@@ -1,6 +1,6 @@
 {
   "name": "com.ab.fwp.buildor",
-  "version": "0.4.1",
+  "version": "0.4.3",
   "displayName": "ab:buildor",
   "description": "various tools to manage building and app:version-ing",
   "keywords": [
