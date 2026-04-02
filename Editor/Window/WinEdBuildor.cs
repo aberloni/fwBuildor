@@ -65,7 +65,7 @@ namespace fwp.buildor.editor
 			if (subMergers == null) subMergers = new WinSubMerger(this);
 			if (subLogs == null) subLogs = new WinSubLogs(this);
 
-			aProfil = Profile;
+			swap(Profile);
 
 			if (helper == null) helper = createBuildHelper();
 		}
@@ -102,15 +102,22 @@ namespace fwp.buildor.editor
 			GUILayout.EndScrollView();
 		}
 
+		void swap(DataBuildSettingProfile np)
+		{
+			aProfil = np;
+			aProfil?.applyProfilEditor();
+
+			subMergers.focus();
+			subSymbols.focus();
+			subLogs.focus();
+			Debug.Log("*new* " + aProfil, aProfil);
+		}
+
 		void drawProfilSelector()
 		{
 			if (PublishLevel != BuildorWinEdHelper.drawEnum<PublishLevel>("publish target", ppref_publish, (int)PublishLevel.intern))
 			{
-				aProfil = Profile;
-				subMergers.focus();
-				subSymbols.focus();
-				subLogs.focus();
-				Debug.Log("*new* " + aProfil, aProfil);
+				swap(Profile);
 			}
 
 			GUILayout.BeginHorizontal();
