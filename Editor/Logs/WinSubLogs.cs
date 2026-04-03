@@ -16,8 +16,9 @@ namespace fwp.logs.editor
 		protected override ProfilLogLevels fetchProfilInstance()
 		{
 			var profil = WinEdBuildor.Profile;
-			if (profil != null) return profil.debug.logLevels;
-			return null;
+			if (profil == null) return null;
+			if (profil.debug == null) return null;
+			return profil.debug.logLevels;
 		}
 
 		protected override void applyEditor(ProfilLogLevels value)
