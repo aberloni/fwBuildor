@@ -4,6 +4,7 @@ using UnityEditor;
 using fwp.logs.editor;
 using fwp.logs;
 using fwp.buildor.version;
+using UnityEditor.VersionControl;
 
 namespace fwp.buildor.editor
 {
@@ -72,6 +73,8 @@ namespace fwp.buildor.editor
 
 		private void OnFocus()
 		{
+			if (helper == null) helper = createBuildHelper();
+
 			subLogs?.focus();
 			subMergers?.focus();
 			subSymbols?.focus();
@@ -93,7 +96,15 @@ namespace fwp.buildor.editor
 				subSymbols?.draw();
 				subLogs?.draw();
 
-				drawBuildFlags();
+				if (helper != null)
+				{
+					GUILayout.Label("build flags", BuildorHelperGuiStyle.gCategoryBold);
+					helper.build_prepro.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
+				}
+
+				if (aProfil.debug == null) GUILayout.Label("-no debug-");
+				else aProfil.debug.drawEd();
+
 				drawPathModifiers();
 				drawSuccess();
 				drawBuildButton();
@@ -107,9 +118,10 @@ namespace fwp.buildor.editor
 			aProfil = np;
 			aProfil?.applyProfilEditor();
 
-			subMergers.focus();
-			subSymbols.focus();
-			subLogs.focus();
+			subMergers?.focus();
+			subSymbols?.focus();
+			subLogs?.focus();
+
 			Debug.Log("*new* " + aProfil, aProfil);
 		}
 
@@ -147,56 +159,6 @@ namespace fwp.buildor.editor
 
 
 			GUILayout.EndHorizontal();
-
-		}
-
-		void drawBuildFlags()
-		{
-			if (helper == null) return;
-
-			GUILayout.Label("build flags", BuildorHelperGuiStyle.gCategoryBold);
-
-			helper.build_prepro.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
-
-			aProfil.debug.developement_build = GUILayout.Toggle(aProfil.debug.developement_build, "dev build");
-			if (aProfil.debug.developement_build != EditorUserBuildSettings.development)
-			{
-				EditorUserBuildSettings.development = aProfil.debug.developement_build;
-				Debug.LogWarning("changed dev build : " + EditorUserBuildSettings.development);
-
-				UnityEditor.EditorUtility.SetDirty(aProfil);
-			}
-
-			aProfil.debug.debugScripting = GUILayout.Toggle(aProfil.debug.debugScripting, "debug scripting");
-			if (aProfil.debug.debugScripting != EditorUserBuildSettings.allowDebugging)
-			{
-				EditorUserBuildSettings.allowDebugging = aProfil.debug.debugScripting;
-				UnityEditor.EditorUtility.SetDirty(aProfil);
-			}
-
-			var level = (DataProfilDebugParameters.ProfilingLevel)EditorGUILayout.EnumPopup("profiling", aProfil.debug.debugProfiling);
-
-			if (level != aProfil.debug.debugProfiling)
-			{
-				switch (level)
-				{
-					case DataProfilDebugParameters.ProfilingLevel.deep:
-						EditorUserBuildSettings.connectProfiler = true;
-						EditorUserBuildSettings.buildWithDeepProfilingSupport = true;
-						break;
-					case DataProfilDebugParameters.ProfilingLevel.profiling:
-						EditorUserBuildSettings.connectProfiler = true;
-						EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
-						break;
-					default:
-						EditorUserBuildSettings.connectProfiler = false;
-						EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
-						break;
-
-				}
-				aProfil.debug.debugProfiling = level;
-				UnityEditor.EditorUtility.SetDirty(aProfil);
-			}
 
 		}
 
@@ -259,6 +221,8 @@ namespace fwp.buildor.editor
 
 		void drawSuccess()
 		{
+			if (helper == null) return;
+
 			GUILayout.Label("on success", BuildorHelperGuiStyle.gCategoryBold);
 
 			helper.build_postpro.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
@@ -307,6 +271,8 @@ namespace fwp.buildor.editor
 
 		void drawBuildButton()
 		{
+			if (helper == null) return;
+
 			if (helper.build_prepro.incVersion)
 			{
 				if (aProfil.versionInternal != null) GUILayout.Label("+ v.internal : " + aProfil.versionInternal.version);
@@ -315,10 +281,12 @@ namespace fwp.buildor.editor
 
 			GUILayout.Label("+ path : " + aProfil.FullPath);
 
-			DataBuildorScenesMerger merger = subMergers.Value;
+			DataBuildorScenesMerger merger = null;
+			if (subMergers != null) merger = subMergers.Value;
 			if (merger != null) GUILayout.Label("+ merger : " + merger.strOneLine());
 
-			ProfilLogLevels logs = subLogs.Value;
+			ProfilLogLevels logs = null;
+			if (subLogs != null) logs = subLogs.Value;
 			if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
 
 			GUILayout.Space(20f);

@@ -62,7 +62,7 @@ namespace fwp.buildor.editor
         {
             get
             {
-                
+
                 if (!string.IsNullOrEmpty(build.build_folder_specific))
                     return build.build_folder_specific;
 
@@ -200,7 +200,7 @@ namespace fwp.buildor.editor
             flags += "_cn";
 #endif
 
-            if (debug.developement_build)
+            if (debug != null && debug.developement_build)
             {
                 flags += "_dbuild";
             }
@@ -242,6 +242,11 @@ namespace fwp.buildor.editor
             BuildHelperBase.applyCompagny(this);
             BuildHelperBase.applyIcons(this);
             BuildHelperBase.applyUnity(this);
+
+            if (debug != null)
+            {
+                debug.apply();
+            }
 
             if (versionPublish != null) versionPublish.applyVersionToEditor();
             else versionInternal.applyVersionToEditor();

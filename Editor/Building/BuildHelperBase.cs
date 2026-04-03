@@ -71,7 +71,7 @@ namespace fwp.buildor.editor
         public BuildPostprocess build_postpro;
 
         public BuildHelperBase()
-        { 
+        {
             build_prepro = new();
             build_postpro = new();
         }
@@ -87,7 +87,7 @@ namespace fwp.buildor.editor
                 build_postpro.doLaunch(Profile, summary);
             };
         }
-        
+
         protected string getBuildName()
         {
             DataBuildSettingsBridge data = getScriptableDataBuildSettings();
@@ -143,9 +143,11 @@ namespace fwp.buildor.editor
             Debug.Log(" L splash show (auto false under licence) : " + PlayerSettings.SplashScreen.show);
 
             //dev build
-            EditorUserBuildSettings.development = profil.debug.developement_build;
-            Debug.Log(" L dev build : " + EditorUserBuildSettings.development);
-
+            if (profil.debug != null)
+            {
+                EditorUserBuildSettings.development = profil.debug.developement_build;
+                Debug.Log(" L dev build : " + EditorUserBuildSettings.development);
+            }
         }
 
         static public void applyIcons(DataBuildSettingProfile profil)
