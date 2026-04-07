@@ -19,7 +19,7 @@ namespace fwp.version.editor
         virtual public void draw(DataBuildSettingVersion version)
         {
             GUILayout.Space(20f);
-            GUILayout.Label("version", BuildorHelperGuiStyle.gCategoryBold);
+            GUILayout.Label("version", HelperGui.gCategoryBold);
 
             if (version == null)
             {

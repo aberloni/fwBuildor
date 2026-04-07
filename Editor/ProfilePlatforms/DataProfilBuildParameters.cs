@@ -5,6 +5,18 @@ namespace fwp.buildor.editor
     [CreateAssetMenu(menuName = "buildor/profil/+build.params", order = 100)]
     public class DataProfilBuildParameters : ScriptableObject
     {
+        [Header("build content")]
+        public DataBuildorScenesMerger merger;
+        public fwp.logs.ProfilLogLevels logLevels;
+
+        /// <summary>
+        /// sdks, lang_en, ...
+        /// </summary>
+        public string[] symbols;
+
+        public bool watermark;
+
+        [Header("post process")]
         [Tooltip("remove any folder from buidl matching given pattern(s)")]
         public string[] clearFolders = new string[0];
 
@@ -15,13 +27,9 @@ namespace fwp.buildor.editor
         public string build_folder_specific = "";
         public bool HasSpecificFolder => !string.IsNullOrEmpty(build_folder_specific);
 
+        [Header("bundle")]
         public Sprite splashscreen;
         public Texture2D icon;
-
-        public DataBuildorScenesMerger merger;
-        public fwp.symbols.editor.ScriptableSymbolProfil scriptSymbols;
-
-        public fwp.logs.ProfilLogLevels logLevels;
     }
 
 }

@@ -88,7 +88,7 @@ namespace fwp.buildor.editor
 
 		public void draw()
 		{
-			GUILayout.Label(getSectionTitle(), BuildorHelperGuiStyle.gCategoryBold);
+			GUILayout.Label(getSectionTitle(), HelperGui.gCategoryBold);
 
 			T _val;
 

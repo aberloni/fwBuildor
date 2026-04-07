@@ -27,21 +27,10 @@ namespace fwp.logs
 		/// <summary>
 		/// scriptable symbols linked to verbosity
 		/// </summary>
-		[SerializeField]
-		string[] symbolsVerbose = new string[]
+		public string[] symbolsVerbose = new string[]
 		{
 			"verbosity"
 		};
-
-		public string stringifySymbols()
-		{
-			string ret = string.Empty;
-			foreach (var s in symbolsVerbose)
-			{
-				ret += s + ",";
-			}
-			return ret;
-		}
 
 		public void applyLogs()
 		{

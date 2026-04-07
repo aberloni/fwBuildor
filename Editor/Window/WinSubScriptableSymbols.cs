@@ -2,7 +2,6 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-    using fwp.symbols;
     using fwp.symbols.editor;
     using UnityEngine;
 
@@ -16,9 +15,10 @@ namespace fwp.buildor.editor
 
         protected override ScriptableSymbolProfil fetchProfilInstance()
         {
-            var profil = BuildorHelpers.Profile;
-            if (profil == null) return null;
-            return profil.build.scriptSymbols;
+            // var profil = BuildorHelpers.Profile;
+            // if (profil == null) return null;
+            // return profil.build.symbolsCustom;
+            return null;
         }
 
         protected override void applyEditor(ScriptableSymbolProfil value)
@@ -26,7 +26,7 @@ namespace fwp.buildor.editor
             var profil = BuildorHelpers.Profile;
             if (profil == null) return;
 
-            value.apply();
+            // value.apply();
         }
 
         protected override void drawDetails(ScriptableSymbolProfil value)

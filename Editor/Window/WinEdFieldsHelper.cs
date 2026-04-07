@@ -92,6 +92,19 @@ namespace fwp.buildor.editor
 			return enumOutput;
 		}
 
+		static public T drawObject<T>(string label, T target) where T : Object
+		{
+			GUILayout.BeginHorizontal();
+			GUILayout.Label(label, GUILayout.Width(200f));
+			var ret = (T)EditorGUILayout.ObjectField(target, typeof(T), false);
+			if (ret != null && GUILayout.Button(">>", GUILayout.Width(40f)))
+			{
+				UnityEditor.Selection.activeObject = ret;
+			}
+			GUILayout.EndHorizontal();
+			return ret;
+		}
+
 
 	}
 

@@ -7,7 +7,7 @@ namespace fwp.buildor
     /// <summary>
     /// extracted : 2022-11-08
     /// </summary>
-    static public class BuildorHelperGuiStyle
+    static public class HelperGui
     {
 
         const float refSize = 1280f;
@@ -27,7 +27,12 @@ namespace fwp.buildor
         public static readonly GUIStyle gBold;
         public static readonly GUIStyle gLabelBoldGizmos;
 
-        static BuildorHelperGuiStyle()
+        public static readonly GUILayoutOption bXS = GUILayout.Width(50f);
+        public static readonly GUILayoutOption bS = GUILayout.Width(75f);
+        public static readonly GUILayoutOption bM = GUILayout.Width(100f);
+        public static readonly GUILayoutOption bL = GUILayout.Width(150f);
+
+        static HelperGui()
         {
             gWinTitle = new GUIStyle();
             gWinTitle.richText = true;
@@ -42,7 +47,7 @@ namespace fwp.buildor
             gWhiteBold.fontStyle = FontStyle.Bold;
             gWhiteBold.padding = new RectOffset(10, 5, 2, 2);
             gWhiteBold.normal.textColor = Color.white;
-        
+
             gButtonBig = new GUIStyle(GUI.skin.button);
             gButtonBig.fontSize = 25;
             gButtonBig.fontStyle = FontStyle.Bold;
@@ -62,7 +67,7 @@ namespace fwp.buildor
             gBold.padding.top = 5;
             gBold.fontStyle = FontStyle.Bold;
             gBold.normal.textColor = Color.white;
-            
+
             gLabelBoldGizmos = new GUIStyle();
             gLabelBoldGizmos.richText = true;
             gLabelBoldGizmos.fontStyle = FontStyle.Bold;

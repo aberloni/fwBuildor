@@ -1,9 +1,9 @@
 using UnityEngine;
 using UnityEditor;
 
-using fwp.logs.editor;
 using fwp.logs;
 using fwp.symbols;
+using fwp.symbols.editor;
 
 namespace fwp.buildor.editor
 {
@@ -56,7 +56,7 @@ namespace fwp.buildor.editor
 		readonly GUIContent _title = new("Buildor");
 		void OnGUI()
 		{
-			GUILayout.Label(_title, BuildorHelperGuiStyle.gWinTitle);
+			GUILayout.Label(_title, HelperGui.gWinTitle);
 
 			_scroll = GUILayout.BeginScrollView(_scroll);
 
@@ -72,7 +72,7 @@ namespace fwp.buildor.editor
 
 				if (helper != null)
 				{
-					GUILayout.Label("build flags", BuildorHelperGuiStyle.gCategoryBold);
+					GUILayout.Label("build flags", HelperGui.gCategoryBold);
 					helper.build_prepro.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
 				}
 
@@ -122,7 +122,7 @@ namespace fwp.buildor.editor
 			else
 			{
 				// just display
-				GUILayout.Label("platform", BuildorHelperGuiStyle.gCategoryBold);
+				GUILayout.Label("platform", HelperGui.gCategoryBold);
 				GUI.enabled = false;
 				EditorGUILayout.ObjectField(aProfil, typeof(DataBuildSettingProfile), true);
 				GUI.enabled = true;
@@ -141,46 +141,39 @@ namespace fwp.buildor.editor
 
 		void drawSymbols()
 		{
-			GUILayout.Label("Symbols", BuildorHelperGuiStyle.gCategoryBold);
+			GUILayout.Label("Symbols", HelperGui.gCategoryBold);
 
-			GUILayout.Label("profil", BuildorHelperGuiStyle.gBold);
-			if (Profile.build == null || Profile.build.scriptSymbols) GUILayout.Label("-none-");
-			else
+			var logs = Profile.GetLogsLevels(BuildorHelpers.DebugLevel);
+			var _logs = WinEdFieldsHelper.drawObject("logs", logs);
+			if (_logs != logs)
 			{
-				GUILayout.Label(Profile.build.scriptSymbols.getStringifiedSymbols());
+				if (BuildorHelpers.IsDebug) Profile.debug.logLevels = _logs;
+				else Profile.build.logLevels = _logs;
 			}
 
-			GUILayout.Label("logs.verbose", BuildorHelperGuiStyle.gBold);
-			if (Profile.debug == null || Profile.build.logLevels == null) GUILayout.Label("-none-");
-			else
+			Profile.build.watermark = WinEdFieldsHelper.drawToggle(Profile.build.watermark, "watermark");
+			string sCurrent = ScriptSymbolsView.getPlayerSetSymbols(Profile.getBuildTargetGroup());
+			GUILayout.Label("unity: " + sCurrent);
+
+			GUILayout.BeginHorizontal();
+			string symbs = Profile.Symbols;
+			if (string.IsNullOrEmpty(symbs)) GUILayout.Label("empty symbols");
+			else GUILayout.Label("profil: " + symbs);
+			if (sCurrent != symbs && GUILayout.Button("apply", HelperGui.bS))
 			{
-				GUILayout.Label(Profile.build.logLevels.stringifySymbols());
+				Debug.LogWarning("apply.symbols: " + symbs, Profile);
+				ScriptSymbolsView.applyEditor(Profile.getBuildTargetGroup(), symbs);
 			}
-
-			if (GUILayout.Button("apply symbols"))
-			{
-				string symbs = string.Empty;
-
-				if (Profile.build != null) symbs += Profile.build.scriptSymbols.getStringifiedSymbols();
-				if (Profile.debug != null && Profile.build.logLevels != null)
-					symbs += Profile.build.logLevels.stringifySymbols();
-
-				if (!string.IsNullOrEmpty(symbs))
-				{
-					Debug.LogWarning("apply.symbols: " + symbs);
-					ScriptSymbolsView.applyEditor(Profile.getBuildTargetGroup(), symbs);
-				}
-			}
-
+			GUILayout.EndHorizontal();
 		}
 
 		void drawLogs()
 		{
-			GUILayout.Label("Logs", BuildorHelperGuiStyle.gCategoryBold);
+			GUILayout.Label("Logs", HelperGui.gCategoryBold);
 
 			if (!BuildorHelpers.IsDebug && Profile.build != null && Profile.build.logLevels != null)
 			{
-				GUILayout.Label("build.logs", BuildorHelperGuiStyle.gBold);
+				GUILayout.Label("build.logs", HelperGui.gBold);
 				foreach (var lvl in Profile.build.logLevels.levels)
 				{
 					GUILayout.Label(lvl.stringify());
@@ -188,7 +181,7 @@ namespace fwp.buildor.editor
 			}
 			else if (BuildorHelpers.IsDebug && Profile.build != null && Profile.build.logLevels != null)
 			{
-				GUILayout.Label("debug.logs", BuildorHelperGuiStyle.gBold);
+				GUILayout.Label("debug.logs", HelperGui.gBold);
 				foreach (var lvl in Profile.debug.logLevels.levels)
 				{
 					GUILayout.Label(lvl.stringify());
@@ -204,9 +197,9 @@ namespace fwp.buildor.editor
 		/// </summary>
 		void drawPathModifiers()
 		{
-			GUILayout.Label("path modifiers", BuildorHelperGuiStyle.gCategoryBold);
+			GUILayout.Label("path modifiers", HelperGui.gCategoryBold);
 
-			GUILayout.Label("build/ modifiers", BuildorHelperGuiStyle.gBold);
+			GUILayout.Label("build/ modifiers", HelperGui.gBold);
 
 
 			//EditorGUI.BeginDisabledGroup(true);
@@ -223,7 +216,7 @@ namespace fwp.buildor.editor
 			GUI.enabled = true;
 
 			// force to a specific folder
-			GUILayout.Label("build/ specific", BuildorHelperGuiStyle.gBold);
+			GUILayout.Label("build/ specific", HelperGui.gBold);
 
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button(gui_btn_browse, GUILayout.Width(100f)))
@@ -252,14 +245,14 @@ namespace fwp.buildor.editor
 		{
 			if (helper == null) return;
 
-			GUILayout.Label("on success", BuildorHelperGuiStyle.gCategoryBold);
+			GUILayout.Label("on success", HelperGui.gCategoryBold);
 
 			helper.build_postpro.openFolderOnSuccess = WinEdFieldsHelper.drawToggle("open folder after build", "openAfterBuild");
 			helper.build_postpro.zipOnSuccess = WinEdFieldsHelper.drawToggle("zip", "zip");
 			helper.build_prepro.autorun = WinEdFieldsHelper.drawToggle("autorun", "autorun");
 
 			GUILayout.Space(20f);
-			GUILayout.Label("outputs", BuildorHelperGuiStyle.gCategoryBold);
+			GUILayout.Label("outputs", HelperGui.gCategoryBold);
 
 			GUILayout.BeginHorizontal();
 			WinEdFieldsHelper.drawCopyPastablePath("app subpath : ", aProfil.getRelativeBuildFolderPath(), false);
@@ -320,7 +313,7 @@ namespace fwp.buildor.editor
 			GUILayout.Space(20f);
 
 			/// BUILD
-			if (GUILayout.Button(getBuildLabel(), BuildorHelperGuiStyle.gButtonBig))
+			if (GUILayout.Button(getBuildLabel(), HelperGui.gButtonBig))
 			{
 				Debug.Log("[BUILD] apply.merger:" + merger.strOneLine());
 				merger?.apply();

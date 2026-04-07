@@ -3,6 +3,7 @@ using UnityEditor;
 using System.IO;
 
 using fwp.version;
+using fwp.logs;
 
 /// <summary>
 /// (ratio iphone)
@@ -48,10 +49,50 @@ namespace fwp.buildor.editor
         public DataProfilBuildParameters build;
         public DataProfilDebugParameters debug;
 
+        public string Symbols
+        {
+            get
+            {
+                string ret = string.Empty;
+                if (build != null)
+                {
+                    if (build.watermark) ret += "watermark;";
+                    if (build.symbols != null) ret += BuildorHelpers.formatSymbols(build.symbols);
+                }
+
+                // logs by debug level
+                var logs = GetLogsLevels(BuildorHelpers.DebugLevel);
+                if (logs != null)
+                {
+                    if (logs != null) ret += BuildorHelpers.formatSymbols(logs.symbolsVerbose);
+                }
+
+                if (BuildorHelpers.IsDebug)
+                {
+                    ret += "debug;";
+                }
+
+                // demo & festival
+                if (releaseLevel != PublishLevel.normal) ret += releaseLevel.ToString() + ";";
+
+                return ret;
+            }
+        }
+
         /// <summary>
         /// root/path/build.ext
         /// </summary>
         public string FullPath => Path.Combine(BuildPath, getAppName());
+
+        public ProfilLogLevels GetLogsLevels(DebugLevel level)
+        {
+            switch (level)
+            {
+                case DebugLevel.normal: return build.logLevels;
+                case DebugLevel.debug: return debug.logLevels;
+            }
+            return null;
+        }
 
         /// <summary>
         /// path where executable is built
@@ -159,7 +200,7 @@ namespace fwp.buildor.editor
             string flags = string.Empty;
 
 #if debug
-    flags += "_d";
+            flags += "_d";
 #endif
 
 #if novideo

@@ -6,7 +6,7 @@ using UnityEditor;
 namespace fwp.buildor
 {
 	using fwp.buildor.editor;
-	
+
 	static public class BuildorHelpers
 	{
 		static public DataBuildSettingProfile Profile
@@ -36,6 +36,13 @@ namespace fwp.buildor
 		public const string _menuItem_basepath = "buildor/";
 		public const string _path_merger = _menuItem_basepath + "merger/";
 
+        static public string formatSymbols(string[] symbols)
+        {
+            string ret = string.Empty;
+            foreach(var s in symbols) ret += s+";";
+            return ret;
+        }
+		
 		static public ScriptableObject[] getScriptableObjectsInEditor(System.Type scriptableType)
 		{
 			string[] all = AssetDatabase.FindAssets("t:" + scriptableType.Name);
