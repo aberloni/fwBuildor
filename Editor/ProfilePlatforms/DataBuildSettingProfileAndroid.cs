@@ -34,7 +34,7 @@ namespace fwp.buildor.editor
         }
 
         public override BuildTarget getPlatformTarget() => BuildTarget.Android;
-        public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.Android;
+        public override BuildTargetGroup getBuildTargetGroup() => BuildTargetGroup.Android;
 
         static public string getPlayerSettingsBuildNumber() => PlayerSettings.Android.bundleVersionCode.ToString();
         static public string getPlayerSettingsVersion() => PlayerSettings.bundleVersion;

@@ -18,19 +18,19 @@ namespace fwp.symbols
         public NamedBuildTarget buildTarget = NamedBuildTarget.Unknown; // u6
 
         public List<string> symbols = new List<string>();
-        public string unityPlatformSymbols => ScriptSymbolsView.getPlayerSetSymbols(group);
+        public string UnityPlatformSymbols => ScriptSymbolsView.getPlayerSetSymbols(group);
 
         public bool has(string uid) => symbols.Contains(uid);
 
         /// <summary>
         /// extract from unity symbols
         /// </summary>
-        public GroupSymbols extractDefaultContent()
+        public GroupSymbols recordDefaultContent()
         {
             // all helper enums
             var enums = ScriptSymbols.extractEnums();
 
-            string[] symbolsParsed = unityPlatformSymbols.Split(';');
+            string[] symbolsParsed = UnityPlatformSymbols.Split(';');
 
             //Debug.Log(group + " => " + unityPlatformSymbols);
             //Debug.Log("total enums x" + enums.Count);

@@ -3,20 +3,18 @@ using UnityEditor;
 
 using fwp.logs.editor;
 using fwp.logs;
-using fwp.buildor.version;
-using UnityEditor.VersionControl;
 
 namespace fwp.buildor.editor
 {
 	public class WinEdBuildor : EditorWindow
 	{
-		const string ppref_publish = "publish";
+		const string ppref_publish = "level_publish";
 
 		static public PublishLevel PublishLevel
 		{
 			get
 			{
-				return (PublishLevel)PlayerPrefs.GetInt(ppref_publish, (int)PublishLevel.intern);
+				return (PublishLevel)PlayerPrefs.GetInt(ppref_publish, (int)PublishLevel.normal);
 			}
 			set
 			{
@@ -46,8 +44,8 @@ namespace fwp.buildor.editor
 		BuildHelperBase helper;
 
 		WinSubVersionBuildor subVersion;
-		WinSubScriptableSymbols subSymbols;
 		WinSubMerger subMergers;
+		WinSubScriptableSymbols subSymbols;
 		WinSubLogs subLogs;
 
 		/// <summary>
@@ -62,9 +60,9 @@ namespace fwp.buildor.editor
 		{
 
 			if (subVersion == null) subVersion = new();
-			if (subSymbols == null) subSymbols = new WinSubScriptableSymbols(this);
-			if (subMergers == null) subMergers = new WinSubMerger(this);
-			if (subLogs == null) subLogs = new WinSubLogs(this);
+			if (subSymbols == null) subSymbols = new(this);
+			if (subMergers == null) subMergers = new(this);
+			if (subLogs == null) subLogs = new(this);
 
 			swap(Profile);
 
@@ -127,10 +125,17 @@ namespace fwp.buildor.editor
 
 		void drawProfilSelector()
 		{
-			if (PublishLevel != BuildorWinEdHelper.drawEnum<PublishLevel>("publish target", ppref_publish, (int)PublishLevel.intern))
+			GUILayout.BeginHorizontal();
+			if (PublishLevel != BuildorWinEdHelper.drawEnum<PublishLevel>("publish", ppref_publish, (int)PublishLevel.normal))
 			{
 				swap(Profile);
 			}
+			var _level = BuildorWinEdHelper.drawEnum<DebugLevel>("debug", (int)Profile.debugLevel);
+			if (_level != Profile.debugLevel)
+			{
+				Profile.debugLevel = _level;
+			}
+			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();
 
@@ -173,7 +178,7 @@ namespace fwp.buildor.editor
 
 			GUILayout.Label("build/ modifiers", BuildorHelperGuiStyle.gBold);
 
-			
+
 			//EditorGUI.BeginDisabledGroup(true);
 			GUI.enabled = !aProfil.build.HasSpecificFolder;
 			// do not provide current value to drawer, must regen value on opening from ppref

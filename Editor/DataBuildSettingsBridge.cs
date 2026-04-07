@@ -5,8 +5,6 @@ using System.Linq;
 using UnityEditor;
 #endif
 
-using fwp.buildor.version;
-
 /// <summary>
 /// (ratio iphone)
 /// 562x1000 
@@ -32,7 +30,7 @@ namespace fwp.buildor.editor
         [Header("console")]
         public DataBuildSettingProfile[] ninSwitch;
 
-        public DataBuildSettingProfile getPlatformProfil(PublishLevel tarState = PublishLevel.intern)
+        public DataBuildSettingProfile getPlatformProfil(PublishLevel tarState = PublishLevel.normal)
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
 

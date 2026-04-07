@@ -2,7 +2,9 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
+    using fwp.symbols;
     using fwp.symbols.editor;
+    using UnityEngine;
 
     public class WinSubScriptableSymbols : WinSubFieldApply<ScriptableSymbolProfil>
     {
@@ -24,25 +26,26 @@ namespace fwp.buildor.editor
             var profil = WinEdBuildor.Profile;
             if (profil == null) return;
 
-            value.data.apply(profil.getPlatformTargetGroup());
+            value.apply();
         }
 
         protected override void drawDetails(ScriptableSymbolProfil value)
         {
             var profil = WinEdBuildor.Profile;
             if (profil == null) return;
-            bool changes = value.data.drawToggles(profil.getPlatformTargetGroup());
-            if (changes)
-            {
-                EditorUtility.SetDirty(value);
-            }
+
+            // var group = value.ActiveGroup;
+            string deets = value.getStringifiedSymbols();
+            if (string.IsNullOrEmpty(deets)) deets = "-none-";
+            GUILayout.Label(deets);
         }
 
         protected override void drawHeader(ScriptableSymbolProfil value)
         {
             var profil = WinEdBuildor.Profile;
             if (profil == null) return;
-            value.data.drawRawStringSymbols(profil.getPlatformTargetGroup());
+
+            GUILayout.Label("editor: " + ScriptSymbolsView.getPlayerSetSymbols(value.ActiveGroup));
         }
 
     }

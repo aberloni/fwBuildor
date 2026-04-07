@@ -17,7 +17,7 @@ namespace fwp.buildor.editor
     {
         public override string getExtension() => "exe";
         public override BuildTarget getPlatformTarget() => BuildTarget.StandaloneWindows;
-        public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.Standalone;
+        public override BuildTargetGroup getBuildTargetGroup() => BuildTargetGroup.Standalone;
 
         static public string getPlayerSettingsBuildNumber() => "-";
         static public string getPlayerSettingsVersion() => PlayerSettings.bundleVersion;

@@ -34,7 +34,7 @@ namespace fwp.buildor.editor
         }
 
         public override BuildTarget getPlatformTarget() => BuildTarget.iOS;
-        public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.iOS;
+        public override BuildTargetGroup getBuildTargetGroup() => BuildTargetGroup.iOS;
 
         static public string getPlayerSettingsBuildNumber() => PlayerSettings.iOS.buildNumber.ToString();
         static public string getPlayerSettingsVersion() => PlayerSettings.bundleVersion;

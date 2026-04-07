@@ -1,23 +1,20 @@
+using UnityEditor;
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace fwp.symbols
 {
-	using UnityEditor;
-	using System.Collections.Generic;
-	using UnityEngine;
-
 	/// <summary>
 	/// all symbols of all platforms
 	/// </summary>
 	[System.Serializable]
 	public class ScriptableSymbolsGroups
 	{
-		public List<GroupSymbols> groups = new List<GroupSymbols>();
-
-		public ScriptableSymbolsGroups()
-		{ }
+		public List<GroupSymbols> groups = new();
 
 		public GroupSymbols extract(BuildTargetGroup tGroup)
 		{
-			return fetch(tGroup).extractDefaultContent();
+			return fetch(tGroup).recordDefaultContent();
 		}
 
 		public GroupSymbols fetch(BuildTargetGroup tGroup)
@@ -28,7 +25,7 @@ namespace fwp.symbols
 				g = new GroupSymbols();
 				g.group = tGroup;
 				groups.Add(g);
-				g.extractDefaultContent();
+				g.recordDefaultContent();
 			}
 
 			return g;
@@ -122,7 +119,7 @@ namespace fwp.symbols
 			}
 			if (GUILayout.Button("Apply"))
 			{
-				mergeScriptableSymbols(group);
+				apply(group.group);
 				changes = true;
 				//EditorUtility.SetDirty(this);
 			}
@@ -131,39 +128,35 @@ namespace fwp.symbols
 			return changes;
 		}
 
+		public void apply(BuildTargetGroup btGroup)
+		{
+			applyEditor(btGroup, extractSymbolsOfGroup(btGroup));
+		}
+
 		/// <summary>
-		/// some symbols to add every time
-		/// ";" separator
+		/// make a string injectable of symbols
 		/// </summary>
-		string solvePredefSymbols()
+		public string extractSymbolsOfGroup(BuildTargetGroup btGroup)
 		{
-			return "UNITY_POST_PROCESSING_STACK_V2;";
+			var group = getGroup(btGroup);
+			if (group == null) return string.Empty;
+
+			string output = string.Empty;
+			foreach (var key in group.symbols) output += key + ";";
+			return output;
 		}
 
-		public void apply(BuildTargetGroup group)
+		/// <summary>
+		/// apply to editor
+		/// </summary>
+		static public void applyEditor(BuildTargetGroup btGroup, string symbols)
 		{
-			Debug.Log("merge symbols @" + group);
-			var gr = getGroup(group);
-			mergeScriptableSymbols(gr);
-		}
-
-		private void mergeScriptableSymbols(GroupSymbols group)
-		{
-			string newScriptableSymbol = solvePredefSymbols();
-
-			foreach (var key in group.symbols)
+			string cur = ScriptSymbolsView.getPlayerSetSymbols(btGroup);
+			if (cur != symbols)
 			{
-				newScriptableSymbol += key + ";";
+				Debug.LogWarning(btGroup + " = apply => " + cur);
+				PlayerSettings.SetScriptingDefineSymbolsForGroup(btGroup, symbols);
 			}
-
-			string cur = group.unityPlatformSymbols;
-			if (cur != newScriptableSymbol)
-			{
-				PlayerSettings.SetScriptingDefineSymbolsForGroup(group.group, newScriptableSymbol);
-				//PlayerSettings.SetScriptingDefineSymbols(group.group, newScriptableSymbol);
-				Debug.Log(group.group + " => " + cur);
-			}
-
 		}
 
 		public void drawRawStringSymbols(BuildTargetGroup tGroup)
@@ -175,7 +168,7 @@ namespace fwp.symbols
 				return;
 			}
 
-			string value = _group.unityPlatformSymbols;
+			string value = _group.UnityPlatformSymbols;
 
 			if (string.IsNullOrEmpty(value))
 				return;

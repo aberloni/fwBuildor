@@ -22,7 +22,7 @@ namespace fwp.buildor.editor
     {
         public override string getExtension() => "x86_64";
         public override BuildTarget getPlatformTarget() => BuildTarget.StandaloneLinux64;
-        public override BuildTargetGroup getPlatformTargetGroup()
+        public override BuildTargetGroup getBuildTargetGroup()
         {
 #if UNITY_2019 || UNITY_2020
             return BuildTargetGroup.Unknown;

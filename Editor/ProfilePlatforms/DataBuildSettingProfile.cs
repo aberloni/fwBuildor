@@ -3,7 +3,6 @@ using UnityEditor;
 using System.IO;
 
 using fwp.version;
-using fwp.buildor.version;
 
 /// <summary>
 /// (ratio iphone)
@@ -40,8 +39,8 @@ namespace fwp.buildor.editor
             }
         }
 
-        public PublishLevel releaseLevel = PublishLevel.intern;
-        public BuildPhase phase = BuildPhase.none;
+        public PublishLevel releaseLevel = PublishLevel.normal;
+        public DebugLevel debugLevel = DebugLevel.release;
 
         [Header("identification")]
         public string compagny_name = "*";
@@ -82,7 +81,7 @@ namespace fwp.buildor.editor
 
 #if UNITY_EDITOR
         abstract public BuildTarget getPlatformTarget();
-        abstract public BuildTargetGroup getPlatformTargetGroup();
+        abstract public BuildTargetGroup getBuildTargetGroup();
 #endif
 
         /// <summary>

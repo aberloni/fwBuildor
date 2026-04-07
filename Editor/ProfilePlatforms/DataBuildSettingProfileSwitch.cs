@@ -69,7 +69,7 @@ namespace fwp.buildor.editor
         }
 
         public override BuildTarget getPlatformTarget() => BuildTarget.Switch;
-        public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.Switch;
+        public override BuildTargetGroup getBuildTargetGroup() => BuildTargetGroup.Switch;
 
         public override string getProductName()
         {

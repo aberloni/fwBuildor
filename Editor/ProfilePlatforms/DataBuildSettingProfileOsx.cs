@@ -17,7 +17,7 @@ namespace fwp.buildor.editor
         public override string getExtension() => "app";
 
         public override BuildTarget getPlatformTarget() => BuildTarget.StandaloneOSX;
-        public override BuildTargetGroup getPlatformTargetGroup() => BuildTargetGroup.iOS;
+        public override BuildTargetGroup getBuildTargetGroup() => BuildTargetGroup.iOS;
 
     }
 

@@ -5,6 +5,10 @@ using UnityEngine;
 static public class BuildorWinEdHelper
 {
 #if UNITY_EDITOR
+
+    /// <summary>
+    /// without ppref
+    /// </summary>
     static public T drawEnum<T>(string label, int value = 0) where T : System.Enum
     {
         T enumValue = (T)System.Enum.ToObject(typeof(T), value);
@@ -34,5 +38,6 @@ static public class BuildorWinEdHelper
 
         return enumOutput;
     }
+    
 #endif
 }

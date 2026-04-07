@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.IO;
-using fwp.buildor.version;
 using UnityEditor.Build;
 
 /// <summary>
@@ -165,11 +163,7 @@ namespace fwp.buildor.editor
 
             //α,β,Ω
             string productName = profil.getProductName();
-            if (profil.phase != BuildPhase.none && profil.phase != BuildPhase.Ω)
-            {
-                productName += "(" + profil.phase + ")";
-            }
-
+            
             PlayerSettings.productName = productName;
             if (verbose) Debug.Log("productName : " + PlayerSettings.productName);
 
