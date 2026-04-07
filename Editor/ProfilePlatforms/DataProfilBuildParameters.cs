@@ -13,6 +13,7 @@ namespace fwp.buildor.editor
 
         [Tooltip("meant for override, folder where build is located each time, build name is then static")]
         public string build_folder_specific = "";
+        public bool HasSpecificFolder => !string.IsNullOrEmpty(build_folder_specific);
 
         public Sprite splashscreen;
         public Texture2D icon;

@@ -37,10 +37,7 @@ using UnityEditor.Build;
 
 namespace fwp.buildor.editor
 {
-
-    using UnityEditor.Build.Reporting;
     using UnityEditor;
-    using fwp.version;
 
     /// <summary>
     /// regroup all parameters used during build process
@@ -52,17 +49,13 @@ namespace fwp.buildor.editor
 
         static public readonly string pref_uid = pref_prefix + "." + Application.productName + "." + Application.productName;
 
+        // modifiers
         static public readonly string pref_include_prefix = pref_uid + "prefix";
         static public readonly string pref_include_platform = pref_uid + "platform";
         static public readonly string pref_include_date = pref_uid + "date";
         static public readonly string pref_include_version = pref_uid + "version";
         static public readonly string pref_suffix = pref_uid + "suffix";
-        static public readonly string pref_specific_folder = pref_uid + "specific_folder";
-        static public readonly string pref_specific_folder_steam = pref_uid + "folder_steam";
-        static public readonly string pref_specific_folder_switch = pref_uid + "folder_switch";
-
-        public static bool IsFolderOverride => EditorPrefs.GetString(pref_specific_folder).Length > 0;
-
+        
         static public DataBuildSettingProfile Profile => WinEdBuildor.Profile;
         static public string Platform => Profile?.getPlatformUid();
 

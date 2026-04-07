@@ -162,6 +162,8 @@ namespace fwp.buildor.editor
 
 		}
 
+		readonly GUIContent gui_btn_browse = new GUIContent("browse");
+
 		/// <summary>
 		/// change destination folder
 		/// </summary>
@@ -170,31 +172,23 @@ namespace fwp.buildor.editor
 			GUILayout.Label("path modifiers", BuildorHelperGuiStyle.gCategoryBold);
 
 			GUILayout.Label("build/ modifiers", BuildorHelperGuiStyle.gBold);
+
+			
+			//EditorGUI.BeginDisabledGroup(true);
+			GUI.enabled = !aProfil.build.HasSpecificFolder;
 			// do not provide current value to drawer, must regen value on opening from ppref
 			GUILayout.BeginHorizontal();
 			WinEdFieldsHelper.drawToggle("prefix", BuildHelperBase.pref_include_prefix);
 			WinEdFieldsHelper.drawToggle("platform", BuildHelperBase.pref_include_platform);
-			if (!BuildHelperBase.IsFolderOverride)
-			{
-				WinEdFieldsHelper.drawToggle("date", BuildHelperBase.pref_include_date);
-				WinEdFieldsHelper.drawToggle("version", BuildHelperBase.pref_include_version);
-			}
+			WinEdFieldsHelper.drawToggle("date", BuildHelperBase.pref_include_date);
+			WinEdFieldsHelper.drawToggle("version", BuildHelperBase.pref_include_version);
 			GUILayout.EndHorizontal();
 
 			WinEdFieldsHelper.editText("suffix", BuildHelperBase.pref_suffix);
+			GUI.enabled = true;
 
-			drawSpecificFolder();
-		}
-
-		readonly GUIContent gui_btn_browse = new GUIContent("browse");
-
-		/// <summary>
-		/// browse for specific folder
-		/// </summary>
-		void drawSpecificFolder()
-		{
 			// force to a specific folder
-			// GUILayout.Label("specific build/", BuildorHelperGuiStyle.gBold);
+			GUILayout.Label("build/ specific", BuildorHelperGuiStyle.gBold);
 
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button(gui_btn_browse, GUILayout.Width(100f)))

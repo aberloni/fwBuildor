@@ -56,7 +56,7 @@ namespace fwp.buildor.editor
         public string FullPath => Path.Combine(BuildPath, getAppName());
 
         /// <summary>
-        /// path where exe is dumped
+        /// path where executable is built
         /// </summary>
         public string BuildPath
         {
@@ -66,6 +66,7 @@ namespace fwp.buildor.editor
                 if (!string.IsNullOrEmpty(build.build_folder_specific))
                     return build.build_folder_specific;
 
+                // drive:to/root/Assets + relative/folder/
                 return Path.Combine(
                     Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/")),
                     getRelativeBuildFolderPath());
@@ -84,30 +85,10 @@ namespace fwp.buildor.editor
         abstract public BuildTargetGroup getPlatformTargetGroup();
 #endif
 
-        string SubFolder
-        {
-            get
-            {
-                string ret = string.Empty;
-
-                if (EditorPrefs.GetBool(BuildHelperBase.pref_specific_folder_steam)) ret = "steam";
-                else if (EditorPrefs.GetBool(BuildHelperBase.pref_specific_folder_switch)) ret = "switch";
-                else
-                {
-                    ret = EditorPrefs.GetString(BuildHelperBase.pref_specific_folder);
-                }
-
-                if (string.IsNullOrEmpty(ret))
-                {
-                    ret = build_path;
-                }
-
-                return ret;
-            }
-        }
-
         /// <summary>
-        /// solve subfolder
+        /// export folder + path within export folder
+        /// relative to project root (parent of Assets/)
+        /// this use window modifiers
         /// </summary>
         virtual public string getRelativeBuildFolderPath()
         {
@@ -115,13 +96,8 @@ namespace fwp.buildor.editor
 
             if (EditorPrefs.GetBool(BuildHelperBase.pref_include_prefix)) sub += build.build_prefix + path_separator;
             if (EditorPrefs.GetBool(BuildHelperBase.pref_include_platform)) sub += getPlatformUid() + path_separator;
-
-            // anything dynamic
-            if (!BuildHelperBase.IsFolderOverride)
-            {
-                if (EditorPrefs.GetBool(BuildHelperBase.pref_include_date)) sub += getFullDate() + path_separator;
-                if (EditorPrefs.GetBool(BuildHelperBase.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
-            }
+            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_date)) sub += getFullDate() + path_separator;
+            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
 
             sub += EditorPrefs.GetString(BuildHelperBase.pref_suffix);
 
@@ -134,7 +110,7 @@ namespace fwp.buildor.editor
             sub += getFlagsString();
 
             // builds/(sub/)
-            return Path.Combine(SubFolder, sub);
+            return Path.Combine(build_path, sub);
         }
 
         /// <summary>
