@@ -125,17 +125,16 @@ namespace fwp.buildor.editor
 
 		void drawProfilSelector()
 		{
-			GUILayout.BeginHorizontal();
 			if (PublishLevel != BuildorWinEdHelper.drawEnum<PublishLevel>("publish", ppref_publish, (int)PublishLevel.normal))
 			{
 				swap(Profile);
 			}
+			
 			var _level = BuildorWinEdHelper.drawEnum<DebugLevel>("debug", (int)Profile.debugLevel);
 			if (_level != Profile.debugLevel)
 			{
 				Profile.debugLevel = _level;
 			}
-			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();
 

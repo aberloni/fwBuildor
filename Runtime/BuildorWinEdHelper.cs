@@ -6,6 +6,8 @@ static public class BuildorWinEdHelper
 {
 #if UNITY_EDITOR
 
+    readonly static GUILayoutOption labelW = GUILayout.Width(200f);
+
     /// <summary>
     /// without ppref
     /// </summary>
@@ -14,10 +16,10 @@ static public class BuildorWinEdHelper
         T enumValue = (T)System.Enum.ToObject(typeof(T), value);
 
         GUILayout.BeginHorizontal();
-        GUILayout.Label(label, GUILayout.Width(200f));
+        GUILayout.Label(label, labelW);
         T enumOutput = (T)UnityEditor.EditorGUILayout.EnumPopup(enumValue);
         GUILayout.EndHorizontal();
-        
+
         return enumOutput;
     }
 
@@ -27,7 +29,7 @@ static public class BuildorWinEdHelper
         T enumValue = (T)System.Enum.ToObject(typeof(T), value);
 
         GUILayout.BeginHorizontal();
-        GUILayout.Label(label, GUILayout.Width(200f));
+        GUILayout.Label(label, labelW);
         T enumOutput = (T)UnityEditor.EditorGUILayout.EnumPopup(enumValue);
         GUILayout.EndHorizontal();
 
@@ -38,6 +40,6 @@ static public class BuildorWinEdHelper
 
         return enumOutput;
     }
-    
+
 #endif
 }
