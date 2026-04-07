@@ -130,7 +130,7 @@ namespace fwp.symbols
 
 		public void apply(BuildTargetGroup btGroup)
 		{
-			applyEditor(btGroup, extractSymbolsOfGroup(btGroup));
+			ScriptSymbolsView.applyEditor(btGroup, extractSymbolsOfGroup(btGroup));
 		}
 
 		/// <summary>
@@ -144,19 +144,6 @@ namespace fwp.symbols
 			string output = string.Empty;
 			foreach (var key in group.symbols) output += key + ";";
 			return output;
-		}
-
-		/// <summary>
-		/// apply to editor
-		/// </summary>
-		static public void applyEditor(BuildTargetGroup btGroup, string symbols)
-		{
-			string cur = ScriptSymbolsView.getPlayerSetSymbols(btGroup);
-			if (cur != symbols)
-			{
-				Debug.LogWarning(btGroup + " = apply => " + cur);
-				PlayerSettings.SetScriptingDefineSymbolsForGroup(btGroup, symbols);
-			}
 		}
 
 		public void drawRawStringSymbols(BuildTargetGroup tGroup)

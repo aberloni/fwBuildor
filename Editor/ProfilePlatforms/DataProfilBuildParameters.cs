@@ -21,6 +21,7 @@ namespace fwp.buildor.editor
         public DataBuildorScenesMerger merger;
         public fwp.symbols.editor.ScriptableSymbolProfil scriptSymbols;
 
+        public fwp.logs.ProfilLogLevels logLevels;
     }
 
 }

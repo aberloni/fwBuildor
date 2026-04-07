@@ -7,6 +7,7 @@ namespace fwp.version.editor
 {
     using fwp.version;
     using fwp.buildor.editor;
+    using fwp.buildor;
 
     public class VersionIncrementor
     {
@@ -14,7 +15,7 @@ namespace fwp.version.editor
         [MenuItem("Version/Internal/MAJOR++")]
         static public void incInternalMajor()
         {
-            var prof = WinEdBuildor.Profile;
+            var prof = BuildorHelpers.Profile;
             prof.versionInternal.incrementMajor();
             apply(false);
         }
@@ -22,7 +23,7 @@ namespace fwp.version.editor
         [MenuItem("Version/Internal/MINOR++")]
         static public void incInternalMinor()
         {
-            var prof = WinEdBuildor.Profile;
+            var prof = BuildorHelpers.Profile;
             prof.versionInternal.incrementMinor();
             apply(false);
         }
@@ -30,7 +31,7 @@ namespace fwp.version.editor
         [MenuItem("Version/Internal/FIX++")]
         static public void incInternalFix()
         {
-            var prof = WinEdBuildor.Profile;
+            var prof = BuildorHelpers.Profile;
             prof.versionInternal.incrementFix();
             apply(false);
         }
@@ -39,7 +40,7 @@ namespace fwp.version.editor
         [MenuItem("Version/Publish/MAJOR++")]
         static public void incPublishMajor()
         {
-            var prof = WinEdBuildor.Profile;
+            var prof = BuildorHelpers.Profile;
             prof.versionPublish.incrementMajor();
             apply(true);
         }
@@ -47,7 +48,7 @@ namespace fwp.version.editor
         [MenuItem("Version/Publish/MINOR++")]
         static public void incPublishMinor()
         {
-            var prof = WinEdBuildor.Profile;
+            var prof = BuildorHelpers.Profile;
             prof.versionPublish.incrementMinor();
             apply(true);
         }
@@ -55,14 +56,14 @@ namespace fwp.version.editor
         [MenuItem("Version/Publish/FIX++")]
         static public void incPublishFix()
         {
-            var prof = WinEdBuildor.Profile;
+            var prof = BuildorHelpers.Profile;
             prof.versionPublish.incrementFix();
             apply(true);
         }
 
         static public void apply(bool publish)
         {
-            var prof = WinEdBuildor.Profile;
+            var prof = BuildorHelpers.Profile;
             Debug.Assert(prof != null);
             Debug.Assert(prof.versionInternal != null);
 

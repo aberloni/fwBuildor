@@ -8,14 +8,14 @@ namespace fwp.buildor
     public enum PublishLevel
     {
         normal = 0,
-        festival,
         demo,
+        festival,
     }
 
     [System.Serializable]
     public enum DebugLevel
     {
-        release,
+        normal = 0,
         debug,
     }
 

@@ -11,27 +11,26 @@ namespace fwp.symbols.editor
         menuName = BuildorHelpers._menuItem_basepath + "(profil) scriptables symbols", order = 100)]
     public class ScriptableSymbolProfil : ScriptableObject
     {
-        public ScriptableSymbolsGroups release;
-        public ScriptableSymbolsGroups debug;
+        public ScriptableSymbolsGroups groups;
+        
+        /// <summary>
+        /// #if watermark
+        /// </summary>
+        public bool watermark;
 
-        public BuildTargetGroup ActiveGroup => WinEdBuildor.Profile.getBuildTargetGroup();
-        public DebugLevel ActiveDebugLevel => WinEdBuildor.Profile.debugLevel;
+        /// <summary>
+        /// lang_en, lang_fr, ...
+        /// </summary>
+        public string[] langs;
 
         public int Count
         {
             get
             {
                 int cnt = 0;
-                foreach (var g in release.groups)
+                foreach (var g in groups.groups)
                 {
                     cnt += g.symbols.Count;
-                }
-                if (ActiveDebugLevel == DebugLevel.debug)
-                {
-                    foreach (var g in debug.groups)
-                    {
-                        cnt += g.symbols.Count;
-                    }
                 }
                 return cnt;
             }
@@ -42,26 +41,22 @@ namespace fwp.symbols.editor
         /// </summary>
         public string getStringifiedSymbols()
         {
-            var _group = WinEdBuildor.Profile.getBuildTargetGroup();
-            string output = release.extractSymbolsOfGroup(_group);
-            if (ActiveDebugLevel == DebugLevel.debug) output += debug.extractSymbolsOfGroup(_group);
+            var _group = BuildorHelpers.Profile.getBuildTargetGroup();
+            string output = groups.extractSymbolsOfGroup(_group);
             return output;
         }
 
         [ContextMenu("apply to editor")]
         public void apply()
         {
-            ScriptableSymbolsGroups.applyEditor(ActiveGroup, getStringifiedSymbols());
+            ScriptSymbolsView.applyEditor(
+                BuildorHelpers.Profile.getBuildTargetGroup(), getStringifiedSymbols());
         }
 
         [ContextMenu("record    : defined platforms")]
         protected void cmExtracts()
         {
-            foreach (var d in release.groups)
-            {
-                d.recordDefaultContent();
-            }
-
+            foreach (var d in groups.groups) d.recordDefaultContent();
             EditorUtility.SetDirty(this);
         }
 
@@ -72,13 +67,13 @@ namespace fwp.symbols.editor
             {
                 case RuntimePlatform.WindowsEditor:
                 case RuntimePlatform.WindowsPlayer:
-                    release.extract(BuildTargetGroup.Standalone);
+                    groups.extract(BuildTargetGroup.Standalone);
                     break;
                 case RuntimePlatform.Android:
-                    release.extract(BuildTargetGroup.Android);
+                    groups.extract(BuildTargetGroup.Android);
                     break;
                 case RuntimePlatform.Switch:
-                    release.extract(BuildTargetGroup.Switch);
+                    groups.extract(BuildTargetGroup.Switch);
                     break;
                 default:
                     throw new System.NotImplementedException(Application.platform + " not implem");

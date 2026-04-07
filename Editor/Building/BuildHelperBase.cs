@@ -54,7 +54,7 @@ namespace fwp.buildor.editor
         static public readonly string pref_include_version = pref_uid + "version";
         static public readonly string pref_suffix = pref_uid + "suffix";
         
-        static public DataBuildSettingProfile Profile => WinEdBuildor.Profile;
+        static public DataBuildSettingProfile Profile => BuildorHelpers.Profile;
         static public string Platform => Profile?.getPlatformUid();
 
         public BuildPreprocess build_prepro;

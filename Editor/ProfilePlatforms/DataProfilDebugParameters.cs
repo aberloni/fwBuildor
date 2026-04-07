@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using fwp.logs;
 using UnityEditor;
 
 /// <summary>
@@ -27,9 +26,8 @@ namespace fwp.buildor.editor
         public bool debugScripting = false;
 
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
-
-        public ProfilLogLevels logLevels;
-
+        public fwp.logs.ProfilLogLevels logLevels;
+        
         public void apply()
         {
             EditorUserBuildSettings.development = developement_build;

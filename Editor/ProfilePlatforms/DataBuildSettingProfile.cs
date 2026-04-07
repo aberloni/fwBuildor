@@ -40,7 +40,6 @@ namespace fwp.buildor.editor
         }
 
         public PublishLevel releaseLevel = PublishLevel.normal;
-        public DebugLevel debugLevel = DebugLevel.release;
 
         [Header("identification")]
         public string compagny_name = "*";

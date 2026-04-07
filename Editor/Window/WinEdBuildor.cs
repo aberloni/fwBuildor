@@ -3,39 +3,20 @@ using UnityEditor;
 
 using fwp.logs.editor;
 using fwp.logs;
+using fwp.symbols;
 
 namespace fwp.buildor.editor
 {
 	public class WinEdBuildor : EditorWindow
 	{
-		const string ppref_publish = "level_publish";
-
-		static public PublishLevel PublishLevel
-		{
-			get
-			{
-				return (PublishLevel)PlayerPrefs.GetInt(ppref_publish, (int)PublishLevel.normal);
-			}
-			set
-			{
-				PlayerPrefs.SetInt(ppref_publish, (int)value);
-			}
-		}
-
-		static public DataBuildSettingProfile Profile
-		{
-			get
-			{
-				return BuildHelperBase.getActiveProfile(PublishLevel);
-			}
-		}
-
 		[MenuItem(BuildorVerbosity._buildor_menuitem_path + "buildor (win)", false, 0)]
 		static void init()
 		{
 			var win = EditorWindow.GetWindow(typeof(WinEdBuildor));
 			win.titleContent = new GUIContent("Buildor");
 		}
+
+		DataBuildSettingProfile Profile => BuildorHelpers.Profile;
 
 		Vector2 _scroll;
 
@@ -45,8 +26,6 @@ namespace fwp.buildor.editor
 
 		WinSubVersionBuildor subVersion;
 		WinSubMerger subMergers;
-		WinSubScriptableSymbols subSymbols;
-		WinSubLogs subLogs;
 
 		/// <summary>
 		/// this helper manage process during building
@@ -60,11 +39,9 @@ namespace fwp.buildor.editor
 		{
 
 			if (subVersion == null) subVersion = new();
-			if (subSymbols == null) subSymbols = new(this);
 			if (subMergers == null) subMergers = new(this);
-			if (subLogs == null) subLogs = new(this);
 
-			swap(Profile);
+			swap(BuildorHelpers.Profile);
 
 			if (helper == null) helper = createBuildHelper();
 		}
@@ -73,9 +50,7 @@ namespace fwp.buildor.editor
 		{
 			if (helper == null) helper = createBuildHelper();
 
-			subLogs?.focus();
 			subMergers?.focus();
-			subSymbols?.focus();
 		}
 
 		readonly GUIContent _title = new("Buildor");
@@ -91,8 +66,9 @@ namespace fwp.buildor.editor
 			{
 				subVersion?.draw(this);
 				subMergers?.draw();
-				subSymbols?.draw();
-				subLogs?.draw();
+
+				drawSymbols();
+				drawLogs();
 
 				if (helper != null)
 				{
@@ -104,7 +80,7 @@ namespace fwp.buildor.editor
 				else aProfil.debug.drawEd();
 
 				drawPathModifiers();
-				drawSuccess();
+				drawPostProcess();
 				drawBuildButton();
 			}
 
@@ -117,23 +93,20 @@ namespace fwp.buildor.editor
 			aProfil?.applyProfilEditor();
 
 			subMergers?.focus();
-			subSymbols?.focus();
-			subLogs?.focus();
 
 			Debug.Log("*new* " + aProfil, aProfil);
 		}
 
 		void drawProfilSelector()
 		{
-			if (PublishLevel != BuildorWinEdHelper.drawEnum<PublishLevel>("publish", ppref_publish, (int)PublishLevel.normal))
+			if (BuildorHelpers.PublishLevel != BuildorWinEdHelper.drawEnum<PublishLevel>("publish", BuildorHelpers.ppref_publish))
 			{
 				swap(Profile);
 			}
-			
-			var _level = BuildorWinEdHelper.drawEnum<DebugLevel>("debug", (int)Profile.debugLevel);
-			if (_level != Profile.debugLevel)
+
+			if (BuildorHelpers.DebugLevel != BuildorWinEdHelper.drawEnum<DebugLevel>("debug", BuildorHelpers.ppref_debug))
 			{
-				Profile.debugLevel = _level;
+				swap(Profile);
 			}
 
 			GUILayout.BeginHorizontal();
@@ -161,8 +134,66 @@ namespace fwp.buildor.editor
 
 			}
 
-
 			GUILayout.EndHorizontal();
+
+
+		}
+
+		void drawSymbols()
+		{
+			GUILayout.Label("Symbols", BuildorHelperGuiStyle.gCategoryBold);
+
+			GUILayout.Label("profil", BuildorHelperGuiStyle.gBold);
+			if (Profile.build == null || Profile.build.scriptSymbols) GUILayout.Label("-none-");
+			else
+			{
+				GUILayout.Label(Profile.build.scriptSymbols.getStringifiedSymbols());
+			}
+
+			GUILayout.Label("logs.verbose", BuildorHelperGuiStyle.gBold);
+			if (Profile.debug == null || Profile.build.logLevels == null) GUILayout.Label("-none-");
+			else
+			{
+				GUILayout.Label(Profile.build.logLevels.stringifySymbols());
+			}
+
+			if (GUILayout.Button("apply symbols"))
+			{
+				string symbs = string.Empty;
+
+				if (Profile.build != null) symbs += Profile.build.scriptSymbols.getStringifiedSymbols();
+				if (Profile.debug != null && Profile.build.logLevels != null)
+					symbs += Profile.build.logLevels.stringifySymbols();
+
+				if (!string.IsNullOrEmpty(symbs))
+				{
+					Debug.LogWarning("apply.symbols: " + symbs);
+					ScriptSymbolsView.applyEditor(Profile.getBuildTargetGroup(), symbs);
+				}
+			}
+
+		}
+
+		void drawLogs()
+		{
+			GUILayout.Label("Logs", BuildorHelperGuiStyle.gCategoryBold);
+
+			if (!BuildorHelpers.IsDebug && Profile.build != null && Profile.build.logLevels != null)
+			{
+				GUILayout.Label("build.logs", BuildorHelperGuiStyle.gBold);
+				foreach (var lvl in Profile.build.logLevels.levels)
+				{
+					GUILayout.Label(lvl.stringify());
+				}
+			}
+			else if (BuildorHelpers.IsDebug && Profile.build != null && Profile.build.logLevels != null)
+			{
+				GUILayout.Label("debug.logs", BuildorHelperGuiStyle.gBold);
+				foreach (var lvl in Profile.debug.logLevels.levels)
+				{
+					GUILayout.Label(lvl.stringify());
+				}
+			}
 
 		}
 
@@ -217,7 +248,7 @@ namespace fwp.buildor.editor
 			GUILayout.EndHorizontal();
 		}
 
-		void drawSuccess()
+		void drawPostProcess()
 		{
 			if (helper == null) return;
 
@@ -284,7 +315,6 @@ namespace fwp.buildor.editor
 			if (merger != null) GUILayout.Label("+ merger : " + merger.strOneLine());
 
 			ProfilLogLevels logs = null;
-			if (subLogs != null) logs = subLogs.Value;
 			if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
 
 			GUILayout.Space(20f);
@@ -296,7 +326,7 @@ namespace fwp.buildor.editor
 				merger?.apply();
 
 				Debug.Log("[BUILD] apply.logs:" + logs);
-				logs?.apply();
+				logs?.applyLogs();
 
 				if (helper == null)
 				{

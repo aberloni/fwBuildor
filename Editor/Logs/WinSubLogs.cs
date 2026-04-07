@@ -2,7 +2,8 @@ using UnityEngine;
 
 namespace fwp.logs.editor
 {
-	using fwp.buildor.editor;
+    using fwp.buildor;
+    using fwp.buildor.editor;
 	//using fwp.buildor;
 
 	public class WinSubLogs : WinSubFieldApply<ProfilLogLevels>
@@ -15,15 +16,15 @@ namespace fwp.logs.editor
 
 		protected override ProfilLogLevels fetchProfilInstance()
 		{
-			var profil = WinEdBuildor.Profile;
+			var profil = BuildorHelpers.Profile;
 			if (profil == null) return null;
-			if (profil.debug == null) return null;
-			return profil.debug.logLevels;
+			if (profil.build == null) return null;
+			return profil.build.logLevels;
 		}
 
 		protected override void applyEditor(ProfilLogLevels value)
 		{
-			value?.apply();
+			value?.applyLogs();
 		}
 
 		protected override void drawDetails(ProfilLogLevels value)

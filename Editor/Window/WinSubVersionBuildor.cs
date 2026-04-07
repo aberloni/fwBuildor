@@ -1,10 +1,12 @@
-using fwp.version;
-using fwp.buildor.editor;
-
-public class WinSubVersionBuildor : fwp.version.editor.WinSubVersion
+namespace fwp.buildor.editor
 {
-	public void draw(WinEdBuildor win)
+
+	public class WinSubVersionBuildor : fwp.version.editor.WinSubVersion
 	{
-		draw(WinEdBuildor.Profile.Version);
+		public void draw(WinEdBuildor win)
+		{
+			draw(BuildorHelpers.Profile.Version);
+		}
 	}
+	
 }

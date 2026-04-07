@@ -16,14 +16,14 @@ namespace fwp.buildor.editor
 
         protected override ScriptableSymbolProfil fetchProfilInstance()
         {
-            var profil = WinEdBuildor.Profile;
+            var profil = BuildorHelpers.Profile;
             if (profil == null) return null;
             return profil.build.scriptSymbols;
         }
 
         protected override void applyEditor(ScriptableSymbolProfil value)
         {
-            var profil = WinEdBuildor.Profile;
+            var profil = BuildorHelpers.Profile;
             if (profil == null) return;
 
             value.apply();
@@ -31,7 +31,7 @@ namespace fwp.buildor.editor
 
         protected override void drawDetails(ScriptableSymbolProfil value)
         {
-            var profil = WinEdBuildor.Profile;
+            var profil = BuildorHelpers.Profile;
             if (profil == null) return;
 
             // var group = value.ActiveGroup;
@@ -42,10 +42,10 @@ namespace fwp.buildor.editor
 
         protected override void drawHeader(ScriptableSymbolProfil value)
         {
-            var profil = WinEdBuildor.Profile;
+            var profil = BuildorHelpers.Profile;
             if (profil == null) return;
 
-            GUILayout.Label("editor: " + ScriptSymbolsView.getPlayerSetSymbols(value.ActiveGroup));
+            // GUILayout.Label("editor: " + ScriptSymbolsView.getPlayerSetSymbols(value.get));
         }
 
     }

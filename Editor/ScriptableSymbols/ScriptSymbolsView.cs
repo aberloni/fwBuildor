@@ -16,6 +16,19 @@ namespace fwp.symbols
         /// </summary>
         static Dictionary<System.Type, string[]> buffer_symbols = new Dictionary<System.Type, string[]>();
 
+		/// <summary>
+		/// apply to editor
+		/// </summary>
+		static public void applyEditor(BuildTargetGroup btGroup, string symbols)
+		{
+			string cur = ScriptSymbolsView.getPlayerSetSymbols(btGroup);
+			if (cur != symbols)
+			{
+				UnityEngine.Debug.LogWarning(btGroup + " = apply => " + cur);
+				PlayerSettings.SetScriptingDefineSymbolsForGroup(btGroup, symbols);
+			}
+		}
+
         /// <summary>
         /// shk
         /// </summary>
