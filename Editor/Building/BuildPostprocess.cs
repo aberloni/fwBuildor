@@ -94,10 +94,17 @@ namespace fwp.buildor.editor
         /// <summary>
         /// open FOLDER of current build
         /// </summary>
-        static public void openBuildFolder(string path)
+        static public void openBuildFolder(string path, bool parent = false)
         {
             // remove file name from path
+            Debug.Log(path);
+
             if (path.Contains(BuildHelperBase.Profile.getExtension()))
+            {
+                path = path.Substring(0, path.LastIndexOf("/"));
+            }
+
+            if(parent)
             {
                 path = path.Substring(0, path.LastIndexOf("/"));
             }
@@ -144,7 +151,7 @@ namespace fwp.buildor.editor
                 // https://stackoverflow.com/questions/60904/how-can-i-open-a-cmd-window-in-a-specific-location
                 string command = $"/K cd /D {buildsRoot} && tar.exe -avcf {zipName} {projectFolder}";
                 log("win.zip : " + command);
-                WinEdBuildor.winExecute(command);
+                WinEdBuildor.shellOpenFile(command);
             }
             else if (Application.platform == RuntimePlatform.OSXEditor)
             {

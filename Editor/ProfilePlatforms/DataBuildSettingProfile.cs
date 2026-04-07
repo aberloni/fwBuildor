@@ -45,7 +45,7 @@ namespace fwp.buildor.editor
         [Header("identification")]
         public string compagny_name = "*";
         public string product_name = "*";
-        
+
         // exe name is located in BUILD scriptable
 
         public DataProfilBuildParameters build;
@@ -84,15 +84,12 @@ namespace fwp.buildor.editor
         /// <summary>
         /// root/path/build.ext
         /// </summary>
-        public string FullPath => Path.Combine(BuildPath, getAppName());
+        public string FullPath => Path.Combine(BuildPath, getAppName()).Replace("\\", "/");
 
         public ProfilLogLevels GetLogsLevels(DebugLevel level)
         {
-            switch (level)
-            {
-                case DebugLevel.normal: return build.logLevels;
-                case DebugLevel.debug: return debug.logLevels;
-            }
+            if (level == DebugLevel.normal && build != null) return build.logLevels;
+            else if (level == DebugLevel.debug && debug != null) return debug.logLevels;
             return null;
         }
 

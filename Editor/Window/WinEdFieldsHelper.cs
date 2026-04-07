@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UIElements.Experimental;
 
 namespace fwp.buildor.editor
 {
 	static public class WinEdFieldsHelper
 	{
 
-		
+
 		static public void drawCopyPastablePath(string label, string path, bool useCopy = true)
 		{
 			GUILayout.BeginHorizontal();
@@ -51,29 +52,30 @@ namespace fwp.buildor.editor
 			bool _val = GUILayout.Toggle(value, label, GUILayout.Width(150f));
 			if (!string.IsNullOrEmpty(ppref) && _val != value)
 			{
-				EditorPrefs.SetInt(ppref, _val ? 1 : 0);
-				// Debug.Log(ppref+"="+_val);
+				EditorPrefs.SetBool(ppref, _val);
+				// Debug.LogWarning(ppref + "=" + _val);
 			}
 
 			return _val;
 		}
 		static public bool drawToggle(string label, string ppref, bool? forceValue = null)
 		{
-			if (forceValue == null) forceValue = EditorPrefs.GetInt(ppref, -1) > 0;
+			if (forceValue == null) forceValue = EditorPrefs.GetBool(ppref, false);
 			return drawToggle(forceValue.Value, label, ppref);
 		}
 
 		static public int drawInt(string label, string ppref)
 		{
-			int _val = EditorPrefs.GetInt(ppref);
+			int value = EditorPrefs.GetInt(ppref);
 
-			int val = EditorGUILayout.IntField(label, _val);
-			if (val != _val)
+			int _val = EditorGUILayout.IntField(label, value);
+			if (_val != value)
 			{
-				EditorPrefs.SetInt(ppref, val);
+				EditorPrefs.SetInt(ppref, _val);
+				// Debug.LogWarning(ppref + "=" + _val);
 			}
 
-			return val;
+			return _val;
 		}
 
 		static public T drawEnum<T>(string label, string pprefUid, int defaultValue = 0) where T : System.Enum

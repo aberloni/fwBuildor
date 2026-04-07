@@ -4,6 +4,7 @@ using UnityEditor;
 using fwp.logs;
 using fwp.symbols;
 using fwp.symbols.editor;
+using System.IO;
 
 namespace fwp.buildor.editor
 {
@@ -72,12 +73,14 @@ namespace fwp.buildor.editor
 
 				if (helper != null)
 				{
-					GUILayout.Label("build flags", HelperGui.gCategoryBold);
+					GUILayout.Label("Pre-process", HelperGui.gCategoryBold);
 					helper.build_prepro.incVersion = WinEdFieldsHelper.drawToggle("incVersion", "incVersion");
 				}
 
-				if (aProfil.debug == null) GUILayout.Label("-no debug-");
-				else aProfil.debug.drawEd();
+				if (aProfil != null && BuildorHelpers.IsDebug)
+				{
+					aProfil.debug.drawEd();
+				}
 
 				drawPathModifiers();
 				drawPostProcess();
@@ -151,7 +154,11 @@ namespace fwp.buildor.editor
 				else Profile.build.logLevels = _logs;
 			}
 
-			Profile.build.watermark = WinEdFieldsHelper.drawToggle(Profile.build.watermark, "watermark");
+			if (Profile.build != null)
+			{
+				Profile.build.watermark = WinEdFieldsHelper.drawToggle(Profile.build.watermark, "watermark");
+			}
+
 			string sCurrent = ScriptSymbolsView.getPlayerSetSymbols(Profile.getBuildTargetGroup());
 			GUILayout.Label("unity: " + sCurrent);
 
@@ -197,7 +204,7 @@ namespace fwp.buildor.editor
 		/// </summary>
 		void drawPathModifiers()
 		{
-			GUILayout.Label("path modifiers", HelperGui.gCategoryBold);
+			GUILayout.Label("Path modifiers", HelperGui.gCategoryBold);
 
 			GUILayout.Label("build/ modifiers", HelperGui.gBold);
 
@@ -275,14 +282,14 @@ namespace fwp.buildor.editor
 				openEditorLogsFolder();
 			}
 
-			if (GUILayout.Button("(folder) build output "))
+			if (GUILayout.Button("(folder) build/"))
 			{
-				BuildPostprocess.openBuildFolder(aProfil.FullPath); // win.button
+				BuildPostprocess.openBuildFolder(aProfil.BuildPath, true); // win.button
 			}
 
 			if (GUILayout.Button("exe last build"))
 			{
-				winExecute(aProfil.FullPath); // win.button
+				shellOpenFile(aProfil.FullPath); // win.button
 			}
 
 			GUILayout.EndHorizontal();
@@ -405,14 +412,22 @@ namespace fwp.buildor.editor
 		/// <summary>
 		/// call of generic windows process
 		/// </summary>
-		static public void winExecute(string processPath, string args = "")
+		static public void shellOpenFile(string processPath, string args = "")
 		{
+			if (!File.Exists(processPath))
+			{
+				Debug.LogWarning("missing file @ " + processPath);
+				return;
+			}
+
 			var process = new System.Diagnostics.Process();
 			process.StartInfo.FileName = processPath;
+			process.StartInfo.UseShellExecute = true;
 			process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+
 			if (args.Length > 0) process.StartInfo.Arguments = args;
 
-			Debug.Log("winExecute @ " + processPath);
+			Debug.Log("shell @ " + processPath);
 
 			//https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=netframework-4.7.2#System_Diagnostics_Process_Start_System_String_System_String_
 			process.Start();
@@ -430,9 +445,10 @@ namespace fwp.buildor.editor
 			//startCmd("cmd", "/K \"cd /D %LOCALAPPDATA%\""); // local
 			string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + "Low"; // c:/[USERAPPDATA]/LocalLow
 			path = System.IO.Path.Combine(path, Application.companyName, Application.productName);
-			path = System.IO.Path.Combine(path, "Player.log");
+			// path = System.IO.Path.Combine(path, "Player.log");
 
-			winExecute(path); // local
+			// shellOpenFile(path); // local
+			os_openFolder(path);
 		}
 
 		[MenuItem("Window/Buildor/Logs/(folder) editor logs")]
@@ -440,9 +456,11 @@ namespace fwp.buildor.editor
 		{
 			string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData); // c:/[USERAPPDATA]/Local
 			path = System.IO.Path.Combine(path, "Unity/Editor");
+			Debug.Log(path);
 
 			//startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
-			os_openFolder("C:/Users/lego/AppData/Local/Unity/Editor");
+			// os_openFolder("C:/Users/lego/AppData/Local/Unity/Editor");
+			os_openFolder(path);
 		}
 
 	}

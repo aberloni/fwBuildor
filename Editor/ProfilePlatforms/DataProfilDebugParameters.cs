@@ -9,8 +9,9 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-    [CreateAssetMenu(menuName = "buildor/profil/+debug.params", order = 100)]
-    public class DataProfilDebugParameters : ScriptableObject
+    // [CreateAssetMenu(menuName = "buildor/profil/+debug.params", order = 100)]
+    [System.Serializable]
+    public class DataProfilDebugParameters
     {
         public enum ProfilingLevel
         {
@@ -61,14 +62,14 @@ namespace fwp.buildor.editor
                 EditorUserBuildSettings.development = developement_build;
                 Debug.LogWarning("changed dev build : " + EditorUserBuildSettings.development);
 
-                UnityEditor.EditorUtility.SetDirty(this);
+                // UnityEditor.EditorUtility.SetDirty(this);
             }
 
             debugScripting = GUILayout.Toggle(debugScripting, "debug scripting");
             if (debugScripting != EditorUserBuildSettings.allowDebugging)
             {
                 EditorUserBuildSettings.allowDebugging = debugScripting;
-                UnityEditor.EditorUtility.SetDirty(this);
+                // UnityEditor.EditorUtility.SetDirty(this);
             }
 
             var level = (DataProfilDebugParameters.ProfilingLevel)EditorGUILayout.EnumPopup("profiling", debugProfiling);
@@ -93,7 +94,7 @@ namespace fwp.buildor.editor
                 }
 
                 debugProfiling = level;
-                UnityEditor.EditorUtility.SetDirty(this);
+                // UnityEditor.EditorUtility.SetDirty(this);
             }
         }
     }

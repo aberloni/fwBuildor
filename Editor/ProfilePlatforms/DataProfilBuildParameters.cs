@@ -2,8 +2,8 @@
 
 namespace fwp.buildor.editor
 {
-    [CreateAssetMenu(menuName = "buildor/profil/+build.params", order = 100)]
-    public class DataProfilBuildParameters : ScriptableObject
+    [System.Serializable]
+    public class DataProfilBuildParameters
     {
         [Header("build content")]
         public DataBuildorScenesMerger merger;
@@ -21,10 +21,10 @@ namespace fwp.buildor.editor
         public string[] clearFolders = new string[0];
 
         [Tooltip("project name used to generate output file")]
-        public string build_prefix = "";
+        public string build_prefix;
 
         [Tooltip("meant for override, folder where build is located each time, build name is then static")]
-        public string build_folder_specific = "";
+        public string build_folder_specific;
         public bool HasSpecificFolder => !string.IsNullOrEmpty(build_folder_specific);
 
         [Header("bundle")]
