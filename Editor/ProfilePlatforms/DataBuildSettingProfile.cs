@@ -45,6 +45,8 @@ namespace fwp.buildor.editor
         [Header("identification")]
         public string compagny_name = "*";
         public string product_name = "*";
+        
+        // exe name is located in BUILD scriptable
 
         public DataProfilBuildParameters build;
         public DataProfilDebugParameters debug;

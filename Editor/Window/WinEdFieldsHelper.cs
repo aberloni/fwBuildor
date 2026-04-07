@@ -7,6 +7,8 @@ namespace fwp.buildor.editor
 {
 	static public class WinEdFieldsHelper
 	{
+
+		
 		static public void drawCopyPastablePath(string label, string path, bool useCopy = true)
 		{
 			GUILayout.BeginHorizontal();

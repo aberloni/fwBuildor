@@ -158,7 +158,7 @@ namespace fwp.buildor.editor
 			GUILayout.BeginHorizontal();
 			string symbs = Profile.Symbols;
 			if (string.IsNullOrEmpty(symbs)) GUILayout.Label("empty symbols");
-			else GUILayout.Label("profil: " + symbs);
+			else GUILayout.Label("profil: " + symbs, HelperGui.gWrapped);
 			if (sCurrent != symbs && GUILayout.Button("apply", HelperGui.bS))
 			{
 				Debug.LogWarning("apply.symbols: " + symbs, Profile);

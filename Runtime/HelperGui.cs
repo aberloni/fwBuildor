@@ -4,9 +4,6 @@ using UnityEngine;
 
 namespace fwp.buildor
 {
-    /// <summary>
-    /// extracted : 2022-11-08
-    /// </summary>
     static public class HelperGui
     {
 
@@ -31,6 +28,12 @@ namespace fwp.buildor
         public static readonly GUILayoutOption bS = GUILayout.Width(75f);
         public static readonly GUILayoutOption bM = GUILayout.Width(100f);
         public static readonly GUILayoutOption bL = GUILayout.Width(150f);
+
+        public static readonly GUIStyle gWrapped = new GUIStyle(GUI.skin.label)
+        {
+            // normal.textColor = Color.white;
+            wordWrap = true
+        };
 
         static HelperGui()
         {
