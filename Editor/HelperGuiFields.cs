@@ -7,11 +7,11 @@ namespace fwp.buildor.editor
 {
 	static public class HelperGuiFields
 	{
-		
+
 		static public void drawLabel(string label)
 		{
 			if (string.IsNullOrEmpty(label)) return;
-			GUILayout.Label(label, HelperGui.gWrapped);
+			GUILayout.Label(label, HelperGui.gWrapped, GUILayout.ExpandWidth(true));
 		}
 
 		static public void drawCopyPastablePath(string label, string path, bool useCopy = true)

@@ -101,7 +101,7 @@ namespace fwp.buildor.editor
 			GUILayout.BeginHorizontal();
 
 			GUILayout.Label(Application.platform.ToString());
-			
+
 			GUI.enabled = false;
 			EditorGUILayout.ObjectField(aProfil, typeof(DataBuildSettingProfile), true);
 			GUI.enabled = true;
@@ -129,6 +129,8 @@ namespace fwp.buildor.editor
 
 			string sCurrent = ScriptSymbolsView.getPlayerSetSymbols(p.getBuildTargetGroup());
 			GUILayout.Label("unity: " + sCurrent);
+
+			// HelperGuiFields.drawLabel("IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;");
 
 			GUILayout.BeginHorizontal();
 			string symbs = p.Symbols;
