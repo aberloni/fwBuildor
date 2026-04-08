@@ -14,7 +14,20 @@ namespace fwp.buildor.editor
         /// </summary>
         public string[] symbols;
 
-        public bool watermark;
+        public TargetFeatures features;
+        public string SymbolsFeatures
+        {
+            get
+            {
+                string ret = string.Empty;
+                foreach (TargetFeatures f in System.Enum.GetValues(typeof(TargetFeatures)))
+                {
+                    if (f == TargetFeatures.none) continue;
+                    if (features.HasFlag(f)) ret += f.ToString() + ";";
+                }
+                return ret;
+            }
+        }
 
         [Header("post process")]
         [Tooltip("remove any folder from buidl matching given pattern(s)")]

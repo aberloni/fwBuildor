@@ -8,7 +8,15 @@ namespace fwp.buildor.editor
 	static public class HelperGuiFields
 	{
 
-		static public void drawLabel(string label)
+		static public void drawField(string context, string value)
+		{
+			GUILayout.BeginHorizontal();
+			GUILayout.Label(context, HelperGui.bM);
+			GUILayout.Label(value, HelperGui.gWrapped, GUILayout.ExpandWidth(true));
+			GUILayout.EndHorizontal();
+		}
+
+		static public void drawWrapLabel(string label)
 		{
 			if (string.IsNullOrEmpty(label)) return;
 			GUILayout.Label(label, HelperGui.gWrapped, GUILayout.ExpandWidth(true));

@@ -63,29 +63,28 @@ namespace fwp.buildor.editor
 		void onProfilRefresh()
 		{
 			aProfil = BuildorVars.Profile;
-
-			Debug.Log("*new* " + aProfil, aProfil);
-
-			aProfil?.injectProfilToEditor();
+			if (aProfil != null)
+			{
+				Debug.Log("*new* " + aProfil, aProfil);
+				aProfil.injectProfilToEditor();
+			}
 		}
 
 		void drawProfilSelector()
 		{
-
-
 			GUILayout.BeginHorizontal();
 
-			HelperGuiFields.drawPrefEnum<PublishLevel>(BuildorVars.ppref_publish, "publish", (value) =>
+			HelperGuiFields.drawPrefEnum<TargetPublish>(BuildorVars.ppref_publish, "publish", (value) =>
 			{
 				onProfilRefresh();
 			});
 
-			HelperGuiFields.drawPrefEnum<Sdks>(BuildorVars.ppref_sdk, "sdk", (value) =>
+			HelperGuiFields.drawPrefEnum<TargetSdks>(BuildorVars.ppref_sdk, "sdk", (value) =>
 			{
 				onProfilRefresh();
 			});
 
-			HelperGuiFields.drawPrefEnum<DebugLevel>(BuildorVars.ppref_debug, "debug", (value) =>
+			HelperGuiFields.drawPrefEnum<TargetDebug>(BuildorVars.ppref_debug, "debug", (value) =>
 			{
 				onProfilRefresh();
 			});
@@ -113,7 +112,7 @@ namespace fwp.buildor.editor
 				GUI.enabled = true;
 				if (GUILayout.Button("refresh")) onProfilRefresh();
 				if (GUILayout.Button(">>", GUILayout.Width(40f))) Selection.activeObject = aProfil;
-				GUILayout.EndHorizontal();				
+				GUILayout.EndHorizontal();
 			}
 
 		}
@@ -125,22 +124,33 @@ namespace fwp.buildor.editor
 			var p = BuildorVars.Profile;
 
 			// profil.build symbols
-			HelperGuiFields.drawLabel(BuildorHelpers.formatSymbols(p.build.symbols));
+			HelperGuiFields.drawField("build.symbols", BuildorHelpers.formatSymbols(p.build.symbols));
 
 			// profil.logs.symbols
 			var logs = p.GetLogsLevels(BuildorVars.TargetDebug);
 			if (logs != null)
 			{
-				HelperGuiFields.drawObjectDisabled(logs);
-				HelperGuiFields.drawLabel(BuildorHelpers.formatSymbols(logs.symbolsVerbose));
+				// HelperGuiFields.drawObjectDisabled(logs);
+				HelperGuiFields.drawField("logs", BuildorHelpers.formatSymbols(logs.symbolsVerbose));
 			}
 
-			// +watermark
-			p.build.watermark = HelperGuiFields.drawToggle(p.build.watermark, "watermark");
+			// profil.build.features
+
+			foreach (TargetFeatures f in System.Enum.GetValues(typeof(TargetFeatures)))
+			{
+				if (f == TargetFeatures.none) continue;
+				bool toggled = HelperGuiFields.drawToggle(p.build.features.HasFlag(f), f.ToString());
+				if (toggled) p.build.features |= f;
+				else p.build.features &= ~f;
+			}
+
+			HelperGuiFields.drawField("build.features", p.build.SymbolsFeatures);
+
+			GUILayout.Space(10f);
 
 			// current unity context value
 			string sCurrent = ScriptSymbolsView.getPlayerSetSymbols(p.getBuildTargetGroup());
-			HelperGuiFields.drawLabel("unity: " + sCurrent);
+			HelperGuiFields.drawField("unity", sCurrent);
 
 			// wrap test
 			// HelperGuiFields.drawLabel("IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;");
@@ -149,7 +159,7 @@ namespace fwp.buildor.editor
 			string symbs = p.Symbols;
 
 			if (string.IsNullOrEmpty(symbs)) GUILayout.Label("empty symbols");
-			else HelperGuiFields.drawLabel("profil: " + symbs);
+			else HelperGuiFields.drawField("inject", symbs);
 
 			if (GUILayout.Button("apply", HelperGui.bS))
 			{

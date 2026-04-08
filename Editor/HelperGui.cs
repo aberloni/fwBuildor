@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEditor;
 
 namespace fwp.buildor
 {
     static public class HelperGui
     {
+        // static float Width10 => EditorGUIUtility.currentViewWidth * 0.1f;
+        // public static readonly GUILayoutOption w10 = GUILayout.Width(Width10);
 
         const float refSize = 1280f;
         const float refTextSize = 16f;

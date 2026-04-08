@@ -40,10 +40,10 @@ namespace fwp.buildor.editor
             }
         }
 
-        public PublishLevel publish = PublishLevel.release;
-        public Sdks sdk = Sdks.none;
+        public TargetPublish publish = TargetPublish.release;
+        public TargetSdks sdk = TargetSdks.none;
 
-        public bool Is(PublishLevel lvl, Sdks sdk) => this.publish == lvl && this.sdk == sdk;
+        public bool Is(TargetPublish lvl, TargetSdks sdk) => this.publish == lvl && this.sdk == sdk;
 
         [Header("identification")]
         public string compagny_name = "*";
@@ -59,9 +59,14 @@ namespace fwp.buildor.editor
             get
             {
                 string ret = string.Empty;
+
+                // demo & festival
+                if (publish != TargetPublish.release) ret += publish.ToString() + ";";
+                if (sdk != TargetSdks.none) ret += sdk.ToString() + ";";
+
                 if (build != null)
                 {
-                    if (build.watermark) ret += "watermark;";
+                    ret += build.SymbolsFeatures;
                     if (build.symbols != null) ret += BuildorHelpers.formatSymbols(build.symbols);
                 }
 
@@ -77,9 +82,6 @@ namespace fwp.buildor.editor
                     ret += "debug;";
                 }
 
-                // demo & festival
-                if (publish != PublishLevel.release) ret += publish.ToString() + ";";
-
                 return ret;
             }
         }
@@ -89,10 +91,10 @@ namespace fwp.buildor.editor
         /// </summary>
         public string FullPath => Path.Combine(BuildPath, getAppName()).Replace("\\", "/");
 
-        public ProfilLogLevels GetLogsLevels(DebugLevel level)
+        public ProfilLogLevels GetLogsLevels(TargetDebug level)
         {
-            if (level == DebugLevel.release && build != null) return build.logLevels;
-            else if (level == DebugLevel.debug && debug != null) return debug.logLevels;
+            if (level == TargetDebug.release && build != null) return build.logLevels;
+            else if (level == TargetDebug.debug && debug != null) return debug.logLevels;
             return null;
         }
 

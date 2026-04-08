@@ -37,27 +37,27 @@ namespace fwp.buildor
         }
 
         static public readonly string ppref_sdk = pref_prefix + "sdk";
-        static public Sdks TargetSdk
+        static public TargetSdks TargetSdk
         {
-            get => (Sdks)EditorPrefs.GetInt(ppref_sdk, 0);
+            get => (TargetSdks)EditorPrefs.GetInt(ppref_sdk, 0);
             set => EditorPrefs.SetInt(ppref_sdk, (int)value);
         }
 
         static public readonly string ppref_publish = pref_prefix + "level_publish";
-        static public PublishLevel TargetPublish
+        static public TargetPublish TargetPublish
         {
-            get => (PublishLevel)EditorPrefs.GetInt(ppref_publish, (int)PublishLevel.release);
+            get => (TargetPublish)EditorPrefs.GetInt(ppref_publish, (int)TargetPublish.release);
             set => EditorPrefs.SetInt(ppref_publish, (int)value);
         }
 
         static public readonly string ppref_debug = pref_prefix + "level_debug";
-        static public DebugLevel TargetDebug
+        static public TargetDebug TargetDebug
         {
-            get => (DebugLevel)EditorPrefs.GetInt(ppref_debug, (int)DebugLevel.release);
+            get => (TargetDebug)EditorPrefs.GetInt(ppref_debug, (int)TargetDebug.release);
             set => EditorPrefs.SetInt(ppref_debug, (int)value);
         }
 
-        static public bool IsDebug => TargetDebug == DebugLevel.debug;
+        static public bool IsDebug => TargetDebug == TargetDebug.debug;
 
         static public readonly string ppref_pre_incVersion = pref_prefix + "pre_inc_version";
         static public bool PreIncVersion

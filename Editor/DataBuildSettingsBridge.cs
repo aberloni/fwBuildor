@@ -30,7 +30,7 @@ namespace fwp.buildor.editor
         [Header("console")]
         public DataBuildSettingProfile[] ninSwitch;
 
-        public DataBuildSettingProfile getPlatformProfil(PublishLevel tarState, Sdks sdk)
+        public DataBuildSettingProfile getPlatformProfil(TargetPublish tarState, TargetSdks sdk)
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
 
