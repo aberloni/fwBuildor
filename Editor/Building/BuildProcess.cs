@@ -58,7 +58,12 @@ namespace fwp.buildor.editor
         protected void log(string msg)
         {
             float dt = Time.realtimeSinceStartup - time;
-            Debug.Log(dt + " | " + GetType().Name + " > " + msg);
+            ulog(dt + " | " + msg, this);
+        }
+
+        static public void ulog(string msg, object tar = null)
+        {
+            Debug.Log((tar != null ? tar.GetType() : string.Empty) + " > " + msg);
         }
     }
 

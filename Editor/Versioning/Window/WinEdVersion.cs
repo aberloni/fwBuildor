@@ -37,7 +37,7 @@ namespace fwp.version.editor
 
 			if (subVersion != null)
 			{
-				subVersion.draw(version);
+				subVersion.drawVersion(version);
 			}
 		}
 

@@ -91,6 +91,11 @@ namespace fwp.buildor.editor
         /// </summary>
         public string FullPath => Path.Combine(BuildPath, getAppName()).Replace("\\", "/");
 
+        /// <summary>
+        /// folder parent of export destination
+        /// </summary>
+        public string PathParent => System.IO.Path.GetDirectoryName(FullPath);
+
         public ProfilLogLevels GetLogsLevels(TargetDebug level)
         {
             if (level == TargetDebug.release && build != null) return build.logLevels;
@@ -227,18 +232,18 @@ namespace fwp.buildor.editor
             return flags;
         }
 
-        public string getZipName()
+        public string ZipFullPath
         {
-            string zipName = getRelativeBuildFolderPath();
+            get
+            {
+                string parent = Path.GetDirectoryName(Path.GetDirectoryName(FullPath));
+                return Path.Combine(parent, getZipName());
+            }
+        }
 
-            zipName = zipName.Substring(zipName.LastIndexOf("/") + 1);
-
-            //string zipName = getAppName(false);
-            //zipName += getFlagsString();
-
-            zipName += ".zip";
-
-            return zipName;
+        string getZipName()
+        {
+            return System.IO.Path.GetDirectoryName(FullPath) + ".zip";
         }
 
         abstract public string getExtension();

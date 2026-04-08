@@ -9,9 +9,6 @@ namespace fwp.buildor.editor
 
     public class BuildPostprocess : BuildProcess
     {
-        public bool openFolderOnSuccess;
-        public bool zipOnSuccess;
-
         BuildSummary summary;
 
         public BuildProcess doLaunch(DataBuildSettingProfile profil, BuildSummary summary)
@@ -58,18 +55,25 @@ namespace fwp.buildor.editor
                     log("  L path : " + summary.outputPath);
 
                     yield return null;
-                    if (openFolderOnSuccess)
+                    if (BuildorVars.PostOpenFolder)
                     {
                         log($"+OPEN FOLDER of build : {summary.outputPath}");
                         openBuildFolder(summary.outputPath); // success.open
                     }
 
                     yield return null;
-                    if (zipOnSuccess)
+                    if (BuildorVars.PostZip)
                     {
-                        string zipName = profil.getZipName();
-                        log($"+ZIP {summary.outputPath}@{zipName}");
-                        zipBuildFolder(summary.outputPath, zipName);
+                        log($"+ZIP");
+
+                        zipBuildFolder(profil.BuildPath, profil.ZipFullPath); // autozip after build
+                    }
+
+                    yield return null;
+                    if (BuildorVars.PostAutorun)
+                    {
+                        log($"+AUTORUN  @{profil.FullPath}");
+                        shellOpenFile(profil.FullPath);
                     }
 
                     break;
@@ -105,7 +109,7 @@ namespace fwp.buildor.editor
                 path = path.Substring(0, path.LastIndexOf("/"));
             }
 
-            if(parent)
+            if (parent)
             {
                 path = path.Substring(0, path.LastIndexOf("/"));
             }
@@ -114,175 +118,179 @@ namespace fwp.buildor.editor
         }
 
         /// <summary>
-        /// https://superuser.com/questions/201371/create-zip-folder-from-the-command-line-windows
-        /// https://techcommunity.microsoft.com/t5/containers/tar-and-curl-come-to-windows/ba-p/382409
-        /// https://ss64.com/nt/tar.html
+        /// zipBuildFolder("D:/builds/myGame", "D:/builds/myGame.zip");
         /// </summary>
-        void zipBuildFolder(string outputPath, string zipName)
+        static public void zipBuildFolder(string folderPath, string zipPath)
         {
+            EditorUtility.DisplayProgressBar("Zipping", "Compressing...", 0f);
 
-            // path/to/builds/project/zipName.exe
-            if (outputPath.Contains("exe") || outputPath.Contains("app"))
-            {
-                outputPath = outputPath.Substring(0, outputPath.LastIndexOf('/'));
-            }
+            string parent = System.IO.Path.GetDirectoryName(folderPath);
+            string folderName = System.IO.Path.GetFileName(folderPath);
 
-            log("zip output path @ " + outputPath);
-
-            // remove '/' just before exe file name
-            if (outputPath.EndsWith("/")) outputPath = outputPath.Substring(0, outputPath.Length - 1);
-
-            // parent folder to project/ (builds/)
-            string buildsRoot = outputPath.Substring(0, outputPath.LastIndexOf('/'));
-            log("output : " + outputPath);
-            log("root : " + buildsRoot);
-
-            // get project/
-            string projectFolder = outputPath.Substring(outputPath.LastIndexOf('/') + 1);
-
-            //string args = $"-cf {outputZip} {buildFolderPath}";
-
-            // cd /D D:/fwProtoss/fw/builds/ && tar.exe -avcf fwp.zip fwp__win__0-0-11
-
-            string folderToZip = $"{buildsRoot}/{projectFolder}";
-            string pathZip = $"{buildsRoot}/{zipName}";
+            ulog("folder.drop: " + parent);
+            ulog("folder.name: " + folderName);
 
             if (Application.platform == RuntimePlatform.WindowsEditor)
             {
-                // https://stackoverflow.com/questions/60904/how-can-i-open-a-cmd-window-in-a-specific-location
-                string command = $"/K cd /D {buildsRoot} && tar.exe -avcf {zipName} {projectFolder}";
-                log("win.zip : " + command);
-                shellOpenFile(command);
+                shellExecute("cmd.exe",
+                    $"/c tar -a -c -f \"{zipPath}\" \"{folderName}\"",
+                    parent);
             }
             else if (Application.platform == RuntimePlatform.OSXEditor)
             {
-                string command = $"zip -r {pathZip} {folderToZip}";
-                log("osx.zip : " + command);
-                osxExecute(command);
+                string args = $"-c \"zip -r '{zipPath}' '{folderPath}'\"";
+                shellExecute("/bin/bash", args);
             }
+            else
+            {
+                Debug.LogWarning("platform not supported");
+            }
+
+            EditorUtility.ClearProgressBar();
         }
 
 
-		/// <summary>
-		/// open explorer at path
-		/// </summary>
-		/// <param name="folderPath"></param>
-		static public void os_openFolder(string folderPath, bool selectFolder = false)
-		{
-			folderPath = folderPath.Replace(@"\", @"/"); // uniform
-			if (!folderPath.EndsWith("/")) folderPath += "/"; // last /
+        static public void shellExecute(string processPath, string args = "", string workingDir = "")
+        {
+            var process = new System.Diagnostics.Process();
+            process.StartInfo.FileName = processPath;
 
-			if (!System.IO.Directory.Exists(folderPath))
-			{
-				Debug.LogWarning("no folder " + folderPath);
-				return;
-			}
+            process.StartInfo.Arguments = args;
+            process.StartInfo.UseShellExecute = false; // better control
+            process.StartInfo.CreateNoWindow = false;
 
-			string argument = string.Empty;
-			if (Application.platform == RuntimePlatform.WindowsEditor)
-			{
-				folderPath = folderPath.Replace(@"/", @"\");   // explorer doesn't like front slashes
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.OutputDataReceived += (s, e) => { if (e.Data != null) Debug.Log(e.Data); };
+            process.ErrorDataReceived += (s, e) => { if (e.Data != null) Debug.LogError(e.Data); };
 
-				if (selectFolder)
-				{
-					//https://stackoverflow.com/questions/334630/opening-a-folder-in-explorer-and-selecting-a-file
-					argument = "/select, ";
-				}
+            if (!string.IsNullOrEmpty(workingDir)) process.StartInfo.WorkingDirectory = workingDir;
 
-				argument += "\"" + folderPath + "\"";
+            try
+            {
+                Debug.Log($"shell @ {processPath} {args}");
 
-				UnityEngine.Debug.Log("explorer:opening : " + argument);
+                process.Start();
+                process.BeginOutputReadLine();
+                process.BeginErrorReadLine();
 
-				System.Diagnostics.Process.Start("explorer.exe", argument);
-			}
-			else if (Application.platform == RuntimePlatform.OSXEditor)
-			{
+                process.WaitForExit(); // wait for process to finish
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError(e);
+            }
+        }
 
+        /// <summary>
+        /// call of generic windows process
+        /// </summary>
+        static public void shellOpenFile(string processPath)
+        {
+            if (!System.IO.File.Exists(processPath))
+            {
+                Debug.LogWarning("missing file @ " + processPath);
+                return;
+            }
+            shellExecute(processPath);
+        }
 
-				UnityEngine.Debug.Log("finder:opening : " + folderPath);
-				EditorUtility.RevealInFinder(folderPath);
-			}
-			else
-			{
-				throw new System.NotImplementedException("platform not implem");
-			}
+        static public void osxExecute(string args)
+        {
+            Debug.Log("osx.bash : " + args);
+            var pStart = new System.Diagnostics.ProcessStartInfo("/bin/bash");
+            //pStart.FileName = "/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal";
+            pStart.WorkingDirectory = "/";
 
+            pStart.UseShellExecute = false;
+            pStart.RedirectStandardInput = true;
+            pStart.RedirectStandardOutput = true;
 
-		}
+            var proc = new System.Diagnostics.Process();
+            proc.StartInfo = pStart;
+            proc.Start();
 
-		static public void osxExecute(string args)
-		{
-			Debug.Log("osx.bash : " + args);
-			var pStart = new System.Diagnostics.ProcessStartInfo("/bin/bash");
-			//pStart.FileName = "/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal";
-			pStart.WorkingDirectory = "/";
-
-			pStart.UseShellExecute = false;
-			pStart.RedirectStandardInput = true;
-			pStart.RedirectStandardOutput = true;
-
-			var proc = new System.Diagnostics.Process();
-			proc.StartInfo = pStart;
-			proc.Start();
-
-			proc.StandardInput.WriteLine(args);
-			proc.StandardInput.Flush();
-			//proc.WaitForExit();
-		}
-
-		/// <summary>
-		/// call of generic windows process
-		/// </summary>
-		static public void shellOpenFile(string processPath, string args = "")
-		{
-			if (!System.IO.File.Exists(processPath))
-			{
-				Debug.LogWarning("missing file @ " + processPath);
-				return;
-			}
-
-			var process = new System.Diagnostics.Process();
-			process.StartInfo.FileName = processPath;
-			process.StartInfo.UseShellExecute = true;
-			process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
-
-			if (args.Length > 0) process.StartInfo.Arguments = args;
-
-			Debug.Log("shell @ " + processPath);
-
-			//https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=netframework-4.7.2#System_Diagnostics_Process_Start_System_String_System_String_
-			process.Start();
-		}
+            proc.StandardInput.WriteLine(args);
+            proc.StandardInput.Flush();
+            //proc.WaitForExit();
+        }
 
 
-		[MenuItem("Window/Buildor/Logs/(folder) player logs")]
-		static public void openPlayerLogsFolder()
-		{
-			//https://stackoverflow.com/questions/4494290/detect-the-location-of-appdata-locallow
-			// Environment.SpecialFolder.LocalApplicationData)
+        /// <summary>
+        /// open explorer at path
+        /// </summary>
+        /// <param name="folderPath"></param>
+        static public void os_openFolder(string folderPath, bool selectFolder = false)
+        {
+            folderPath = folderPath.Replace(@"\", @"/"); // uniform
+            if (!folderPath.EndsWith("/")) folderPath += "/"; // last /
 
-			//startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
-			//startCmd("cmd", "start %APPDATA%"); // roaming
-			//startCmd("cmd", "/K \"cd /D %LOCALAPPDATA%\""); // local
-			string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + "Low"; // c:/[USERAPPDATA]/LocalLow
-			path = System.IO.Path.Combine(path, Application.companyName, Application.productName);
-			// path = System.IO.Path.Combine(path, "Player.log");
+            if (!System.IO.Directory.Exists(folderPath))
+            {
+                Debug.LogWarning("no folder " + folderPath);
+                return;
+            }
 
-			// shellOpenFile(path); // local
-			os_openFolder(path);
-		}
+            string argument = string.Empty;
+            if (Application.platform == RuntimePlatform.WindowsEditor)
+            {
+                folderPath = folderPath.Replace(@"/", @"\");   // explorer doesn't like front slashes
 
-		[MenuItem("Window/Buildor/Logs/(folder) editor logs")]
-		static public void openEditorLogsFolder()
-		{
-			string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData); // c:/[USERAPPDATA]/Local
-			path = System.IO.Path.Combine(path, "Unity/Editor");
-			Debug.Log(path);
+                if (selectFolder)
+                {
+                    //https://stackoverflow.com/questions/334630/opening-a-folder-in-explorer-and-selecting-a-file
+                    argument = "/select, ";
+                }
 
-			//startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
-			// os_openFolder("C:/Users/lego/AppData/Local/Unity/Editor");
-			os_openFolder(path);
-		}
+                argument += "\"" + folderPath + "\"";
+
+                UnityEngine.Debug.Log("explorer:opening : " + argument);
+
+                System.Diagnostics.Process.Start("explorer.exe", argument);
+            }
+            else if (Application.platform == RuntimePlatform.OSXEditor)
+            {
+
+
+                UnityEngine.Debug.Log("finder:opening : " + folderPath);
+                EditorUtility.RevealInFinder(folderPath);
+            }
+            else
+            {
+                throw new System.NotImplementedException("platform not implem");
+            }
+
+
+        }
+
+        [MenuItem("Window/Buildor/Logs/(folder) player logs")]
+        static public void openPlayerLogsFolder()
+        {
+            //https://stackoverflow.com/questions/4494290/detect-the-location-of-appdata-locallow
+            // Environment.SpecialFolder.LocalApplicationData)
+
+            //startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
+            //startCmd("cmd", "start %APPDATA%"); // roaming
+            //startCmd("cmd", "/K \"cd /D %LOCALAPPDATA%\""); // local
+            string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + "Low"; // c:/[USERAPPDATA]/LocalLow
+            path = System.IO.Path.Combine(path, Application.companyName, Application.productName);
+            // path = System.IO.Path.Combine(path, "Player.log");
+
+            // shellOpenFile(path); // local
+            os_openFolder(path);
+        }
+
+        [MenuItem("Window/Buildor/Logs/(folder) editor logs")]
+        static public void openEditorLogsFolder()
+        {
+            string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData); // c:/[USERAPPDATA]/Local
+            path = System.IO.Path.Combine(path, "Unity/Editor");
+            Debug.Log(path);
+
+            //startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
+            // os_openFolder("C:/Users/lego/AppData/Local/Unity/Editor");
+            os_openFolder(path);
+        }
 
     }
 

@@ -238,7 +238,7 @@ namespace fwp.buildor.editor
 			HelperGuiFields.drawPrefToggle(BuildorVars.pref_include_version, "version");
 			GUILayout.EndHorizontal();
 
-			HelperGuiFields.editText("suffix", BuildorVars.pref_suffix);
+			HelperGuiFields.editText(BuildorVars.pref_suffix, "suffix");
 			GUI.enabled = true;
 
 			// force to a specific folder
@@ -272,14 +272,22 @@ namespace fwp.buildor.editor
 			GUILayout.Space(20f);
 			GUILayout.Label("outputs", HelperGui.gCategoryBold);
 
+			GUILayout.BeginHorizontal(GUILayout.Height(20f));
+			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_pre_incVersion, "version.incr");
+			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_openFolder, "open folder");
+			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_zip, "zip folder");
+			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_autorun, "autorun");
+			GUILayout.EndHorizontal();
+
 			GUILayout.BeginHorizontal();
 			HelperGuiFields.drawCopyPastablePath("app subpath : ", aProfil.getRelativeBuildFolderPath(), false);
 			HelperGuiFields.drawCopyPastablePath("app name :", aProfil.getAppName(), false);
 			GUILayout.EndHorizontal();
 
-			HelperGuiFields.drawCopyPastablePath("export path :", aProfil.BuildPath);
+			HelperGuiFields.drawCopyPastablePath("path.build :", aProfil.BuildPath);
+			HelperGuiFields.drawCopyPastablePath("path: ", aProfil.FullPath);
 
-			HelperGuiFields.drawCopyPastablePath("zip name :", aProfil.getZipName());
+			HelperGuiFields.drawCopyPastablePath("zip: ", aProfil.ZipFullPath);
 
 			GUILayout.BeginHorizontal();
 
@@ -301,6 +309,11 @@ namespace fwp.buildor.editor
 			if (GUILayout.Button("exe last build"))
 			{
 				BuildPostprocess.shellOpenFile(aProfil.FullPath); // win.button
+			}
+
+			if (GUILayout.Button("zip"))
+			{
+				BuildPostprocess.zipBuildFolder(aProfil.BuildPath, aProfil.ZipFullPath); // window button
 			}
 
 			GUILayout.EndHorizontal();
@@ -326,8 +339,8 @@ namespace fwp.buildor.editor
 		{
 			if (BuildorVars.PreIncVersion)
 			{
-				if (aProfil.versionInternal != null) GUILayout.Label("+ v.internal : " + aProfil.versionInternal.version);
-				if (aProfil.versionPublish != null) GUILayout.Label("+ v.publish : " + aProfil.versionPublish.version);
+				if (aProfil.versionInternal != null) GUILayout.Label("+ v.internal");
+				if (aProfil.versionPublish != null) GUILayout.Label("+ v.publish");
 			}
 
 			GUILayout.Label("+ path : " + aProfil.FullPath);

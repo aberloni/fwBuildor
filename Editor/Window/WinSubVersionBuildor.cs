@@ -1,3 +1,6 @@
+using UnityEditor;
+using UnityEngine;
+
 namespace fwp.buildor.editor
 {
 
@@ -5,8 +8,14 @@ namespace fwp.buildor.editor
 	{
 		public void draw(WinEdBuildor win)
 		{
-			draw(BuildorVars.Profile.Version);
+			GUILayout.Label("version", HelperGui.gCategoryBold);
+
+			var p = BuildorVars.Profile;
+			drawVersion(p.versionInternal);
+			drawVersion(p.versionPublish);
+
+			GUILayout.Label("PlayerSettings: " + fwp.version.VersionManager.getPlayerSettingsVersion());
 		}
 	}
-	
+
 }

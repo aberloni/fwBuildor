@@ -3,39 +3,28 @@ using UnityEditor;
 
 namespace fwp.version.editor
 {
-    using fwp.buildor;
     using System.IO;
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class WinSubVersion
     {
-
         readonly GUILayoutOption bS = GUILayout.Width(75f);
         readonly GUILayoutOption bSM = GUILayout.Width(90f);
         readonly GUILayoutOption bM = GUILayout.Width(105f);
         
-        /// <summary>
-        /// result is stored in flagsBuild
-        /// </summary>
-        virtual public void draw(DataBuildSettingVersion version)
+        public void drawVersion(DataBuildSettingVersion version, bool controls = true)
         {
-            GUILayout.Space(20f);
-            GUILayout.Label("version", HelperGui.gCategoryBold);
-
-            if (version == null)
-            {
-                GUILayout.Label("no version");
-                return;
-            }
+            if (version == null) return;
 
             GUILayout.BeginHorizontal();
 
             GUI.enabled = false;
-            //var version = getActiveVersion(win);
-
             EditorGUILayout.ObjectField(version, typeof(DataBuildSettingVersion), true);
             GUI.enabled = true;
 
-            if (version != null)
+            if (version != null && controls)
             {
                 GUILayout.Label(version.getFormated(), bS);
 
@@ -58,8 +47,6 @@ namespace fwp.version.editor
             GUILayout.Label("last incremented: " + version.timestamp_incr);
             GUILayout.Label("last built: " + version.timestamp_build);
             GUILayout.EndHorizontal();
-
-            GUILayout.Label("PlayerSettings: " + VersionManager.getPlayerSettingsVersion());
 
             GUILayout.Space(10f);
         }

@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Build;
+using System.Runtime.InteropServices;
 
 namespace fwp.buildor.editor
 {
@@ -15,9 +16,6 @@ namespace fwp.buildor.editor
     public class BuildPreprocess : BuildProcess
     {
         public BuildPlayerOptions buildPlayerOptions;
-        public bool incVersion;
-
-        public bool autorun;
 
         public BuildSummary? build_summary;
 
@@ -54,14 +52,24 @@ namespace fwp.buildor.editor
         {
             buildPlayerOptions = new BuildPlayerOptions();
 
-            if (autorun)
+            if (Directory.Exists(profil.BuildPath))
+            {
+                log("+clear folder");
+                Directory.Delete(profil.BuildPath, true); // true = recursive delete
+            }
+            else
+            {
+                Directory.CreateDirectory(profil.BuildPath);
+            }
+
+            if (BuildorVars.PostAutorun)
             {
                 log("+autorun");
                 buildPlayerOptions.options |= BuildOptions.AutoRunPlayer;
             }
 
             //this will apply
-            if (incVersion)
+            if (BuildorVars.PreIncVersion)
             {
                 log("+inc.version");
                 profil.versionInternal?.incrementFix();

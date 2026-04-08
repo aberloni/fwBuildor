@@ -56,6 +56,8 @@ namespace fwp.buildor.editor
         public void drawEd()
         {
 
+            GUILayout.Label("Debug", HelperGui.gCategoryBold);
+
             developement_build = GUILayout.Toggle(developement_build, "dev build");
             if (developement_build != UnityEditor.EditorUserBuildSettings.development)
             {
