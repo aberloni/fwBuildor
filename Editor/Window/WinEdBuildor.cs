@@ -94,20 +94,27 @@ namespace fwp.buildor.editor
 
 			if (aProfil == null)
 			{
+				GUILayout.BeginHorizontal();
 				GUILayout.Label("no active profil");
-				return;
+				if (GUILayout.Button("open bridge"))
+				{
+					Selection.activeObject = BuildorHelpers.getScriptableDataBuildSettings();
+				}
+				GUILayout.EndHorizontal();
 			}
+			else
+			{
+				GUILayout.BeginHorizontal();
 
-			GUILayout.BeginHorizontal();
+				GUILayout.Label(Application.platform.ToString());
 
-			GUILayout.Label(Application.platform.ToString());
-
-			GUI.enabled = false;
-			EditorGUILayout.ObjectField(aProfil, typeof(DataBuildSettingProfile), true);
-			GUI.enabled = true;
-			if (GUILayout.Button("refresh")) onProfilRefresh();
-			if (GUILayout.Button(">>", GUILayout.Width(40f))) Selection.activeObject = aProfil;
-			GUILayout.EndHorizontal();
+				GUI.enabled = false;
+				EditorGUILayout.ObjectField(aProfil, typeof(DataBuildSettingProfile), true);
+				GUI.enabled = true;
+				if (GUILayout.Button("refresh")) onProfilRefresh();
+				if (GUILayout.Button(">>", GUILayout.Width(40f))) Selection.activeObject = aProfil;
+				GUILayout.EndHorizontal();				
+			}
 
 		}
 
@@ -140,7 +147,7 @@ namespace fwp.buildor.editor
 
 			GUILayout.BeginHorizontal();
 			string symbs = p.Symbols;
-			
+
 			if (string.IsNullOrEmpty(symbs)) GUILayout.Label("empty symbols");
 			else HelperGuiFields.drawLabel("profil: " + symbs);
 
