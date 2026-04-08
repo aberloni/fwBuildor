@@ -24,6 +24,8 @@ namespace fwp.buildor
         public static readonly GUIStyle gBold;
         public static readonly GUIStyle gLabelBoldGizmos;
 
+        public static readonly GUILayoutOption labelW = GUILayout.Width(200f);
+
         public static readonly GUILayoutOption bXS = GUILayout.Width(50f);
         public static readonly GUILayoutOption bS = GUILayout.Width(75f);
         public static readonly GUILayoutOption bM = GUILayout.Width(100f);

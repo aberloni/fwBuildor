@@ -7,7 +7,7 @@ namespace fwp.buildor
     [System.Serializable]
     public enum PublishLevel
     {
-        normal = 0,
+        release = 0,
         demo,
         festival,
     }
@@ -15,8 +15,16 @@ namespace fwp.buildor
     [System.Serializable]
     public enum DebugLevel
     {
-        normal = 0,
+        release = 0,
         debug,
+    }
+    
+    [System.Serializable]
+    public enum Sdks
+    {
+        none = 0,
+        steam,
+        ninSwitch,
     }
 
 }

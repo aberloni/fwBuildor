@@ -40,7 +40,10 @@ namespace fwp.buildor.editor
             }
         }
 
-        public PublishLevel releaseLevel = PublishLevel.normal;
+        public PublishLevel publish = PublishLevel.release;
+        public Sdks sdk = Sdks.none;
+
+        public bool Is(PublishLevel lvl, Sdks sdk) => this.publish == lvl && this.sdk == sdk;
 
         [Header("identification")]
         public string compagny_name = "*";
@@ -63,19 +66,19 @@ namespace fwp.buildor.editor
                 }
 
                 // logs by debug level
-                var logs = GetLogsLevels(BuildorHelpers.DebugLevel);
+                var logs = GetLogsLevels(BuildorVars.TargetDebug);
                 if (logs != null)
                 {
                     if (logs != null) ret += BuildorHelpers.formatSymbols(logs.symbolsVerbose);
                 }
 
-                if (BuildorHelpers.IsDebug)
+                if (BuildorVars.IsDebug)
                 {
                     ret += "debug;";
                 }
 
                 // demo & festival
-                if (releaseLevel != PublishLevel.normal) ret += releaseLevel.ToString() + ";";
+                if (publish != PublishLevel.release) ret += publish.ToString() + ";";
 
                 return ret;
             }
@@ -88,7 +91,7 @@ namespace fwp.buildor.editor
 
         public ProfilLogLevels GetLogsLevels(DebugLevel level)
         {
-            if (level == DebugLevel.normal && build != null) return build.logLevels;
+            if (level == DebugLevel.release && build != null) return build.logLevels;
             else if (level == DebugLevel.debug && debug != null) return debug.logLevels;
             return null;
         }
@@ -113,7 +116,7 @@ namespace fwp.buildor.editor
 
         virtual protected void OnValidate()
         {
-            if (isSelectedPlatform()) applyProfilEditor(); // on validate
+            if (isSelectedPlatform()) injectProfilToEditor(); // on validate
         }
 
         public bool isSelectedPlatform() => getPlatformTarget() == EditorUserBuildSettings.activeBuildTarget;
@@ -132,12 +135,12 @@ namespace fwp.buildor.editor
         {
             string sub = string.Empty;
 
-            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_prefix)) sub += build.build_prefix + path_separator;
-            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_platform)) sub += getPlatformUid() + path_separator;
-            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_date)) sub += getFullDate() + path_separator;
-            if (EditorPrefs.GetBool(BuildHelperBase.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
+            if (EditorPrefs.GetBool(BuildorVars.pref_include_prefix)) sub += build.build_prefix + path_separator;
+            if (EditorPrefs.GetBool(BuildorVars.pref_include_platform)) sub += getPlatformUid() + path_separator;
+            if (EditorPrefs.GetBool(BuildorVars.pref_include_date)) sub += getFullDate() + path_separator;
+            if (EditorPrefs.GetBool(BuildorVars.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
 
-            sub += EditorPrefs.GetString(BuildHelperBase.pref_suffix);
+            sub += EditorPrefs.GetString(BuildorVars.pref_suffix);
 
             // remove last "__"
             if (sub.EndsWith(path_separator))
@@ -243,19 +246,19 @@ namespace fwp.buildor.editor
         [ContextMenu("apply to player settings")]
         protected void cmApply()
         {
-            applyProfilEditor(); // contextmenu on profile
+            injectProfilToEditor(); // contextmenu on profile
         }
 
-        virtual public void applyProfilEditor()
+        virtual public void injectProfilToEditor()
         {
-            Debug.Log("applying profile : <b>" + name + "</b>");
+            Debug.Log("applying scriptable profile : <b>" + name + "</b>", this);
             Debug.Log("current platform ? " + GetType());
 
             //Debug.Log("applying " + name);
             //fwp.build.BuildHelperBase.applySettings(this);
-            BuildHelperBase.applyCompagny(this);
-            BuildHelperBase.applyIcons(this);
-            BuildHelperBase.applyUnity(this);
+            BuildPreprocess.applyCompagny(this);
+            BuildPreprocess.applyIcons(this);
+            BuildPreprocess.applyProfilToUnity(this);
 
             if (debug != null)
             {

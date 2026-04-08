@@ -5,7 +5,7 @@ namespace fwp.buildor.editor
 	{
 		public void draw(WinEdBuildor win)
 		{
-			draw(BuildorHelpers.Profile.Version);
+			draw(BuildorVars.Profile.Version);
 		}
 	}
 	

@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEditor;
 
 namespace fwp.buildor.editor
 {
@@ -99,7 +100,7 @@ namespace fwp.buildor.editor
             // remove file name from path
             Debug.Log(path);
 
-            if (path.Contains(BuildHelperBase.Profile.getExtension()))
+            if (path.Contains(BuildExecutor.Profile.getExtension()))
             {
                 path = path.Substring(0, path.LastIndexOf("/"));
             }
@@ -109,7 +110,7 @@ namespace fwp.buildor.editor
                 path = path.Substring(0, path.LastIndexOf("/"));
             }
 
-            WinEdBuildor.os_openFolder(path);
+            os_openFolder(path);
         }
 
         /// <summary>
@@ -151,15 +152,137 @@ namespace fwp.buildor.editor
                 // https://stackoverflow.com/questions/60904/how-can-i-open-a-cmd-window-in-a-specific-location
                 string command = $"/K cd /D {buildsRoot} && tar.exe -avcf {zipName} {projectFolder}";
                 log("win.zip : " + command);
-                WinEdBuildor.shellOpenFile(command);
+                shellOpenFile(command);
             }
             else if (Application.platform == RuntimePlatform.OSXEditor)
             {
                 string command = $"zip -r {pathZip} {folderToZip}";
                 log("osx.zip : " + command);
-                WinEdBuildor.osxExecute(command);
+                osxExecute(command);
             }
         }
+
+
+		/// <summary>
+		/// open explorer at path
+		/// </summary>
+		/// <param name="folderPath"></param>
+		static public void os_openFolder(string folderPath, bool selectFolder = false)
+		{
+			folderPath = folderPath.Replace(@"\", @"/"); // uniform
+			if (!folderPath.EndsWith("/")) folderPath += "/"; // last /
+
+			if (!System.IO.Directory.Exists(folderPath))
+			{
+				Debug.LogWarning("no folder " + folderPath);
+				return;
+			}
+
+			string argument = string.Empty;
+			if (Application.platform == RuntimePlatform.WindowsEditor)
+			{
+				folderPath = folderPath.Replace(@"/", @"\");   // explorer doesn't like front slashes
+
+				if (selectFolder)
+				{
+					//https://stackoverflow.com/questions/334630/opening-a-folder-in-explorer-and-selecting-a-file
+					argument = "/select, ";
+				}
+
+				argument += "\"" + folderPath + "\"";
+
+				UnityEngine.Debug.Log("explorer:opening : " + argument);
+
+				System.Diagnostics.Process.Start("explorer.exe", argument);
+			}
+			else if (Application.platform == RuntimePlatform.OSXEditor)
+			{
+
+
+				UnityEngine.Debug.Log("finder:opening : " + folderPath);
+				EditorUtility.RevealInFinder(folderPath);
+			}
+			else
+			{
+				throw new System.NotImplementedException("platform not implem");
+			}
+
+
+		}
+
+		static public void osxExecute(string args)
+		{
+			Debug.Log("osx.bash : " + args);
+			var pStart = new System.Diagnostics.ProcessStartInfo("/bin/bash");
+			//pStart.FileName = "/System/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal";
+			pStart.WorkingDirectory = "/";
+
+			pStart.UseShellExecute = false;
+			pStart.RedirectStandardInput = true;
+			pStart.RedirectStandardOutput = true;
+
+			var proc = new System.Diagnostics.Process();
+			proc.StartInfo = pStart;
+			proc.Start();
+
+			proc.StandardInput.WriteLine(args);
+			proc.StandardInput.Flush();
+			//proc.WaitForExit();
+		}
+
+		/// <summary>
+		/// call of generic windows process
+		/// </summary>
+		static public void shellOpenFile(string processPath, string args = "")
+		{
+			if (!System.IO.File.Exists(processPath))
+			{
+				Debug.LogWarning("missing file @ " + processPath);
+				return;
+			}
+
+			var process = new System.Diagnostics.Process();
+			process.StartInfo.FileName = processPath;
+			process.StartInfo.UseShellExecute = true;
+			process.StartInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Normal;
+
+			if (args.Length > 0) process.StartInfo.Arguments = args;
+
+			Debug.Log("shell @ " + processPath);
+
+			//https://docs.microsoft.com/en-us/dotnet/api/system.diagnostics.process.start?view=netframework-4.7.2#System_Diagnostics_Process_Start_System_String_System_String_
+			process.Start();
+		}
+
+
+		[MenuItem("Window/Buildor/Logs/(folder) player logs")]
+		static public void openPlayerLogsFolder()
+		{
+			//https://stackoverflow.com/questions/4494290/detect-the-location-of-appdata-locallow
+			// Environment.SpecialFolder.LocalApplicationData)
+
+			//startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
+			//startCmd("cmd", "start %APPDATA%"); // roaming
+			//startCmd("cmd", "/K \"cd /D %LOCALAPPDATA%\""); // local
+			string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData) + "Low"; // c:/[USERAPPDATA]/LocalLow
+			path = System.IO.Path.Combine(path, Application.companyName, Application.productName);
+			// path = System.IO.Path.Combine(path, "Player.log");
+
+			// shellOpenFile(path); // local
+			os_openFolder(path);
+		}
+
+		[MenuItem("Window/Buildor/Logs/(folder) editor logs")]
+		static public void openEditorLogsFolder()
+		{
+			string path = System.Environment.GetFolderPath(System.Environment.SpecialFolder.LocalApplicationData); // c:/[USERAPPDATA]/Local
+			path = System.IO.Path.Combine(path, "Unity/Editor");
+			Debug.Log(path);
+
+			//startCmd("C:/Users/lego/AppData/LocalLow/com.redcorner.king/King");
+			// os_openFolder("C:/Users/lego/AppData/Local/Unity/Editor");
+			os_openFolder(path);
+		}
 
     }
 

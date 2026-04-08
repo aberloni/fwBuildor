@@ -13,8 +13,6 @@ namespace fwp.buildor.editor
 
         protected override DataBuildorScenesMerger fetchProfilInstance()
         {
-            var profil = BuildorHelpers.Profile;
-            if (profil != null) return profil.build.merger;
             return null;
         }
 
@@ -23,17 +21,17 @@ namespace fwp.buildor.editor
         /// </summary>
         protected override void applyEditor(DataBuildorScenesMerger value)
         {
-            value.apply();
+            // value.apply();
         }
 
         protected override void drawHeader(DataBuildorScenesMerger value)
         {
-            GUILayout.Label(value.strOneLine());
+            // GUILayout.Label(value.strOneLine());
         }
 
         protected override void drawDetails(DataBuildorScenesMerger value)
         {
-            GUILayout.Label(value.stringify());
+            // GUILayout.Label(value.stringify());
         }
 
     }

@@ -16,10 +16,7 @@ namespace fwp.logs.editor
 
 		protected override ProfilLogLevels fetchProfilInstance()
 		{
-			var profil = BuildorHelpers.Profile;
-			if (profil == null) return null;
-			if (profil.build == null) return null;
-			return profil.build.logLevels;
+			return BuildorVars.Profile?.build.logLevels;
 		}
 
 		protected override void applyEditor(ProfilLogLevels value)

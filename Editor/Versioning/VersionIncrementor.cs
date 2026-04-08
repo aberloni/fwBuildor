@@ -11,28 +11,26 @@ namespace fwp.version.editor
 
     public class VersionIncrementor
     {
-        
+        static DataBuildSettingProfile Profile => BuildorVars.Profile;
+
         [MenuItem("Version/Internal/MAJOR++")]
         static public void incInternalMajor()
         {
-            var prof = BuildorHelpers.Profile;
-            prof.versionInternal.incrementMajor();
+            Profile.versionInternal.incrementMajor();
             apply(false);
         }
 
         [MenuItem("Version/Internal/MINOR++")]
         static public void incInternalMinor()
         {
-            var prof = BuildorHelpers.Profile;
-            prof.versionInternal.incrementMinor();
+            Profile.versionInternal.incrementMinor();
             apply(false);
         }
 
         [MenuItem("Version/Internal/FIX++")]
         static public void incInternalFix()
         {
-            var prof = BuildorHelpers.Profile;
-            prof.versionInternal.incrementFix();
+            Profile.versionInternal.incrementFix();
             apply(false);
         }
 
@@ -40,42 +38,40 @@ namespace fwp.version.editor
         [MenuItem("Version/Publish/MAJOR++")]
         static public void incPublishMajor()
         {
-            var prof = BuildorHelpers.Profile;
-            prof.versionPublish.incrementMajor();
+            Profile.versionPublish.incrementMajor();
             apply(true);
         }
 
         [MenuItem("Version/Publish/MINOR++")]
         static public void incPublishMinor()
         {
-            var prof = BuildorHelpers.Profile;
-            prof.versionPublish.incrementMinor();
+            Profile.versionPublish.incrementMinor();
             apply(true);
         }
 
         [MenuItem("Version/Publish/FIX++")]
         static public void incPublishFix()
         {
-            var prof = BuildorHelpers.Profile;
-            prof.versionPublish.incrementFix();
+            Profile.versionPublish.incrementFix();
             apply(true);
         }
 
         static public void apply(bool publish)
         {
-            var prof = BuildorHelpers.Profile;
-            Debug.Assert(prof != null);
-            Debug.Assert(prof.versionInternal != null);
+            if (Profile == null) return;
 
-            Debug.Log(prof.GetType());
+            Debug.Assert(Profile.versionInternal != null);
 
-            DataBuildSettingVersion v = publish ? prof.versionPublish : prof.versionInternal;
+            Debug.Log(Profile.GetType());
+
+            DataBuildSettingVersion v = publish ? Profile.versionPublish : Profile.versionInternal;
+            
             Debug.Log(v.GetType() + " | " + v.getFormated());
 
             v.applyVersionToEditor();
         }
 
 
-	}
+    }
 
 }

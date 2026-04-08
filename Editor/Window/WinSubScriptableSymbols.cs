@@ -23,29 +23,14 @@ namespace fwp.buildor.editor
 
         protected override void applyEditor(ScriptableSymbolProfil value)
         {
-            var profil = BuildorHelpers.Profile;
-            if (profil == null) return;
-
-            // value.apply();
         }
 
         protected override void drawDetails(ScriptableSymbolProfil value)
         {
-            var profil = BuildorHelpers.Profile;
-            if (profil == null) return;
-
-            // var group = value.ActiveGroup;
-            string deets = value.getStringifiedSymbols();
-            if (string.IsNullOrEmpty(deets)) deets = "-none-";
-            GUILayout.Label(deets);
         }
 
         protected override void drawHeader(ScriptableSymbolProfil value)
         {
-            var profil = BuildorHelpers.Profile;
-            if (profil == null) return;
-
-            // GUILayout.Label("editor: " + ScriptSymbolsView.getPlayerSetSymbols(value.get));
         }
 
     }

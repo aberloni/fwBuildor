@@ -30,7 +30,7 @@ namespace fwp.buildor.editor
         [Header("console")]
         public DataBuildSettingProfile[] ninSwitch;
 
-        public DataBuildSettingProfile getPlatformProfil(PublishLevel tarState = PublishLevel.normal)
+        public DataBuildSettingProfile getPlatformProfil(PublishLevel tarState, Sdks sdk)
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
 
@@ -38,20 +38,20 @@ namespace fwp.buildor.editor
             {
                 case BuildTarget.StandaloneWindows64:
                 case BuildTarget.StandaloneWindows:
-                    return windows.FirstOrDefault(x => x.releaseLevel == tarState);
+                    return windows.FirstOrDefault(x => x.Is(tarState, sdk));
                 case BuildTarget.StandaloneOSX:
-                    return osx.FirstOrDefault(x => x.releaseLevel == tarState);
+                    return osx.FirstOrDefault(x => x.Is(tarState, sdk));
                 case BuildTarget.StandaloneLinux64:
                 case BuildTarget.EmbeddedLinux:
-                    return linux.FirstOrDefault(x => x.releaseLevel == tarState);
+                    return linux.FirstOrDefault(x => x.Is(tarState, sdk));
 
                 case BuildTarget.iOS:
-                    return ios.FirstOrDefault(x => x.releaseLevel == tarState);
+                    return ios.FirstOrDefault(x => x.Is(tarState, sdk));
                 case BuildTarget.Android:
-                    return android.FirstOrDefault(x => x.releaseLevel == tarState);
+                    return android.FirstOrDefault(x => x.Is(tarState, sdk));
 
                 case BuildTarget.Switch:
-                    return ninSwitch.FirstOrDefault(x => x.releaseLevel == tarState);
+                    return ninSwitch.FirstOrDefault(x => x.Is(tarState, sdk));
 
                 case BuildTarget.NoTarget:
                 default:

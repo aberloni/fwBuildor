@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEditor.Build.Reporting;
+using UnityEditor.Build;
 
 namespace fwp.buildor.editor
 {
@@ -67,8 +68,17 @@ namespace fwp.buildor.editor
                 profil.versionPublish?.incrementFix();
             }
 
-            //apply everything (after inc)
-            profil.applyProfilEditor();
+            profil.versionInternal?.event_build();
+            profil.versionPublish?.event_build();
+
+            // scenes
+            profil.build.merger?.apply();
+
+            // logs
+            profil.GetLogsLevels(BuildorVars.TargetDebug)?.applyLogs();
+
+            // apply PlayerSettings vars
+            profil.injectProfilToEditor();
 
             yield return null;
 
@@ -180,6 +190,48 @@ namespace fwp.buildor.editor
             }
 
             return sceneNames.ToArray();
+        }
+
+        static public void applyIcons(DataBuildSettingProfile profil)
+        {
+
+            Texture2D[] icons = new Texture2D[1];
+            icons[0] = profil.build.icon;
+
+            PlayerSettings.SetIcons(NamedBuildTarget.Unknown, icons, IconKind.Any);
+
+            Debug.Log(" L icons updated");
+        }
+
+        static public void applyCompagny(DataBuildSettingProfile profil, bool verbose = false)
+        {
+
+            //profil.applyVersionToEditor(); // apply version
+
+            PlayerSettings.companyName = profil.compagny_name;
+
+            if (verbose) Debug.Log("companyName : " + PlayerSettings.companyName);
+
+            //α,β,Ω
+            string productName = profil.getProductName();
+
+            PlayerSettings.productName = productName;
+            if (verbose) Debug.Log("productName : " + PlayerSettings.productName);
+
+        }
+
+        static public void applyProfilToUnity(DataBuildSettingProfile profil)
+        {
+
+            PlayerSettings.SplashScreen.show = false;
+            Debug.Log(" L splash show (auto false under licence) : " + PlayerSettings.SplashScreen.show);
+
+            //dev build
+            if (profil.debug != null)
+            {
+                EditorUserBuildSettings.development = profil.debug.developement_build;
+                Debug.Log(" L dev build : " + EditorUserBuildSettings.development);
+            }
         }
 
     }

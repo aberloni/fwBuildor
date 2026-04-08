@@ -87,7 +87,7 @@ namespace fwp.buildor
             inject(menus);
 
             EditorBuildSettings.scenes = scenesToInject.ToArray();
-            Debug.Log("merger.applied (" + name + ") x" + EditorBuildSettings.scenes.Length, this);
+            Debug.Log("->| merger.applied (" + name + ") x" + EditorBuildSettings.scenes.Length, this);
         }
 
         void inject(DataBuildorScenesFilter[] profils)

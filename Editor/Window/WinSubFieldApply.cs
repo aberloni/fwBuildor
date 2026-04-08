@@ -50,7 +50,7 @@ namespace fwp.buildor.editor
 		string pprefUid()
 		{
 			string ppref = typeof(T).ToString();
-			var profil = BuildorHelpers.Profile;
+			var profil = BuildorVars.Profile;
 			if (profil != null) ppref = profil.name + "_" + ppref;
 			return ppref;
 		}

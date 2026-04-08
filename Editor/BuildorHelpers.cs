@@ -9,40 +9,41 @@ namespace fwp.buildor
 
 	static public class BuildorHelpers
 	{
-		static public DataBuildSettingProfile Profile
-		{
-			get
-			{
-				return BuildHelperBase.getActiveProfile(PublishLevel);
-			}
-		}
-
-		public const string ppref_publish = "level_publish";
-		static public PublishLevel PublishLevel
-		{
-			get => (PublishLevel)PlayerPrefs.GetInt(ppref_publish, (int)PublishLevel.normal);
-			set => PlayerPrefs.SetInt(ppref_publish, (int)value);
-		}
-
-		public const string ppref_debug = "ppref_debug";
-		static public DebugLevel DebugLevel
-		{
-			get => (DebugLevel)PlayerPrefs.GetInt(ppref_debug, (int)DebugLevel.normal);
-			set => PlayerPrefs.SetInt(ppref_debug, (int)value);
-		}
-
-		static public bool IsDebug => DebugLevel == DebugLevel.debug;
-
 		public const string _menuItem_basepath = "buildor/";
 		public const string _path_merger = _menuItem_basepath + "merger/";
 
-        static public string formatSymbols(string[] symbols)
-        {
-            string ret = string.Empty;
-            foreach(var s in symbols) ret += s+";";
-            return ret;
-        }
+		static public string formatSymbols(string[] symbols)
+		{
+			if (symbols == null || symbols.Length <= 0) return string.Empty;
+
+			string ret = string.Empty;
+			foreach (var s in symbols) ret += s + ";";
+			return ret;
+		}
 		
+        /// <summary>
+        /// 
+        /// </summary>
+        static public DataBuildSettingsBridge getScriptableDataBuildSettings()
+        {
+            string[] all = AssetDatabase.FindAssets("t:DataBuildSettingsBridge");
+
+            if (all.Length > 0)
+            {
+                for (int i = 0; i < all.Length; i++)
+                {
+                    Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(DataBuildSettingsBridge));
+                    DataBuildSettingsBridge data = obj as DataBuildSettingsBridge;
+                    if (data != null) return data;
+                }
+            }
+            //Debug.LogWarning("no objects returned by AssetDatabase for type : DataBuildSettingsBridge");
+
+            //Debug.LogError("could not find object of type : DataBuildSettingsBridge");
+            return null;
+        }
+
+
 		static public ScriptableObject[] getScriptableObjectsInEditor(System.Type scriptableType)
 		{
 			string[] all = AssetDatabase.FindAssets("t:" + scriptableType.Name);
