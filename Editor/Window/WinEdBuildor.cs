@@ -117,30 +117,39 @@ namespace fwp.buildor.editor
 
 			var p = BuildorVars.Profile;
 
+			// profil.build symbols
 			HelperGuiFields.drawLabel(BuildorHelpers.formatSymbols(p.build.symbols));
 
+			// profil.logs.symbols
 			var logs = p.GetLogsLevels(BuildorVars.TargetDebug);
 			if (logs != null)
 			{
 				HelperGuiFields.drawObjectDisabled(logs);
 				HelperGuiFields.drawLabel(BuildorHelpers.formatSymbols(logs.symbolsVerbose));
 			}
+
+			// +watermark
 			p.build.watermark = HelperGuiFields.drawToggle(p.build.watermark, "watermark");
 
+			// current unity context value
 			string sCurrent = ScriptSymbolsView.getPlayerSetSymbols(p.getBuildTargetGroup());
-			GUILayout.Label("unity: " + sCurrent);
+			HelperGuiFields.drawLabel("unity: " + sCurrent);
 
+			// wrap test
 			// HelperGuiFields.drawLabel("IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;");
 
 			GUILayout.BeginHorizontal();
 			string symbs = p.Symbols;
+			
 			if (string.IsNullOrEmpty(symbs)) GUILayout.Label("empty symbols");
-			else GUILayout.Label("profil: " + symbs, HelperGui.gWrapped);
-			if (sCurrent != symbs && GUILayout.Button("apply", HelperGui.bS))
+			else HelperGuiFields.drawLabel("profil: " + symbs);
+
+			if (GUILayout.Button("apply", HelperGui.bS))
 			{
 				Debug.LogWarning("apply.symbols: " + symbs, p);
 				ScriptSymbolsView.applyEditor(p.getBuildTargetGroup(), symbs);
 			}
+
 			GUILayout.EndHorizontal();
 		}
 
