@@ -265,12 +265,10 @@ namespace fwp.buildor.editor
             //fwp.build.BuildHelperBase.applySettings(this);
             BuildPreprocess.applyCompagny(this);
             BuildPreprocess.applyIcons(this);
-            BuildPreprocess.applyProfilToUnity(this);
 
-            if (debug != null)
-            {
-                debug.apply();
-            }
+            if (BuildorVars.IsDebug) debug.apply();
+            else debug.clear();
+            debug.log();
 
             if (versionPublish != null) versionPublish.applyVersionToEditor();
             else versionInternal.applyVersionToEditor();

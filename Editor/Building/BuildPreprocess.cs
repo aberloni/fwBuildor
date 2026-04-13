@@ -228,20 +228,6 @@ namespace fwp.buildor.editor
 
         }
 
-        static public void applyProfilToUnity(DataBuildSettingProfile profil)
-        {
-
-            PlayerSettings.SplashScreen.show = false;
-            Debug.Log(" L splash show (auto false under licence) : " + PlayerSettings.SplashScreen.show);
-
-            //dev build
-            if (profil.debug != null)
-            {
-                EditorUserBuildSettings.development = profil.debug.developement_build;
-                Debug.Log(" L dev build : " + EditorUserBuildSettings.development);
-            }
-        }
-
     }
 
 }

@@ -28,7 +28,15 @@ namespace fwp.buildor.editor
 
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
         public fwp.logs.ProfilLogLevels logLevels;
-        
+
+        public void clear()
+        {
+            EditorUserBuildSettings.development = false;
+            EditorUserBuildSettings.allowDebugging = false;
+            EditorUserBuildSettings.connectProfiler = false;
+            EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
+        }
+
         public void apply()
         {
             EditorUserBuildSettings.development = developement_build;
@@ -48,9 +56,15 @@ namespace fwp.buildor.editor
                     EditorUserBuildSettings.connectProfiler = false;
                     EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
                     break;
-
             }
+        }
 
+        public void log()
+        {
+            Debug.Log(" L dev build? " + EditorUserBuildSettings.development);
+            Debug.Log(" L debugging? " + EditorUserBuildSettings.allowDebugging);
+            Debug.Log(" L profiler? " + EditorUserBuildSettings.connectProfiler);
+            Debug.Log(" L profiler.deep? " + EditorUserBuildSettings.buildWithDeepProfilingSupport);
         }
 
         public void drawEd()
