@@ -43,6 +43,13 @@ namespace fwp.buildor.editor
         [Header("bundle")]
         public Sprite splashscreen;
         public Texture2D icon;
+
+        public void apply()
+        {
+            Debug.Log("build.apply");
+            merger?.apply();
+            logLevels?.applyLogs();
+        }
     }
 
 }

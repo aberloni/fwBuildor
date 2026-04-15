@@ -284,6 +284,10 @@ namespace fwp.buildor.editor
             // merger might be override
             // merger is applied before build exec
             // if (merger != null) merger.apply();
+            if (build != null)
+            {
+                build.apply();
+            }
 
             EditorUtility.SetDirty(this);
         }

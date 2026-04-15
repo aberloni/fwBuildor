@@ -39,6 +39,8 @@ namespace fwp.logs
 				Application.SetStackTraceLogType(lvl.type, lvl.stackTrace);
 				Debug.Log(lvl.stringify());
 			}
+
+			Debug.Log("->| logs.applied (" + name + ")", this);
 		}
 	}
 
