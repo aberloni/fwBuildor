@@ -155,7 +155,7 @@ namespace fwp.buildor.editor
                 sub = sub.Substring(0, sub.Length - path_separator.Length);
             }
 
-            sub += getFlagsString();
+            sub += solveFlagsString();
 
             // builds/(sub/)
             return Path.Combine(build_path, sub);
@@ -204,7 +204,7 @@ namespace fwp.buildor.editor
             }
         }
 
-        public string getFlagsString()
+        public string solveFlagsString()
         {
             string flags = string.Empty;
 
@@ -224,10 +224,14 @@ namespace fwp.buildor.editor
             flags += "_cn";
 #endif
 
-            if (debug != null && debug.developement_build)
+            if (BuildorVars.IsDebug && debug != null)
             {
-                flags += "_dbuild";
+                if (debug.developement_build)
+                {
+                    flags += "_dbuild";
+                }
             }
+
 
             return flags;
         }
@@ -260,15 +264,19 @@ namespace fwp.buildor.editor
         {
             Debug.Log("applying scriptable profile : <b>" + name + "</b>", this);
             Debug.Log("current platform ? " + GetType());
+            Debug.Log("Debug ? " + BuildorVars.IsDebug);
 
             //Debug.Log("applying " + name);
             //fwp.build.BuildHelperBase.applySettings(this);
             BuildPreprocess.applyCompagny(this);
             BuildPreprocess.applyIcons(this);
 
-            if (BuildorVars.IsDebug) debug.apply();
-            else debug.clear();
-            debug.log();
+            if (debug != null)
+            {
+                // apply: will clear instead if not at debug level
+                debug.apply();
+                debug.log();
+            }
 
             if (versionPublish != null) versionPublish.applyVersionToEditor();
             else versionInternal.applyVersionToEditor();

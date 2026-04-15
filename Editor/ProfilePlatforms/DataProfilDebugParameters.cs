@@ -29,7 +29,7 @@ namespace fwp.buildor.editor
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
         public fwp.logs.ProfilLogLevels logLevels;
 
-        public void clear()
+        void clear()
         {
             EditorUserBuildSettings.development = false;
             EditorUserBuildSettings.allowDebugging = false;
@@ -39,6 +39,12 @@ namespace fwp.buildor.editor
 
         public void apply()
         {
+            if(!BuildorVars.IsDebug)
+            {
+                clear();
+                return;
+            }
+
             EditorUserBuildSettings.development = developement_build;
             EditorUserBuildSettings.allowDebugging = debugScripting;
 
@@ -69,7 +75,6 @@ namespace fwp.buildor.editor
 
         public void drawEd()
         {
-
             GUILayout.Label("Debug", HelperGui.gCategoryBold);
 
             developement_build = GUILayout.Toggle(developement_build, "dev build");

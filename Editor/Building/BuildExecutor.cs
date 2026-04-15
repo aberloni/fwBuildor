@@ -51,13 +51,11 @@ namespace fwp.buildor.editor
 
         BuildPreprocess build_prepro;
         BuildPostprocess build_postpro;
-        
+
         public BuildExecutor()
         {
             build_prepro = new();
             build_postpro = new();
-
-            launch();
         }
 
         public void launch()
@@ -72,7 +70,7 @@ namespace fwp.buildor.editor
             };
         }
 
-        
+
     }
 
 }

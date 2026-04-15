@@ -118,12 +118,15 @@ namespace fwp.buildor.editor
 
             yield return null;
 
-            if (profil.debug != null)
+            if (BuildorVars.IsDebug)
             {
-                if (profil.debug.developement_build) buildPlayerOptions.options |= BuildOptions.Development;
-                if (profil.debug.debugScripting) buildPlayerOptions.options |= BuildOptions.AllowDebugging;
+                if (profil.debug != null)
+                {
+                    if (profil.debug.developement_build) buildPlayerOptions.options |= BuildOptions.Development;
+                    if (profil.debug.debugScripting) buildPlayerOptions.options |= BuildOptions.AllowDebugging;
+                }
             }
-
+            
             //BuildPipeline.BuildPlayer(buildPlayerOptions);
         }
 
