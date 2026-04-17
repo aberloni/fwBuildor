@@ -8,7 +8,7 @@ namespace fwp.buildor.editor
 	{
 		public void draw(WinEdBuildor win)
 		{
-			GUILayout.Label("version", HelperGui.gCategoryBold);
+			GUILayout.Label("Version", HelperGui.gCategoryBold);
 
 			var p = BuildorVars.Profile;
 			drawVersion(p.versionInternal);

@@ -44,6 +44,7 @@ namespace fwp.buildor.editor
 			{
 				subVersion?.draw(this);
 
+				drawMergers();
 				drawSymbols();
 				drawLogs();
 
@@ -111,10 +112,10 @@ namespace fwp.buildor.editor
 				EditorGUILayout.ObjectField(aProfil, typeof(DataBuildSettingProfile), true);
 				GUI.enabled = true;
 				if (GUILayout.Button("refresh")) onProfilRefresh();
+				// if(GUILayout.Button("editor")) aProfil?.editor.apply();
 				if (GUILayout.Button(">>", GUILayout.Width(40f))) Selection.activeObject = aProfil;
 				GUILayout.EndHorizontal();
 			}
-
 		}
 
 		void drawSymbols()
@@ -124,17 +125,19 @@ namespace fwp.buildor.editor
 			var p = BuildorVars.Profile;
 
 			// profil.build symbols
-			HelperGuiFields.drawField("build.symbols", BuildorHelpers.formatSymbols(p.build.symbols));
+			HelperGuiFields.drawField("symbols.build", BuildorHelpers.formatSymbols(p.build.symbols));
 
 			// profil.logs.symbols
 			var logs = p.GetLogsLevels(BuildorVars.TargetDebug);
 			if (logs != null)
 			{
 				// HelperGuiFields.drawObjectDisabled(logs);
-				HelperGuiFields.drawField("logs", BuildorHelpers.formatSymbols(logs.symbolsVerbose));
+				HelperGuiFields.drawField("symbols.logs", BuildorHelpers.formatSymbols(logs.symbolsVerbose));
 			}
 
 			// profil.build.features
+
+			HelperGuiFields.drawField("symbols.features", p.build.SymbolsFeatures);
 
 			foreach (TargetFeatures f in System.Enum.GetValues(typeof(TargetFeatures)))
 			{
@@ -144,13 +147,11 @@ namespace fwp.buildor.editor
 				else p.build.features &= ~f;
 			}
 
-			HelperGuiFields.drawField("build.features", p.build.SymbolsFeatures);
-
 			GUILayout.Space(10f);
 
 			// current unity context value
 			string sCurrent = ScriptSymbolsView.getPlayerSetSymbols(p.getBuildTargetGroup());
-			HelperGuiFields.drawField("unity", sCurrent);
+			HelperGuiFields.drawField("unity.settings", sCurrent);
 
 			// wrap test
 			// HelperGuiFields.drawLabel("IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;");
@@ -158,7 +159,7 @@ namespace fwp.buildor.editor
 			GUILayout.BeginHorizontal();
 			string symbs = p.Symbols;
 
-			if (string.IsNullOrEmpty(symbs)) GUILayout.Label("empty symbols");
+			if (string.IsNullOrEmpty(symbs)) GUILayout.Label("no symbols to inject");
 			else HelperGuiFields.drawField("inject", symbs);
 
 			if (GUILayout.Button("apply", HelperGui.bS))
@@ -172,48 +173,45 @@ namespace fwp.buildor.editor
 
 		void drawLogs()
 		{
+			GUILayout.Label("Logs", HelperGui.gCategoryBold);
 			var p = BuildorVars.Profile;
 
+			drawLog(p.GetLogsLevels(BuildorVars.TargetDebug), "inject");
+			drawLog(p.editor.logLevels, "editor");
+		}
 
+		void drawLog(ProfilLogLevels log, string context)
+		{
+			if (log == null) return;
 
-			var logs = p.GetLogsLevels(BuildorVars.TargetDebug);
-			if (logs != null)
-			{
-				GUILayout.Label("Logs", HelperGui.gCategoryBold);
-				// GUILayout.BeginVertical();
-				HelperGuiFields.drawObjectDisabled(logs);
-				GUILayout.BeginHorizontal();
-				foreach (var lvl in logs.levels) GUILayout.Label(lvl.stringify());
-				GUILayout.EndHorizontal();
-				// GUILayout.EndVertical();
-			}
-			/*
 			GUILayout.BeginHorizontal();
-			if (p.build.logLevels != null)
-			{
-				GUILayout.BeginVertical();
-				GUILayout.Label("build.logs", HelperGui.gBold);
-				HelperGuiFields.drawObjectDisabled(p.build.logLevels);
-				foreach (var lvl in p.build.logLevels.levels)
-				{
-					GUILayout.Label(lvl.stringify());
-				}
-				GUILayout.EndVertical();
-			}
-
-			if (p.debug.logLevels != null)
-			{
-				GUILayout.BeginVertical();
-				GUILayout.Label("debug.logs", HelperGui.gBold);
-				HelperGuiFields.drawObjectDisabled(p.debug.logLevels);
-				foreach (var lvl in p.debug.logLevels.levels)
-				{
-					GUILayout.Label(lvl.stringify());
-				}
-				GUILayout.EndVertical();
-			}
+			GUILayout.Label(context);
+			// GUILayout.BeginVertical();
+			HelperGuiFields.drawObjectDisabled(log);
+			if (GUILayout.Button("apply", HelperGui.bM)) log.applyLogs();
 			GUILayout.EndHorizontal();
-			*/
+
+			GUILayout.BeginHorizontal();
+			foreach (var lvl in log.levels) GUILayout.Label(lvl.stringify());
+			GUILayout.EndHorizontal();
+			// GUILayout.EndVertical();
+		}
+
+		bool foldMerger = false;
+		void drawMergers()
+		{
+			GUILayout.Label("Mergers", HelperGui.gCategoryBold);
+			if (aProfil.build.merger == null) GUILayout.Label("no merger set");
+			else
+			{
+				GUILayout.BeginHorizontal();
+				GUILayout.Label("merger.build");
+				HelperGuiFields.drawObjectDisabled(aProfil.build.merger);
+				if (GUILayout.Button("apply", HelperGui.bM)) aProfil.build.merger.apply();
+				GUILayout.EndHorizontal();
+				foldMerger = EditorGUILayout.Foldout(foldMerger, aProfil.build.merger.strOneLine(), true);
+				if (foldMerger) GUILayout.Label(aProfil.build.merger.stringify());
+			}
 		}
 
 		readonly GUIContent gui_btn_browse = new GUIContent("browse");
@@ -224,7 +222,6 @@ namespace fwp.buildor.editor
 		void drawPathModifiers()
 		{
 			GUILayout.Label("Path modifiers", HelperGui.gCategoryBold);
-
 			GUILayout.Label("build/ modifiers", HelperGui.gBold);
 
 

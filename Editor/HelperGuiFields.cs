@@ -12,6 +12,7 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.BeginHorizontal();
 			GUILayout.Label(context, HelperGui.bM);
+			if (string.IsNullOrEmpty(value)) GUILayout.Label("empty", GUILayout.ExpandWidth(true));
 			GUILayout.Label(value, HelperGui.gWrapped, GUILayout.ExpandWidth(true));
 			GUILayout.EndHorizontal();
 		}

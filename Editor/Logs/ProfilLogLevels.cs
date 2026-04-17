@@ -34,13 +34,14 @@ namespace fwp.logs
 
 		public void applyLogs()
 		{
+			string output = "->| logs.applied (" + name + ")";
 			foreach (var lvl in levels)
 			{
 				Application.SetStackTraceLogType(lvl.type, lvl.stackTrace);
-				Debug.Log(lvl.stringify());
+				output += "\n" + lvl.stringify();
 			}
 
-			Debug.Log("->| logs.applied (" + name + ")", this);
+			Debug.Log(output, this);
 		}
 	}
 

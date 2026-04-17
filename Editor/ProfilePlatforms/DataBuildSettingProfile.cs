@@ -53,6 +53,7 @@ namespace fwp.buildor.editor
 
         public DataProfilBuildParameters build;
         public DataProfilDebugParameters debug;
+        public DataProfilEditorParameters editor;
 
         public string Symbols
         {

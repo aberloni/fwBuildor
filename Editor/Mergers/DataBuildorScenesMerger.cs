@@ -29,7 +29,7 @@ namespace fwp.buildor
 
         public DataBuildorScenesFilter[] menus;
 
-        public int countTotalFilters
+        public int CountTotalFilters
         {
             get
             {
@@ -42,7 +42,7 @@ namespace fwp.buildor
             }
         }
 
-        public int countTotalScenes
+        public int CountTotalScenes
         {
             get
             {
@@ -55,7 +55,7 @@ namespace fwp.buildor
             }
         }
 
-        public string strOneLine() => name + " filters x" + countTotalFilters + " => scenes x" + countTotalScenes;
+        public string strOneLine() => name + " | filters x" + CountTotalFilters + " | scenes x" + CountTotalScenes;
         public string stringify()
         {
             string ret = strOneLine();
