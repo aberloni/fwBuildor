@@ -45,6 +45,9 @@ namespace fwp.buildor.editor
 				subVersion?.draw(this);
 
 				drawMergers();
+				
+				drawMedias();
+
 				drawSymbols();
 				drawLogs();
 
@@ -195,6 +198,12 @@ namespace fwp.buildor.editor
 			foreach (var lvl in log.levels) GUILayout.Label(lvl.stringify());
 			GUILayout.EndHorizontal();
 			// GUILayout.EndVertical();
+		}
+
+		void drawMedias()
+		{
+			GUILayout.Label("Medias", HelperGui.gCategoryBold);
+			aProfil.build.medias.draw();
 		}
 
 		bool foldMerger = false;

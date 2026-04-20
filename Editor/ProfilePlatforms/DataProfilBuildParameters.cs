@@ -5,7 +5,6 @@ namespace fwp.buildor.editor
     [System.Serializable]
     public class DataProfilBuildParameters
     {
-        [Header("build content")]
         public DataBuildorScenesMerger merger;
         public fwp.logs.ProfilLogLevels logLevels;
 
@@ -29,6 +28,8 @@ namespace fwp.buildor.editor
             }
         }
 
+        public BuildExtensionMedias medias;
+
         [Header("post process")]
         [Tooltip("remove any folder from buidl matching given pattern(s)")]
         public string[] clearFolders = new string[0];
@@ -43,7 +44,7 @@ namespace fwp.buildor.editor
         [Header("bundle")]
         public Sprite splashscreen;
         public Texture2D icon;
-
+        
         public void apply()
         {
             Debug.Log("build.apply");
