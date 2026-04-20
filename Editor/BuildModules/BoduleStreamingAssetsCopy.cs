@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
+using fwp.buildor;
+
 
 #if UNITY_EDITOR
 using System.IO;
@@ -10,7 +12,7 @@ using UnityEditor;
 /// Serializable config that defines what gets copied into StreamingAssets for a given platform.
 /// Create one ScriptableObject per platform and wire them into your build pipeline.
 /// </summary>
-[CreateAssetMenu(menuName = "Build/StreamingAssets Copy Config", fileName = "BoduleStreamingAssetsCopy")]
+[CreateAssetMenu(menuName = BuildorHelpers._menuItem_basepath + "modules/+streamingassetcopy", fileName = "BoduleStreamingAssetsCopy")]
 public class BoduleStreamingAssetsCopy : BuildModule
 {
     [Tooltip("Source folder path, relative to the project root (i.e. sibling of Assets/).")]
@@ -86,7 +88,7 @@ public class BoduleStreamingAssetsCopy : BuildModule
             if (!PassesFilter(filePath)) { skipped++; continue; }
 
             string relative = Path.GetRelativePath(src, filePath);
-            string target   = Path.Combine(dst, relative);
+            string target = Path.Combine(dst, relative);
 
             Directory.CreateDirectory(Path.GetDirectoryName(target)!);
             File.Copy(filePath, target, overwrite: true);
@@ -169,10 +171,10 @@ public class StreamingAssetsCopyConfigEditor : Editor
         EditorGUILayout.LabelField("Source Folder", EditorStyles.boldLabel);
         DrawFolderRow(
             serializedObject.FindProperty(nameof(BoduleStreamingAssetsCopy.sourceFolderPath)),
-            browseTitle:    "Select source folder",
-            browseRoot:     Path.GetFullPath(Path.Combine(Application.dataPath, "..")),
+            browseTitle: "Select source folder",
+            browseRoot: Path.GetFullPath(Path.Combine(Application.dataPath, "..")),
             makeRelativeTo: Path.GetFullPath(Path.Combine(Application.dataPath, "..")),
-            absolutePath:   cfg.ResolvedSourcePath
+            absolutePath: cfg.ResolvedSourcePath
         );
         DrawAbsolutePath(cfg.ResolvedSourcePath);
 
@@ -182,10 +184,10 @@ public class StreamingAssetsCopyConfigEditor : Editor
         EditorGUILayout.LabelField("Destination Sub-folder  (inside StreamingAssets/)", EditorStyles.boldLabel);
         DrawFolderRow(
             serializedObject.FindProperty(nameof(BoduleStreamingAssetsCopy.destinationSubFolder)),
-            browseTitle:    "Select destination folder inside StreamingAssets",
-            browseRoot:     Application.streamingAssetsPath,
+            browseTitle: "Select destination folder inside StreamingAssets",
+            browseRoot: Application.streamingAssetsPath,
             makeRelativeTo: Application.streamingAssetsPath,
-            absolutePath:   cfg.ResolvedDestinationPath
+            absolutePath: cfg.ResolvedDestinationPath
         );
         DrawAbsolutePath(cfg.ResolvedDestinationPath);
 
@@ -230,15 +232,15 @@ public class StreamingAssetsCopyConfigEditor : Editor
 
             if (_previewFoldout)
             {
-                float rowH   = EditorGUIUtility.singleLineHeight;
-                float maxH   = rowH * 12 + 4;
+                float rowH = EditorGUIUtility.singleLineHeight;
+                float maxH = rowH * 12 + 4;
                 float totalH = rowH * Mathf.Max(_preview.Count, 1) + 4;
 
                 _previewScroll = EditorGUILayout.BeginScrollView(
                     _previewScroll, GUILayout.Height(Mathf.Min(totalH, maxH)));
 
                 var dimStyle = new GUIStyle(EditorStyles.miniLabel)
-                    { normal = { textColor = Color.gray } };
+                { normal = { textColor = Color.gray } };
 
                 if (_preview.Count == 0)
                 {
@@ -309,7 +311,7 @@ public class StreamingAssetsCopyConfigEditor : Editor
 
                 if (!string.IsNullOrEmpty(chosen))
                 {
-                    try   { prop.stringValue = Path.GetRelativePath(makeRelativeTo, chosen); }
+                    try { prop.stringValue = Path.GetRelativePath(makeRelativeTo, chosen); }
                     catch { prop.stringValue = chosen; }
                 }
             }
@@ -334,7 +336,7 @@ public class StreamingAssetsCopyConfigEditor : Editor
 
         var style = new GUIStyle(EditorStyles.miniLabel)
         {
-            normal  = { textColor = exists ? new Color(0.5f, 0.5f, 0.5f) : new Color(0.85f, 0.4f, 0.4f) },
+            normal = { textColor = exists ? new Color(0.5f, 0.5f, 0.5f) : new Color(0.85f, 0.4f, 0.4f) },
             padding = new RectOffset(4, 0, 0, 2),
         };
 
