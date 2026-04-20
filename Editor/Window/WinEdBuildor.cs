@@ -3,10 +3,6 @@ using UnityEditor;
 
 using fwp.logs;
 using fwp.symbols;
-using System.IO;
-using System.Linq;
-using PlasticGui.Help;
-using System.Collections.Generic;
 
 namespace fwp.buildor.editor
 {
