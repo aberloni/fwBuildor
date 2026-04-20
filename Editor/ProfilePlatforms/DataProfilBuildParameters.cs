@@ -7,8 +7,8 @@ namespace fwp.buildor.editor
     [System.Serializable]
     public class DataProfilBuildParameters
     {
-        public DataBuildorScenesMerger Merger => modules.OfType<DataBuildorScenesMerger>().FirstOrDefault();
-        public ProfilLogLevels Logs => modules.OfType<ProfilLogLevels>().FirstOrDefault();
+        public DataBuildorScenesMerger Merger => modules?.OfType<DataBuildorScenesMerger>().FirstOrDefault();
+        public ProfilLogLevels Logs => modules?.OfType<ProfilLogLevels>().FirstOrDefault();
 
         /// <summary>
         /// sdks, lang_en, ...
@@ -50,7 +50,7 @@ namespace fwp.buildor.editor
         public void Apply()
         {
             if(modules == null) return;
-            
+
             foreach (var m in modules)
             {
                 if (m == null) continue;

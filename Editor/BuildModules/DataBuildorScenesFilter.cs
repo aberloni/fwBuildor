@@ -57,7 +57,7 @@ public class DataBuildorScenesFilter : BuildorScriptable
     [ContextMenu("add to build settings")]
     protected void cmAdd() => Apply();
 
-    public void Apply()
+        public void Apply()
     {
         //keep existing
         List<EditorBuildSettingsScene> tmp = new List<EditorBuildSettingsScene>();
