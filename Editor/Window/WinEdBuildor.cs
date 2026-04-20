@@ -243,20 +243,18 @@ namespace fwp.buildor.editor
 		bool foldMerger = false;
 		void drawMergers()
 		{
-			GUILayout.Label("Mergers", HelperGui.gCategoryBold);
-			if (aProfil.build.Merger == null) GUILayout.Label("no merger set");
-			else
-			{
-				var merg = aProfil.build.Merger;
+			var merg = aProfil.build.Merger;
+			if (merg == null) return;
 
-				GUILayout.BeginHorizontal();
-				GUILayout.Label("merger.build");
-				HelperGuiFields.drawObjectDisabled(merg);
-				if (GUILayout.Button("apply", HelperGui.bM)) merg.Apply();
-				GUILayout.EndHorizontal();
-				foldMerger = EditorGUILayout.Foldout(foldMerger, merg.strOneLine(), true);
-				if (foldMerger) GUILayout.Label(merg.stringify());
-			}
+			GUILayout.Label("Mergers", HelperGui.gCategoryBold);
+
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("merger.build");
+			HelperGuiFields.drawObjectDisabled(merg);
+			if (GUILayout.Button("apply", HelperGui.bM)) merg.Apply();
+			GUILayout.EndHorizontal();
+			foldMerger = EditorGUILayout.Foldout(foldMerger, merg.strOneLine(), true);
+			if (foldMerger) GUILayout.Label(merg.stringify());
 		}
 
 		readonly GUIContent gui_btn_browse = new GUIContent("browse");
