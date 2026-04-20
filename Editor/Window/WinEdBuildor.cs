@@ -174,19 +174,24 @@ namespace fwp.buildor.editor
 
 		void drawLogs()
 		{
-			GUILayout.Label("Logs", HelperGui.gCategoryBold);
 			var p = BuildorVars.Profile;
+			if (p == null) return;
+			var _logs = p.Logs;
+
+			if (_logs == null) return;
+
+			GUILayout.Label("Logs", HelperGui.gCategoryBold);
 
 			GUILayout.BeginHorizontal();
-			GUILayout.Label(p.Logs.name);
+			GUILayout.Label(_logs.name);
 			// GUILayout.BeginVertical();
-			HelperGuiFields.drawObjectDisabled(p.Logs);
-			if (GUILayout.Button("apply", HelperGui.bM)) p.Logs.Apply();
+			HelperGuiFields.drawObjectDisabled(_logs);
+			if (GUILayout.Button("apply", HelperGui.bM)) _logs.Apply();
 			if (GUILayout.Button("reset", HelperGui.bM)) ProfilLogLevels.resetEditor();
 			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();
-			foreach (var lvl in p.Logs.levels) GUILayout.Label(lvl.stringify());
+			foreach (var lvl in _logs.levels) GUILayout.Label(lvl.stringify());
 			GUILayout.EndHorizontal();
 			// GUILayout.EndVertical();
 		}
