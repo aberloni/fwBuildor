@@ -71,14 +71,26 @@ namespace fwp.buildor
 
         List<EditorBuildSettingsScene> scenesToInject = new();
 
-        [ContextMenu("apply")]
-        override public void Apply()
+        [ContextMenu("apply additive")]
+        public void ApplyAdditive()
         {
             scenesToInject.Clear();
 
             // keep whatever is already in
-            // if (additive) scenesToInject.AddRange(EditorBuildSettings.scenes);
+            scenesToInject.AddRange(EditorBuildSettings.scenes);
 
+            inject();
+        }
+
+        [ContextMenu("apply")]
+        override public void Apply()
+        {
+            scenesToInject.Clear();
+            inject();
+        }
+
+        void inject()
+        {
             inject(cores);
             inject(levels);
             inject(debugs);
