@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using fwp.logs;
 using UnityEngine;
 
 namespace fwp.buildor.editor
@@ -6,9 +7,8 @@ namespace fwp.buildor.editor
     [System.Serializable]
     public class DataProfilBuildParameters
     {
-        public DataBuildorScenesMerger Merger => profilModules.OfType<DataBuildorScenesMerger>().FirstOrDefault();
-
-        public fwp.logs.ProfilLogLevels logLevels;
+        public DataBuildorScenesMerger Merger => modules.OfType<DataBuildorScenesMerger>().FirstOrDefault();
+        public ProfilLogLevels Logs => modules.OfType<ProfilLogLevels>().FirstOrDefault();
 
         /// <summary>
         /// sdks, lang_en, ...
@@ -30,15 +30,7 @@ namespace fwp.buildor.editor
             }
         }
 
-        /// <summary>
-        /// universal module, applied with profil
-        /// </summary>
-        public BuildModule[] profilModules = new BuildModule[0];
-
-        /// <summary>
-        /// apply only when actually building
-        /// </summary>
-        public BuildModule[] buildModules = new BuildModule[0];
+        public BuildModule[] modules;
 
         [Header("post process")]
         [Tooltip("remove any folder from buidl matching given pattern(s)")]
@@ -57,8 +49,13 @@ namespace fwp.buildor.editor
 
         public void Apply()
         {
-            foreach (var m in profilModules) m?.Apply();
-            logLevels?.applyLogs();
+            if(modules == null) return;
+            
+            foreach (var m in modules)
+            {
+                if (m == null) continue;
+                if (m.isProfilModule()) m.Apply();
+            }
         }
     }
 

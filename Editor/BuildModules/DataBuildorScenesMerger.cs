@@ -18,6 +18,8 @@ namespace fwp.buildor
     [CreateAssetMenu(menuName = "buildor/merger/create DataBuildSettingProfilScenesMerger", order = 100)]
     public class DataBuildorScenesMerger : BuildModule
     {
+        public override bool isProfilModule() => true;
+
         [Tooltip("engine scenes")]
         public DataBuildorScenesFilter[] cores;
 
@@ -55,7 +57,13 @@ namespace fwp.buildor
             }
         }
 
-        override public string strOneLine() => base.strOneLine() + " | filters x" + CountTotalFilters + " | scenes x" + CountTotalScenes;
+        override public string strOneLine()
+        {
+            string ret = base.strOneLine();
+            ret += " filters x" + CountTotalFilters + ", scenes x" + CountTotalScenes;
+            return ret;
+        }
+
         public string stringify()
         {
             string ret = strOneLine();

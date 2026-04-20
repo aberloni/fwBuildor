@@ -4,8 +4,10 @@ namespace fwp.logs
 {
 
 	[CreateAssetMenu(menuName = "buildor/profil/+logs", order = 100)]
-	public class ProfilLogLevels : ScriptableObject
+	public class ProfilLogLevels : BuildModule
 	{
+		public override bool isProfilModule() => false;
+
 		[System.Serializable]
 		public struct LogLevel
 		{
@@ -32,16 +34,41 @@ namespace fwp.logs
 			"verbosity"
 		};
 
-		public void applyLogs()
+		override public void Apply()
 		{
-			string output = "->| logs.applied (" + name + ")";
+			applyToEditor(levels);
+		}
+
+		static void applyToEditor(LogLevel[] levels)
+		{
+			string output = "->| logs.applied";
 			foreach (var lvl in levels)
 			{
 				Application.SetStackTraceLogType(lvl.type, lvl.stackTrace);
 				output += "\n" + lvl.stringify();
 			}
 
-			Debug.Log(output, this);
+			Debug.Log(output);
+		}
+
+		/// <summary>
+		/// default, all stacks
+		/// </summary>
+		static public void resetEditor()
+		{
+			applyToEditor(new LogLevel[]
+			{
+				new LogLevel(){ type = LogType.Exception, stackTrace = StackTraceLogType.ScriptOnly},
+				new LogLevel(){ type = LogType.Assert, stackTrace = StackTraceLogType.ScriptOnly},
+				new LogLevel(){ type = LogType.Error, stackTrace = StackTraceLogType.ScriptOnly},
+				new LogLevel(){ type = LogType.Warning, stackTrace = StackTraceLogType.ScriptOnly},
+				new LogLevel(){ type = LogType.Log, stackTrace = StackTraceLogType.ScriptOnly},
+			});
+		}
+
+		public override string strOneLine()
+		{
+			return base.strOneLine() + " x" + levels.Length;
 		}
 	}
 

@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using fwp.logs;
+using System.Linq;
 
 /// <summary>
 /// (ratio iphone)
@@ -27,7 +29,9 @@ namespace fwp.buildor.editor
         public bool debugScripting = false;
 
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
-        public fwp.logs.ProfilLogLevels logLevels;
+        
+        public BuildModule[] modules;
+        public ProfilLogLevels Logs => modules.OfType<ProfilLogLevels>().FirstOrDefault();
 
         void clear()
         {

@@ -15,7 +15,7 @@ using UnityEditor;
 /// </summary>
 
 [CreateAssetMenu(menuName = "buildor/merger/+filter", order = 100)]
-public class DataBuildorScenesFilter : BuildModule
+public class DataBuildorScenesFilter : BuildorScriptable
 {
     /// <summary>
     /// only scenes within Assets/
@@ -57,7 +57,7 @@ public class DataBuildorScenesFilter : BuildModule
     [ContextMenu("add to build settings")]
     protected void cmAdd() => Apply();
 
-    override public void Apply()
+    public void Apply()
     {
         //keep existing
         List<EditorBuildSettingsScene> tmp = new List<EditorBuildSettingsScene>();

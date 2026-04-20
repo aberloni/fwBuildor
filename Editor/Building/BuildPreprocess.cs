@@ -83,13 +83,15 @@ namespace fwp.buildor.editor
             profil.build.Apply();
 
             // streama copy & others
-            foreach (var m in profil.build.buildModules)
+            foreach (var m in profil.build.modules)
             {
-                m.Apply();
+                m?.Apply();
             }
 
-            // logs
-            profil.GetLogsLevels(BuildorVars.TargetDebug)?.applyLogs();
+            if (BuildorVars.IsDebug)
+            {
+                foreach (var m in profil.debug.modules) m?.Apply();
+            }
 
             // apply PlayerSettings vars
             profil.injectProfilToEditor();

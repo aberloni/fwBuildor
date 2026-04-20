@@ -53,7 +53,6 @@ namespace fwp.buildor.editor
 
         public DataProfilBuildParameters build;
         public DataProfilDebugParameters debug;
-        public DataProfilEditorParameters editor;
 
         public string Symbols
         {
@@ -72,11 +71,7 @@ namespace fwp.buildor.editor
                 }
 
                 // logs by debug level
-                var logs = GetLogsLevels(BuildorVars.TargetDebug);
-                if (logs != null)
-                {
-                    if (logs != null) ret += BuildorHelpers.formatSymbols(logs.symbolsVerbose);
-                }
+                if (Logs != null) ret += BuildorHelpers.formatSymbols(Logs.symbolsVerbose);
 
                 if (BuildorVars.IsDebug)
                 {
@@ -87,6 +82,8 @@ namespace fwp.buildor.editor
             }
         }
 
+        public ProfilLogLevels Logs => BuildorVars.IsDebug ? debug.Logs : build.Logs;
+
         /// <summary>
         /// root/path/build.ext
         /// </summary>
@@ -96,13 +93,6 @@ namespace fwp.buildor.editor
         /// folder parent of export destination
         /// </summary>
         public string PathParent => System.IO.Path.GetDirectoryName(FullPath);
-
-        public ProfilLogLevels GetLogsLevels(TargetDebug level)
-        {
-            if (level == TargetDebug.release && build != null) return build.logLevels;
-            else if (level == TargetDebug.debug && debug != null) return debug.logLevels;
-            return null;
-        }
 
         /// <summary>
         /// path where executable is built

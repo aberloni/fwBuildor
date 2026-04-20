@@ -69,7 +69,7 @@ namespace fwp.buildor.editor
 			if (aProfil != null)
 			{
 				Debug.Log("*new* " + aProfil, aProfil);
-				aProfil.injectProfilToEditor();
+				// aProfil.injectProfilToEditor();
 			}
 		}
 
@@ -113,9 +113,9 @@ namespace fwp.buildor.editor
 				GUI.enabled = false;
 				EditorGUILayout.ObjectField(aProfil, typeof(DataBuildSettingProfile), true);
 				GUI.enabled = true;
-				if (GUILayout.Button("refresh")) onProfilRefresh();
-				// if(GUILayout.Button("editor")) aProfil?.editor.apply();
-				if (GUILayout.Button(">>", GUILayout.Width(40f))) Selection.activeObject = aProfil;
+				if (GUILayout.Button("refresh", HelperGui.bS)) onProfilRefresh();
+				if (aProfil != null && GUILayout.Button("apply", HelperGui.bS)) aProfil.injectProfilToEditor();
+				if (GUILayout.Button(">>", HelperGui.bS)) Selection.activeObject = aProfil;
 				GUILayout.EndHorizontal();
 			}
 		}
@@ -130,11 +130,10 @@ namespace fwp.buildor.editor
 			HelperGuiFields.drawField("symbols.build", BuildorHelpers.formatSymbols(p.build.symbols));
 
 			// profil.logs.symbols
-			var logs = p.GetLogsLevels(BuildorVars.TargetDebug);
-			if (logs != null)
+			if (p.Logs != null)
 			{
 				// HelperGuiFields.drawObjectDisabled(logs);
-				HelperGuiFields.drawField("symbols.logs", BuildorHelpers.formatSymbols(logs.symbolsVerbose));
+				HelperGuiFields.drawField("symbols.logs", BuildorHelpers.formatSymbols(p.Logs.symbolsVerbose));
 			}
 
 			// profil.build.features
@@ -178,23 +177,16 @@ namespace fwp.buildor.editor
 			GUILayout.Label("Logs", HelperGui.gCategoryBold);
 			var p = BuildorVars.Profile;
 
-			drawLog(p.GetLogsLevels(BuildorVars.TargetDebug), "inject");
-			drawLog(p.editor.logLevels, "editor");
-		}
-
-		void drawLog(ProfilLogLevels log, string context)
-		{
-			if (log == null) return;
-
 			GUILayout.BeginHorizontal();
-			GUILayout.Label(context);
+			GUILayout.Label(p.Logs.name);
 			// GUILayout.BeginVertical();
-			HelperGuiFields.drawObjectDisabled(log);
-			if (GUILayout.Button("apply", HelperGui.bM)) log.applyLogs();
+			HelperGuiFields.drawObjectDisabled(p.Logs);
+			if (GUILayout.Button("apply", HelperGui.bM)) p.Logs.Apply();
+			if (GUILayout.Button("reset", HelperGui.bM)) ProfilLogLevels.resetEditor();
 			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();
-			foreach (var lvl in log.levels) GUILayout.Label(lvl.stringify());
+			foreach (var lvl in p.Logs.levels) GUILayout.Label(lvl.stringify());
 			GUILayout.EndHorizontal();
 			// GUILayout.EndVertical();
 		}
@@ -207,8 +199,12 @@ namespace fwp.buildor.editor
 
 			GUILayout.Label("Modules", HelperGui.gCategoryBold);
 
-			drawModules(aProfil.build.profilModules);
-			drawModules(aProfil.build.buildModules);
+			drawModules(aProfil.build.modules);
+			if (BuildorVars.IsDebug)
+			{
+				drawModules(aProfil.debug.modules);
+			}
+
 
 		}
 
@@ -394,11 +390,10 @@ namespace fwp.buildor.editor
 
 			GUILayout.Label("+ path : " + aProfil.FullPath);
 
-			foreach (var mod in aProfil.build.profilModules) GUILayout.Label("+ " + mod.strOneLine());
-			foreach (var mod in aProfil.build.buildModules) GUILayout.Label("+ " + mod.strOneLine());
+			foreach (var mod in aProfil.build.modules) GUILayout.Label("+ " + mod.strOneLine());
+			if (BuildorVars.IsDebug) foreach (var mod in aProfil.debug.modules) GUILayout.Label("+ " + mod.strOneLine());
 
-
-			ProfilLogLevels logs = aProfil.GetLogsLevels(BuildorVars.TargetDebug);
+			ProfilLogLevels logs = aProfil.Logs;
 			if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
 
 		}
