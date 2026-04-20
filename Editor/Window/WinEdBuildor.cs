@@ -205,27 +205,19 @@ namespace fwp.buildor.editor
 			GUILayout.Label("Modules", HelperGui.gCategoryBold);
 
 			drawModules(aProfil.build.modules);
-			if (BuildorVars.IsDebug)
-			{
-				drawModules(aProfil.debug.modules);
-			}
-
-
+			if (BuildorVars.IsDebug) drawModules(aProfil.debug.modules);
 		}
 
 		void drawModules(BuildModule[] mods)
 		{
+			if (mods == null || mods.Length <= 0) return;
+
 			GUIStyle style = new GUIStyle(EditorStyles.miniLabel)
 			{
 				normal = { textColor = new Color(0.5f, 0.5f, 0.5f) },
 				padding = new RectOffset(4, 0, 0, 2),
 			};
 
-			if (mods == null || mods.Length <= 0)
-			{
-				GUILayout.Label("-empty-");
-				return;
-			}
 			foreach (var m in mods)
 			{
 				GUILayout.BeginHorizontal();
