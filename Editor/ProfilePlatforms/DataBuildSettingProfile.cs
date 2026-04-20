@@ -287,7 +287,7 @@ namespace fwp.buildor.editor
             // if (merger != null) merger.apply();
             if (build != null)
             {
-                build.apply();
+                build.Apply();
             }
 
             EditorUtility.SetDirty(this);

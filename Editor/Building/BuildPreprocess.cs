@@ -79,8 +79,14 @@ namespace fwp.buildor.editor
             profil.versionInternal?.event_build();
             profil.versionPublish?.event_build();
 
-            // scenes
-            profil.build.merger?.apply();
+            // merger & others
+            profil.build.Apply();
+
+            // streama copy & others
+            foreach (var m in profil.build.buildModules)
+            {
+                m.Apply();
+            }
 
             // logs
             profil.GetLogsLevels(BuildorVars.TargetDebug)?.applyLogs();
@@ -126,7 +132,7 @@ namespace fwp.buildor.editor
                     if (profil.debug.debugScripting) buildPlayerOptions.options |= BuildOptions.AllowDebugging;
                 }
             }
-            
+
             //BuildPipeline.BuildPlayer(buildPlayerOptions);
         }
 

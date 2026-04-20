@@ -11,7 +11,7 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-    [CreateAssetMenu(menuName = "buildor/new profil:osx", order = 100)]
+    [CreateAssetMenu(menuName = BuildorHelpers._menuItem_basepath + "profils/+osx", order = 100)]
     public class DataBuildSettingProfileOsx : DataBuildSettingProfile
     {
         public override string getExtension() => "app";

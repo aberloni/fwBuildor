@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace fwp.buildor.editor
 {
     [System.Serializable]
     public class DataProfilBuildParameters
     {
-        public DataBuildorScenesMerger merger;
+        public DataBuildorScenesMerger Merger => profilModules.OfType<DataBuildorScenesMerger>().FirstOrDefault();
+
         public fwp.logs.ProfilLogLevels logLevels;
 
         /// <summary>
@@ -28,7 +30,15 @@ namespace fwp.buildor.editor
             }
         }
 
-        public BuildExtensionMedias medias;
+        /// <summary>
+        /// universal module, applied with profil
+        /// </summary>
+        public BuildModule[] profilModules = new BuildModule[0];
+
+        /// <summary>
+        /// apply only when actually building
+        /// </summary>
+        public BuildModule[] buildModules = new BuildModule[0];
 
         [Header("post process")]
         [Tooltip("remove any folder from buidl matching given pattern(s)")]
@@ -44,11 +54,10 @@ namespace fwp.buildor.editor
         [Header("bundle")]
         public Sprite splashscreen;
         public Texture2D icon;
-        
-        public void apply()
+
+        public void Apply()
         {
-            Debug.Log("build.apply");
-            merger?.apply();
+            foreach (var m in profilModules) m?.Apply();
             logLevels?.applyLogs();
         }
     }

@@ -15,7 +15,7 @@ using UnityEditor;
 /// </summary>
 
 [CreateAssetMenu(menuName = "buildor/merger/+filter", order = 100)]
-public class DataBuildorScenesFilter : ScriptableObject
+public class DataBuildorScenesFilter : BuildModule
 {
     /// <summary>
     /// only scenes within Assets/
@@ -55,7 +55,9 @@ public class DataBuildorScenesFilter : ScriptableObject
 #if UNITY_EDITOR
 
     [ContextMenu("add to build settings")]
-    public void add()
+    protected void cmAdd() => Apply();
+
+    override public void Apply()
     {
         //keep existing
         List<EditorBuildSettingsScene> tmp = new List<EditorBuildSettingsScene>();
@@ -81,7 +83,7 @@ public class DataBuildorScenesFilter : ScriptableObject
         EditorBuildSettings.scenes = tmp.ToArray();
     }
 
-    [ContextMenu("record from project scenes")]
+    [ContextMenu("fill based on project scenes")]
     public void record()
     {
         List<string> tmp = new List<string>();
@@ -192,9 +194,9 @@ public class DataBuildorScenesFilterCustom : Editor
     {
         var t = target as DataBuildorScenesFilter;
 
-        if (GUILayout.Button("add to build settings"))
+        if (GUILayout.Button("apply to build settings"))
         {
-            t.add();
+            t.Apply();
         }
 
         if (GUILayout.Button("record from project"))

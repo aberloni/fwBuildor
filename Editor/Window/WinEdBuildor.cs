@@ -4,6 +4,9 @@ using UnityEditor;
 using fwp.logs;
 using fwp.symbols;
 using System.IO;
+using System.Linq;
+using PlasticGui.Help;
+using System.Collections.Generic;
 
 namespace fwp.buildor.editor
 {
@@ -45,8 +48,8 @@ namespace fwp.buildor.editor
 				subVersion?.draw(this);
 
 				drawMergers();
-				
-				drawMedias();
+
+				drawModules();
 
 				drawSymbols();
 				drawLogs();
@@ -200,26 +203,70 @@ namespace fwp.buildor.editor
 			// GUILayout.EndVertical();
 		}
 
-		void drawMedias()
+
+
+		void drawModules()
 		{
-			GUILayout.Label("Medias", HelperGui.gCategoryBold);
-			aProfil.build.medias.draw();
+			if (aProfil.build == null) return;
+
+			GUILayout.Label("Modules", HelperGui.gCategoryBold);
+
+			drawModules(aProfil.build.profilModules);
+			drawModules(aProfil.build.buildModules);
+
+		}
+
+		void drawModules(BuildModule[] mods)
+		{
+			GUIStyle style = new GUIStyle(EditorStyles.miniLabel)
+			{
+				normal = { textColor = new Color(0.5f, 0.5f, 0.5f) },
+				padding = new RectOffset(4, 0, 0, 2),
+			};
+
+			if (mods == null || mods.Length <= 0)
+			{
+				GUILayout.Label("-empty-");
+				return;
+			}
+			foreach (var m in mods)
+			{
+				GUILayout.BeginHorizontal();
+				// GUILayout.Label(m.name, GUILayout.Width(200f));
+				GUI.enabled = false;
+				var ret = (BuildModule)EditorGUILayout.ObjectField(m, typeof(BuildModule), false);
+				GUI.enabled = true;
+				if (ret != null)
+				{
+					if (GUILayout.Button("apply", HelperGui.bXS)) m.Apply();
+				}
+				if (GUILayout.Button(">>", HelperGui.bXS))
+				{
+					UnityEditor.Selection.activeObject = ret;
+				}
+				GUILayout.EndHorizontal();
+
+				var rect = EditorGUILayout.GetControlRect(false, EditorStyles.miniLabel.lineHeight + 2);
+				EditorGUI.LabelField(rect, m.strOneLine(), style);
+			}
 		}
 
 		bool foldMerger = false;
 		void drawMergers()
 		{
 			GUILayout.Label("Mergers", HelperGui.gCategoryBold);
-			if (aProfil.build.merger == null) GUILayout.Label("no merger set");
+			if (aProfil.build.Merger == null) GUILayout.Label("no merger set");
 			else
 			{
+				var merg = aProfil.build.Merger;
+
 				GUILayout.BeginHorizontal();
 				GUILayout.Label("merger.build");
-				HelperGuiFields.drawObjectDisabled(aProfil.build.merger);
-				if (GUILayout.Button("apply", HelperGui.bM)) aProfil.build.merger.apply();
+				HelperGuiFields.drawObjectDisabled(merg);
+				if (GUILayout.Button("apply", HelperGui.bM)) merg.Apply();
 				GUILayout.EndHorizontal();
-				foldMerger = EditorGUILayout.Foldout(foldMerger, aProfil.build.merger.strOneLine(), true);
-				if (foldMerger) GUILayout.Label(aProfil.build.merger.stringify());
+				foldMerger = EditorGUILayout.Foldout(foldMerger, merg.strOneLine(), true);
+				if (foldMerger) GUILayout.Label(merg.stringify());
 			}
 		}
 
@@ -351,8 +398,9 @@ namespace fwp.buildor.editor
 
 			GUILayout.Label("+ path : " + aProfil.FullPath);
 
-			DataBuildorScenesMerger merger = aProfil.build.merger;
-			if (merger != null) GUILayout.Label("+ merger : " + merger.strOneLine());
+			foreach (var mod in aProfil.build.profilModules) GUILayout.Label("+ " + mod.strOneLine());
+			foreach (var mod in aProfil.build.buildModules) GUILayout.Label("+ " + mod.strOneLine());
+
 
 			ProfilLogLevels logs = aProfil.GetLogsLevels(BuildorVars.TargetDebug);
 			if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());

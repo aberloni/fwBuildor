@@ -17,7 +17,7 @@ namespace fwp.buildor.editor
     /// <summary>
     /// not compatible before u2021
     /// </summary>
-    [CreateAssetMenu(menuName = "buildor/new profil:linux", order = 100)]
+    [CreateAssetMenu(menuName = BuildorHelpers._menuItem_basepath + "profils/+linux", order = 100)]
     public class DataBuildSettingProfileLinux : DataBuildSettingProfile
     {
         public override string getExtension() => "x86_64";

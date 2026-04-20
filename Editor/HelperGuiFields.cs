@@ -94,11 +94,11 @@ namespace fwp.buildor.editor
 			GUILayout.Label(label, GUILayout.Width(200f));
 			if (disabled) GUI.enabled = false;
 			var ret = (T)EditorGUILayout.ObjectField(target, typeof(T), false);
+			if (disabled) GUI.enabled = true;
 			if (ret != null && GUILayout.Button(">>", GUILayout.Width(40f)))
 			{
 				UnityEditor.Selection.activeObject = ret;
 			}
-			if (disabled) GUI.enabled = true;
 			GUILayout.EndHorizontal();
 			return ret;
 		}

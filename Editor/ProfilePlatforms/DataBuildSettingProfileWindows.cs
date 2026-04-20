@@ -10,7 +10,7 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
-    [CreateAssetMenu(menuName = "buildor/new profil:windows", order = 100)]
+    [CreateAssetMenu(menuName = BuildorHelpers._menuItem_basepath + "profils/+windows", order = 100)]
     public class DataBuildSettingProfileWindows : DataBuildSettingProfile
     {
         public override string getExtension() => "exe";

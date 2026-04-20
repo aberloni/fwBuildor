@@ -16,7 +16,7 @@ using UnityEditor;
 namespace fwp.buildor
 {
     [CreateAssetMenu(menuName = "buildor/merger/create DataBuildSettingProfilScenesMerger", order = 100)]
-    public class DataBuildorScenesMerger : ScriptableObject
+    public class DataBuildorScenesMerger : BuildModule
     {
         [Tooltip("engine scenes")]
         public DataBuildorScenesFilter[] cores;
@@ -55,7 +55,7 @@ namespace fwp.buildor
             }
         }
 
-        public string strOneLine() => name + " | filters x" + CountTotalFilters + " | scenes x" + CountTotalScenes;
+        override public string strOneLine() => base.strOneLine() + " | filters x" + CountTotalFilters + " | scenes x" + CountTotalScenes;
         public string stringify()
         {
             string ret = strOneLine();
@@ -72,14 +72,12 @@ namespace fwp.buildor
         List<EditorBuildSettingsScene> scenesToInject = new();
 
         [ContextMenu("apply")]
-        public void apply(bool additive = false)
+        override public void Apply()
         {
             scenesToInject.Clear();
 
-            if (additive) // keep whatever is already in
-            {
-                scenesToInject.AddRange(EditorBuildSettings.scenes);
-            }
+            // keep whatever is already in
+            // if (additive) scenesToInject.AddRange(EditorBuildSettings.scenes);
 
             inject(cores);
             inject(levels);
@@ -173,7 +171,7 @@ namespace fwp.buildor
             {
                 if (merger.levels[i].name.Contains(level))
                 {
-                    merger.levels[i].add();
+                    merger.levels[i].Apply();
                     return;
                 }
             }
@@ -186,7 +184,7 @@ namespace fwp.buildor
             //DataBuildSettingProfilScenes scenes = HalperScriptables.getScriptableObjectInEditor<DataBuildSettingProfilScenes>("game_release");
             DataBuildorScenesMerger merger = getScriptableObjectInEditor<DataBuildorScenesMerger>(filter);
 
-            merger.apply();
+            merger.Apply();
 
             Debug.Log("re-applied all scenes from scriptable " + merger.name, merger);
         }
