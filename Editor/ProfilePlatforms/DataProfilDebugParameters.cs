@@ -29,9 +29,9 @@ namespace fwp.buildor.editor
         public bool debugScripting = false;
 
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
-        
-        public BuildModule[] modules;
-        public ProfilLogLevels Logs => modules.OfType<ProfilLogLevels>().FirstOrDefault();
+
+        public BuildModule[] modules = new BuildModule[0];
+        public ProfilLogLevels Logs => modules != null && modules.OfType<ProfilLogLevels>().FirstOrDefault();
 
         void clear()
         {
@@ -43,7 +43,7 @@ namespace fwp.buildor.editor
 
         public void apply()
         {
-            if(!BuildorVars.IsDebug)
+            if (!BuildorVars.IsDebug)
             {
                 clear();
                 return;

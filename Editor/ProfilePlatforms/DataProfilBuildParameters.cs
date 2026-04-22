@@ -13,9 +13,10 @@ namespace fwp.buildor.editor
         /// <summary>
         /// sdks, lang_en, ...
         /// </summary>
-        public string[] symbols;
+        public string[] symbols = new string[0];
 
         public TargetFeatures features;
+
         public string SymbolsFeatures
         {
             get
@@ -30,7 +31,7 @@ namespace fwp.buildor.editor
             }
         }
 
-        public BuildModule[] modules;
+        public BuildModule[] modules = new BuildModule[0];
 
         [Header("post process")]
         [Tooltip("remove any folder from buidl matching given pattern(s)")]
@@ -49,7 +50,7 @@ namespace fwp.buildor.editor
 
         public void Apply()
         {
-            if(modules == null) return;
+            if (modules == null) return;
 
             foreach (var m in modules)
             {
