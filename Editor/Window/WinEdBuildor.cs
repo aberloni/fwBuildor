@@ -377,6 +377,12 @@ namespace fwp.buildor.editor
 
 		void drawPrevisualization()
 		{
+			if (aProfil == null)
+			{
+				GUILayout.Label("no active profil");
+				return;
+			}
+
 			if (BuildorVars.PreIncVersion)
 			{
 				if (aProfil.versionInternal != null) GUILayout.Label("+ v.internal");
@@ -385,8 +391,15 @@ namespace fwp.buildor.editor
 
 			GUILayout.Label("+ path : " + aProfil.FullPath);
 
-			foreach (var mod in aProfil.build.modules) GUILayout.Label("+ " + mod.strOneLine());
-			if (BuildorVars.IsDebug) foreach (var mod in aProfil.debug.modules) GUILayout.Label("+ " + mod.strOneLine());
+			if (aProfil.build != null)
+			{
+				foreach (var mod in aProfil.build.modules) GUILayout.Label("+ " + mod.strOneLine());
+			}
+
+			if (BuildorVars.IsDebug && aProfil.debug != null)
+			{
+				foreach (var mod in aProfil.debug.modules) GUILayout.Label("+ " + mod.strOneLine());
+			}
 
 			ProfilLogLevels logs = aProfil.Logs;
 			if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
