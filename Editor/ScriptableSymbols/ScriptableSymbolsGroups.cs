@@ -130,7 +130,7 @@ namespace fwp.symbols
 
 		public void apply(BuildTargetGroup btGroup)
 		{
-			ScriptSymbolsView.applyEditor(btGroup, extractSymbolsOfGroup(btGroup));
+			ScriptSymbolsView.setPlayerSymbols(btGroup, extractSymbolsOfGroup(btGroup));
 		}
 
 		/// <summary>

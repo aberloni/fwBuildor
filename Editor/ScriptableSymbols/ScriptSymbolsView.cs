@@ -4,6 +4,7 @@ namespace fwp.symbols
 
     using UnityEditor;
     using System.Collections.Generic;
+    using UnityEditor.Build;
 
     /// <summary>
     /// whatever is localy set (in unity)
@@ -16,19 +17,6 @@ namespace fwp.symbols
         /// </summary>
         static Dictionary<System.Type, string[]> buffer_symbols = new Dictionary<System.Type, string[]>();
 
-		/// <summary>
-		/// apply to editor
-		/// </summary>
-		static public void applyEditor(BuildTargetGroup btGroup, string symbols)
-		{
-			string cur = ScriptSymbolsView.getPlayerSetSymbols(btGroup);
-			if (cur != symbols)
-			{
-				UnityEngine.Debug.LogWarning(btGroup + " = apply => " + cur);
-				PlayerSettings.SetScriptingDefineSymbolsForGroup(btGroup, symbols);
-			}
-		}
-
         /// <summary>
         /// shk
         /// </summary>
@@ -36,7 +24,9 @@ namespace fwp.symbols
         {
             try
             {
-                return PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
+                var namedTarget = NamedBuildTarget.FromBuildTargetGroup(group);
+                return PlayerSettings.GetScriptingDefineSymbols(namedTarget);
+                // return PlayerSettings.GetScriptingDefineSymbolsForGroup(group);
             }
             catch
             {
@@ -45,19 +35,32 @@ namespace fwp.symbols
             }
         }
 
-        static public void setPlayerSymbols(BuildTargetGroup group, string val)
+        static public void setPlayerSymbols(BuildTargetGroup group, string val, bool force = false)
         {
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(group, val);
+            if (!force)
+            {
+                string cur = ScriptSymbolsView.getPlayerSetSymbols(group);
+                if (cur == val)
+                {
+                    UnityEngine.Debug.LogWarning("no need to apply, already at value=" + val);
+                    return;
+                }
+            }
+
+            UnityEngine.Debug.LogWarning(group + " = apply => " + val);
+            var namedTarget = NamedBuildTarget.FromBuildTargetGroup(group);
+            PlayerSettings.SetScriptingDefineSymbols(namedTarget, val);
+            // PlayerSettings.SetScriptingDefineSymbolsForGroup(group, val);
         }
 
         static public Dictionary<System.Type, string[]> getEnumsBuffer(bool force = false)
         {
-            if(buffer_symbols == null || force)
+            if (buffer_symbols == null || force)
             {
                 buffer_symbols = new Dictionary<Type, string[]>();
             }
 
-            if(buffer_symbols.Count <= 0)
+            if (buffer_symbols.Count <= 0)
             {
                 var enums = ScriptSymbols.extractEnums();
 

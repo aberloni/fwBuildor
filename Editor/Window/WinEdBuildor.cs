@@ -166,7 +166,7 @@ namespace fwp.buildor.editor
 			if (GUILayout.Button("apply", HelperGui.bS))
 			{
 				Debug.LogWarning("apply.symbols: " + symbs, p);
-				ScriptSymbolsView.applyEditor(p.getBuildTargetGroup(), symbs);
+				ScriptSymbolsView.setPlayerSymbols(p.getBuildTargetGroup(), symbs);
 			}
 
 			GUILayout.EndHorizontal();
