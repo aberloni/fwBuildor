@@ -105,6 +105,7 @@ namespace fwp.buildor.editor
 
 		static public void drawObjectDisabled(Object target)
 		{
+			if (target == null) return;
 			GUI.enabled = false;
 			EditorGUILayout.ObjectField(target, target.GetType(), false);
 			GUI.enabled = true;
