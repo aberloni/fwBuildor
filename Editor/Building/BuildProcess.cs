@@ -16,11 +16,11 @@ namespace fwp.buildor.editor
 
         IEnumerator _exec = null;
 
-        float time;
+        double time;
 
         protected BuildProcess launch(DataBuildSettingProfile profil)
         {
-            time = Time.realtimeSinceStartup;
+            time = EditorApplication.timeSinceStartup;
 
             this.profil = profil;
 
@@ -57,7 +57,7 @@ namespace fwp.buildor.editor
 
         protected void log(string msg)
         {
-            float dt = Time.realtimeSinceStartup - time;
+            var dt = EditorApplication.timeSinceStartup - time;
             ulog(dt + " | " + msg, this);
         }
 

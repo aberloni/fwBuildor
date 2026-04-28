@@ -35,9 +35,9 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.Label(_title, HelperGui.gWinTitle);
 
-			_scroll = GUILayout.BeginScrollView(_scroll);
-
 			drawProfilSelector();
+
+			_scroll = GUILayout.BeginScrollView(_scroll);
 
 			if (aProfil != null)
 			{
@@ -107,9 +107,6 @@ namespace fwp.buildor.editor
 			else
 			{
 				GUILayout.BeginHorizontal();
-
-				GUILayout.Label(Application.platform.ToString());
-
 				GUI.enabled = false;
 				EditorGUILayout.ObjectField(aProfil, typeof(DataBuildSettingProfile), true);
 				GUI.enabled = true;
@@ -118,6 +115,15 @@ namespace fwp.buildor.editor
 				if (GUILayout.Button(">>", HelperGui.bS)) Selection.activeObject = aProfil;
 				GUILayout.EndHorizontal();
 			}
+
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("unity.platform", GUILayout.Width(100f));
+			GUILayout.Label(Application.platform.ToString());
+			GUILayout.Label("unity.build.target", GUILayout.Width(100f));
+			GUILayout.Label(EditorUserBuildSettings.activeBuildTarget.ToString());
+			
+			GUILayout.EndHorizontal();
+
 		}
 
 		void drawSymbols()
@@ -204,13 +210,23 @@ namespace fwp.buildor.editor
 
 			GUILayout.Label("Modules", HelperGui.gCategoryBold);
 
+			GUILayout.Label("modules.build");
 			drawModules(aProfil.build.modules);
-			if (BuildorVars.IsDebug) drawModules(aProfil.debug.modules);
+
+			if (BuildorVars.IsDebug)
+			{
+				GUILayout.Label("modules.debug");
+				drawModules(aProfil.debug.modules);
+			}
 		}
 
 		void drawModules(BuildModule[] mods)
 		{
-			if (mods == null || mods.Length <= 0) return;
+			if (mods == null || mods.Length <= 0)
+			{
+				GUILayout.Label("-none-");
+				return;
+			}
 
 			GUIStyle style = new GUIStyle(EditorStyles.miniLabel)
 			{
