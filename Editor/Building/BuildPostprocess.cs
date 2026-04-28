@@ -27,54 +27,8 @@ namespace fwp.buildor.editor
             switch (summary.result)
             {
                 case BuildResult.Succeeded:
-
-                    // autorun will inject a flag, no need to do it by hand
-                    /*
-                    if (_parameters.buildFlags.autorun)
-                    {
-                        Debug.Log("<color=orange>AUTORUN</color>");
-                        WinEdBuildor.winExecute(summary.outputPath); // autorun flag
-                    }
-                    */
-
-                    log("<color=green>build.Success</color>");
-
-                    log("<b>Build finished</b>");
-                    log("  L version : <b>" + fwp.version.VersionManager.getFormatedVersion() + "</b>");
-                    log("  L result : warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
-                    log("  L symbols : " + ScriptableSymbolHelper.getGroupSymbols(summary.platformGroup));
-                    log("  L platform : <b>" + summary.platform + "</b>");
-                    log("  L build time : " + summary.totalTime);
-
-                    ulong bytes = summary.totalSize;
-                    ulong byteToMo = 1048576;
-
-                    int size = (int)(bytes / byteToMo);
-
-                    log("  L size : " + summary.totalSize + " bytes ; " + size + " Mo");
-                    log("  L path : " + summary.outputPath);
-
-                    yield return null;
-                    if (BuildorVars.PostOpenFolder)
-                    {
-                        log($"+OPEN FOLDER of build : {summary.outputPath}");
-                        openBuildFolder(summary.outputPath); // success.open
-                    }
-
-                    yield return null;
-                    if (BuildorVars.PostZip)
-                    {
-                        log($"+ZIP");
-
-                        zipBuildFolder(profil.BuildPath, profil.ZipFullPath); // autozip after build
-                    }
-
-                    yield return null;
-                    if (BuildorVars.PostAutorun)
-                    {
-                        log($"+AUTORUN  @{profil.FullPath}");
-                        shellOpenFile(profil.FullPath);
-                    }
+                    
+                    onSuccess();
 
                     break;
 
@@ -83,15 +37,70 @@ namespace fwp.buildor.editor
                 case BuildResult.Unknown:
                 default:
 
-                    log("<color=red>build.Failure</color>");
-                    Debug.LogError("Build failed: " + summary.result);
-
-                    Debug.LogError($"BuildResult : Helper Build : {summary.result}");
-                    Debug.LogError("options : " + summary.options);
-                    Debug.LogError("output path : " + summary.outputPath);
-
+                    onFailure();
 
                     break;
+            }
+
+        }
+
+        void onFailure()
+        {
+            log("<color=red>build.Failure</color>");
+            Debug.LogError("Build failed: " + summary.result);
+
+            Debug.LogError($"BuildResult : Helper Build : {summary.result}");
+            Debug.LogError("options : " + summary.options);
+            Debug.LogError("output path : " + summary.outputPath);
+
+        }
+
+        void onSuccess()
+        {
+            
+            // autorun will inject a flag, no need to do it by hand
+            /*
+            if (_parameters.buildFlags.autorun)
+            {
+                Debug.Log("<color=orange>AUTORUN</color>");
+                WinEdBuildor.winExecute(summary.outputPath); // autorun flag
+            }
+            */
+
+            log("<color=green>build.Success</color>");
+
+            log("<b>Build finished</b>");
+            log("  L version : <b>" + profil.Version + "</b>");
+            log("  L result : warnings : " + summary.totalWarnings + " | errors " + summary.totalErrors);
+            log("  L symbols : " + ScriptableSymbolHelper.getGroupSymbols(summary.platformGroup));
+            log("  L platform : <b>" + summary.platform + "</b>");
+            log("  L build time : " + summary.totalTime);
+
+            ulong bytes = summary.totalSize;
+            ulong byteToMo = 1048576;
+
+            int size = (int)(bytes / byteToMo);
+
+            log("  L size : " + summary.totalSize + " bytes ; " + size + " Mo");
+            log("  L path : " + summary.outputPath);
+
+            if (BuildorVars.PostOpenFolder)
+            {
+                log($"+OPEN FOLDER of build : {summary.outputPath}");
+                openBuildFolder(summary.outputPath); // success.open
+            }
+
+            if (BuildorVars.PostZip)
+            {
+                log($"+ZIP");
+
+                zipBuildFolder(profil.BuildPath, profil.ZipFullPath); // autozip after build
+            }
+
+            if (BuildorVars.PostAutorun)
+            {
+                log($"+AUTORUN  @{profil.FullPath}");
+                shellOpenFile(profil.FullPath);
             }
 
         }

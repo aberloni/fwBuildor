@@ -3,10 +3,6 @@ using UnityEditor;
 using System.IO;
 
 /// <summary>
-/// (ratio iphone)
-/// 562x1000 
-/// 506x900
-/// 
 /// application id
 /// https://developer.nintendo.com/html/online-docs/g1kr9vj6-en/Packages/SDK/NintendoSDK/Documents/Package/contents/Pages/Page_177636769.html#Anchor_177636769_ApplicationId
 /// 
@@ -27,8 +23,6 @@ using System.IO;
 /// https://developer.nintendo.com/group/development/g1kr9vj6/forums/english/-/gts_message_boards/thread/19553057#568124
 /// need to now define "small icon" and have bmp icon file (1024x1024)
 /// </summary>
-
-
 namespace fwp.buildor.editor
 {
     using fwp.version;
@@ -104,7 +98,7 @@ namespace fwp.buildor.editor
                 bn += upper;
             }
 
-            return bn + " (" + VersionManager.getFormatedVersion('.') + ")";
+            return bn;
         }
 
         public override void injectProfilToEditor()

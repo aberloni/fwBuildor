@@ -10,13 +10,13 @@ namespace fwp.version
 		public override void applyVersionToEditor()
 		{
 			//ios specific version
-			UnityEditor.PlayerSettings.iOS.buildNumber = version;
+			UnityEditor.PlayerSettings.iOS.buildNumber = Version;
 
 			//android bundle version code
 			UnityEditor.PlayerSettings.Android.bundleVersionCode = buildNumber;
 
 			//version under compagny name & product name
-			UnityEditor.PlayerSettings.bundleVersion = version;
+			UnityEditor.PlayerSettings.bundleVersion = Version;
 			//Debug.Log("+bundleVersion=" + UnityEditor.PlayerSettings.bundleVersion);
 		}
 #endif

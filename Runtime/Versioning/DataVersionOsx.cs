@@ -12,7 +12,7 @@ namespace fwp.version
         public override void applyVersionToEditor()
         {
             //short version
-            UnityEditor.PlayerSettings.bundleVersion = version;
+            UnityEditor.PlayerSettings.bundleVersion = Version;
         }
 #endif
 

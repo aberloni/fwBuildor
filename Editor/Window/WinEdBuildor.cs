@@ -386,8 +386,8 @@ namespace fwp.buildor.editor
 
 			if (BuildorVars.PreIncVersion)
 			{
-				if (aProfil.versionInternal != null) GUILayout.Label("+ v.internal");
-				if (aProfil.versionPublish != null) GUILayout.Label("+ v.publish");
+				if (aProfil.versionInternal != null) GUILayout.Label("+ v.internal " + aProfil.versionInternal);
+				if (aProfil.versionPublish != null) GUILayout.Label("+ v.publish " + aProfil.versionPublish);
 			}
 
 			GUILayout.Label("+ path : " + aProfil.FullPath);

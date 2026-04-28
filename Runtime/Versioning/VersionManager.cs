@@ -36,14 +36,12 @@ namespace fwp.version
         /// </summary>
         static public void displayOnStartup()
         {
-            logPlayerSettingsVersion();
+            Debug.Log(getPlayerSettingsVersion());
 
 #if !noVersion
             new GameObject("--version").AddComponent<VersionManager>();
 #endif
         }
-
-        public const char versionSeparator = '.';
 
         [SerializeField]
         float timer = 0f;
@@ -118,12 +116,9 @@ namespace fwp.version
         /// </summary>
         virtual public string formatVersion()
         {
-            string output = getFormatedVersion();
+            string output = getPlayerSettingsVersion();
 
-            if (Debug.isDebugBuild)
-            {
-                output += " (devb)";
-            }
+            if (Debug.isDebugBuild) output += " (devb)";
 
 #if debug
             output += " (debug)";
@@ -134,12 +129,10 @@ namespace fwp.version
 
         void updateRect()
         {
-
             rec.x = Screen.width - 30f;
             rec.y = Screen.height - 65f;
             rec.width = 25f;
             rec.height = 25f;
-
         }
 
         void updateFontSize()
@@ -148,25 +141,6 @@ namespace fwp.version
             float ratio = pxSize / 1920f; // N px on a 1080p screen
             int size = Mathf.FloorToInt(Screen.width * ratio);
             guis.fontSize = size;
-        }
-
-
-        /// <summary>
-        /// logs data from unity version setup
-        /// notbuildor version scriptables
-        /// </summary>
-        static public void logPlayerSettingsVersion()
-        {
-            logXYZVersion(getPlayerSettingsVersion(), getPlayerSettingsBuildNumber());
-        }
-
-        static public void logXYZVersion(DataBuildSettingVersion v) => logXYZVersion(v.version, v.buildNumber.ToString());
-        static void logXYZVersion(string XYZ, string inc = "")
-        {
-            string output = getFormatedVersion(splitVersion(XYZ));
-            if (inc.Length > 0) output += ":" + inc;
-
-            Debug.Log($"<b>{output}</b>");
         }
 
         static public void logVersionStamps(DataBuildSettingVersion v)
@@ -178,16 +152,11 @@ namespace fwp.version
         /// major.minor.inc
         /// no build number
         /// </summary>
-        static public string getFormatedVersion(int[] data = null)
+        static public string getFormatedVersion(int[] version, char separator = DataBuildSettingVersion.separator)
         {
-            return getFormatedVersion(versionSeparator, data);
-        }
-
-        static public string getFormatedVersion(char separator, int[] data = null)
-        {
-            if (data == null) data = getPlayerSettingsVersionInts();
-
-            return data[0].ToString() + separator + data[1] + separator + data[2];
+            return version[0].ToString() + DataBuildSettingVersion.separator 
+                + version[1] + DataBuildSettingVersion.separator 
+                + version[2];
         }
 
         /// <summary>
@@ -227,8 +196,6 @@ namespace fwp.version
             }
             return output;
         }
-
-        static public string getDisplayVersion() => getFormatedVersion();
 
         static public string getPlayerSettingsVersion()
         {

@@ -136,7 +136,7 @@ namespace fwp.buildor.editor
             if (EditorPrefs.GetBool(BuildorVars.pref_include_prefix)) sub += build.build_prefix + path_separator;
             if (EditorPrefs.GetBool(BuildorVars.pref_include_platform)) sub += getPlatformUid() + path_separator;
             if (EditorPrefs.GetBool(BuildorVars.pref_include_date)) sub += getFullDate() + path_separator;
-            if (EditorPrefs.GetBool(BuildorVars.pref_include_version)) sub += VersionManager.getFormatedVersion('-') + path_separator;
+            if (EditorPrefs.GetBool(BuildorVars.pref_include_version)) sub += Version + path_separator;
 
             sub += EditorPrefs.GetString(BuildorVars.pref_suffix);
 
@@ -287,11 +287,11 @@ namespace fwp.buildor.editor
         {
             if (publish)
             {
-                PlayerSettings.bundleVersion = versionPublish.version;
+                PlayerSettings.bundleVersion = versionPublish.Version;
             }
             else
             {
-                PlayerSettings.bundleVersion = versionInternal.version;
+                PlayerSettings.bundleVersion = versionInternal.Version;
             }
         }
 
