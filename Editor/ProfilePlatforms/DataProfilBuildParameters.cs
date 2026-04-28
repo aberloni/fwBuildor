@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using fwp.logs;
+using UnityEditor;
 using UnityEngine;
 
 namespace fwp.buildor.editor
@@ -31,6 +32,9 @@ namespace fwp.buildor.editor
             }
         }
 
+        public DataBuildorScenesMerger merger;
+        public ProfilLogLevels logs;
+
         public BuildModule[] modules = new BuildModule[0];
 
         [Header("post process")]
@@ -48,14 +52,21 @@ namespace fwp.buildor.editor
         public Sprite splashscreen;
         public Texture2D icon;
 
-        public void Apply()
+        public void ApplyModules()
         {
             if (modules == null) return;
+
+            if (merger != null) merger.Apply();
+            if (logs != null) logs.Apply();
 
             foreach (var m in modules)
             {
                 if (m == null) continue;
-                if (m.isProfilModule()) m.Apply();
+
+                if (EditorUtility.DisplayDialog("module", "apply module: " + m.GetType() + "." + m.name + " ?", "yes", "no"))
+                {
+                    m.Apply();
+                }
             }
         }
     }

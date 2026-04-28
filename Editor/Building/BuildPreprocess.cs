@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using UnityEditor.Build.Reporting;
 using UnityEditor.Build;
-using System.Runtime.InteropServices;
 
 namespace fwp.buildor.editor
 {
@@ -83,13 +82,7 @@ namespace fwp.buildor.editor
             profil.versionPublish?.event_build();
 
             // merger & others
-            profil.build.Apply();
-
-            // streama copy & others
-            foreach (var m in profil.build.modules)
-            {
-                m?.Apply();
-            }
+            profil.build.ApplyModules(); // build.pre
 
             if (BuildorVars.IsDebug)
             {
@@ -189,7 +182,7 @@ namespace fwp.buildor.editor
 
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             build_summary = report.summary;
-            
+
             onBuildEnd?.Invoke(build_summary.Value);
         }
 

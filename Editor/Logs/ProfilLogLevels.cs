@@ -6,8 +6,6 @@ namespace fwp.logs
 	[CreateAssetMenu(menuName = "buildor/profil/+logs", order = 100)]
 	public class ProfilLogLevels : BuildModule
 	{
-		public override bool isProfilModule() => false;
-
 		[System.Serializable]
 		public struct LogLevel
 		{
@@ -41,14 +39,14 @@ namespace fwp.logs
 
 		static void applyToEditor(LogLevel[] levels)
 		{
-			string output = "->| logs.applied";
+			string output = "";
 			foreach (var lvl in levels)
 			{
 				Application.SetStackTraceLogType(lvl.type, lvl.stackTrace);
 				output += "\n" + lvl.stringify();
 			}
 
-			Debug.Log(output);
+			Debug.Log("->| logs.applied: " + output);
 		}
 
 		/// <summary>

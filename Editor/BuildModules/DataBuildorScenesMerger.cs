@@ -18,8 +18,6 @@ namespace fwp.buildor
     [CreateAssetMenu(menuName = "buildor/merger/create DataBuildSettingProfilScenesMerger", order = 100)]
     public class DataBuildorScenesMerger : BuildModule
     {
-        public override bool isProfilModule() => true;
-
         [Tooltip("engine scenes")]
         public DataBuildorScenesFilter[] cores;
 

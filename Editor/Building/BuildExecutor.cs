@@ -91,7 +91,7 @@ namespace fwp.buildor.editor
         void log(string msg)
         {
             float dt = Time.realtimeSinceStartup - time;
-            Debug.Log("[dt:" + (int)dt + "] <<< <color=pink><b>" + msg + "</b></color> >>>");
+            Debug.Log("[dt:" + (int)dt + "] <<< <color=#FF00FF><b>" + msg + "</b></color> >>>");
         }
 
 

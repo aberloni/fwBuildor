@@ -271,15 +271,7 @@ namespace fwp.buildor.editor
 
             if (versionPublish != null) versionPublish.applyVersionToEditor();
             else versionInternal.applyVersionToEditor();
-
-            // merger might be override
-            // merger is applied before build exec
-            // if (merger != null) merger.apply();
-            if (build != null)
-            {
-                build.Apply();
-            }
-
+            
             EditorUtility.SetDirty(this);
         }
 
