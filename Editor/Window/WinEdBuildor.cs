@@ -246,14 +246,13 @@ namespace fwp.buildor.editor
 			var merg = aProfil.build.Merger;
 
 			GUILayout.Label("Mergers", HelperGui.gCategoryBold);
-			if (merg != null)
-			{
-				GUILayout.BeginHorizontal();
-				GUILayout.Label("merger.build");
-				HelperGuiFields.drawObjectDisabled(merg);
-				if (GUILayout.Button("apply", HelperGui.bM)) merg.Apply();
-				GUILayout.EndHorizontal();
-			}
+			if (merg == null) return;
+
+			GUILayout.BeginHorizontal();
+			GUILayout.Label("merger.build");
+			HelperGuiFields.drawObjectDisabled(merg);
+			if (GUILayout.Button("apply", HelperGui.bM)) merg.Apply();
+			GUILayout.EndHorizontal();
 
 			foldMerger = EditorGUILayout.Foldout(foldMerger, merg.strOneLine(), true);
 			if (foldMerger) GUILayout.Label(merg.stringify());

@@ -21,8 +21,7 @@ namespace fwp.buildor
     public enum TargetSdks
     {
         none = 0,
-        steam,
-        ninSwitch,
+        steam = 1,
     }
 
     [Flags]
