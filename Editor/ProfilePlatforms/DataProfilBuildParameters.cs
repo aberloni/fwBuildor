@@ -8,9 +8,6 @@ namespace fwp.buildor.editor
     [System.Serializable]
     public class DataProfilBuildParameters
     {
-        public DataBuildorScenesMerger Merger => modules?.OfType<DataBuildorScenesMerger>().FirstOrDefault();
-        public ProfilLogLevels Logs => modules?.OfType<ProfilLogLevels>().FirstOrDefault();
-
         /// <summary>
         /// sdks, lang_en, ...
         /// </summary>

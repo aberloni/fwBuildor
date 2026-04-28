@@ -243,7 +243,7 @@ namespace fwp.buildor.editor
 		bool foldMerger = false;
 		void drawMergers()
 		{
-			var merg = aProfil.build.Merger;
+			var merg = aProfil.build.merger;
 
 			GUILayout.Label("Mergers", HelperGui.gCategoryBold);
 			if (merg == null) return;

@@ -82,7 +82,7 @@ namespace fwp.buildor.editor
             }
         }
 
-        public ProfilLogLevels Logs => BuildorVars.IsDebug ? debug.Logs : build.Logs;
+        public ProfilLogLevels Logs => BuildorVars.IsDebug ? debug.logs : build.logs;
 
         /// <summary>
         /// root/path/build.ext

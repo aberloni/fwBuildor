@@ -23,6 +23,8 @@ namespace fwp.buildor.editor
             deep,
         }
 
+        public ProfilLogLevels logs;
+
         [Tooltip("unity dev build ticked")]
         public bool developement_build = false; // match : EditorUserBuildSettings.development
 
@@ -32,14 +34,6 @@ namespace fwp.buildor.editor
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
 
         public BuildModule[] modules = new BuildModule[0];
-        public ProfilLogLevels Logs
-        {
-            get
-            {
-                if (modules == null) return null;
-                return modules.OfType<ProfilLogLevels>().FirstOrDefault();
-            }
-        }
 
         void clear()
         {
