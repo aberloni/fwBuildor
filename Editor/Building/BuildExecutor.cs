@@ -52,7 +52,7 @@ namespace fwp.buildor.editor
         BuildPreprocess build_prepro;
         BuildPostprocess build_postpro;
 
-        float time = 0f;
+        double time = 0f;
 
         public BuildExecutor()
         {
@@ -62,7 +62,7 @@ namespace fwp.buildor.editor
 
         public void launch()
         {
-            time = Time.realtimeSinceStartup;
+            time = EditorApplication.timeSinceStartup;
 
             build_prepro.onBuildStart += () =>
             {
@@ -90,7 +90,7 @@ namespace fwp.buildor.editor
 
         void log(string msg)
         {
-            float dt = Time.realtimeSinceStartup - time;
+            var dt = EditorApplication.timeSinceStartup - time;
             Debug.Log("[dt:" + (int)dt + "] <<< <color=#FF00FF><b>" + msg + "</b></color> >>>");
         }
 
