@@ -52,6 +52,8 @@ namespace fwp.buildor.editor
         BuildPreprocess build_prepro;
         BuildPostprocess build_postpro;
 
+        float time = 0f;
+
         public BuildExecutor()
         {
             build_prepro = new();
@@ -60,14 +62,36 @@ namespace fwp.buildor.editor
 
         public void launch()
         {
-            // data = getScriptableDataBuildSettings();
-            Debug.Log(" <<< <b>starting build process</b> >>>");
+            time = Time.realtimeSinceStartup;
 
-            build_prepro.doLaunch(Profile);
-            build_prepro.onBuilt += (summary) =>
+            build_prepro.onBuildStart += () =>
             {
-                build_postpro.doLaunch(Profile, summary);
+                log("build..");
+                UnityEditor.EditorUtility.DisplayProgressBar("build " + Profile.FullPath, "build...", 0.25f);
             };
+
+            build_prepro.onBuildEnd += (summary) =>
+            {
+                UnityEditor.EditorUtility.DisplayProgressBar("build " + Profile.FullPath, "postprocess...", 0.75f);
+                log("build.post..");
+                build_postpro.doLaunch(Profile, summary);
+
+                build_postpro.onPostEnded += () =>
+                {
+                    log("build.end");
+                    EditorUtility.ClearProgressBar();
+                };
+            };
+
+            UnityEditor.EditorUtility.DisplayProgressBar("build " + Profile.FullPath, "preprocess...", 0f);
+            log("build.pre..");
+            build_prepro.doLaunch(Profile);
+        }
+
+        void log(string msg)
+        {
+            float dt = Time.realtimeSinceStartup - time;
+            Debug.Log("[dt:" + (int)dt + "] <<< <color=pink><b>" + msg + "</b></color> >>>");
         }
 
 

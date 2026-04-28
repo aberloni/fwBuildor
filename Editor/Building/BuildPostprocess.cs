@@ -5,11 +5,14 @@ using UnityEditor;
 
 namespace fwp.buildor.editor
 {
+    using System;
     using UnityEditor.Build.Reporting;
 
     public class BuildPostprocess : BuildProcess
     {
         BuildSummary summary;
+
+        public Action onPostEnded;
 
         public BuildProcess doLaunch(DataBuildSettingProfile profil, BuildSummary summary)
         {
@@ -22,6 +25,8 @@ namespace fwp.buildor.editor
 
         protected override IEnumerator exec()
         {
+            yield return null;
+            yield return null;
             yield return null;
 
             switch (summary.result)
@@ -41,6 +46,8 @@ namespace fwp.buildor.editor
 
                     break;
             }
+
+            onPostEnded?.Invoke();
 
         }
 

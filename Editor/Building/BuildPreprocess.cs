@@ -19,7 +19,8 @@ namespace fwp.buildor.editor
 
         public BuildSummary? build_summary;
 
-        public Action<BuildSummary> onBuilt;
+        public Action onBuildStart;
+        public Action<BuildSummary> onBuildEnd;
 
         public BuildProcess doLaunch(DataBuildSettingProfile profil)
         {
@@ -43,6 +44,8 @@ namespace fwp.buildor.editor
 
             _wait = execWait();
             while (_wait.MoveNext()) yield return null;
+
+            onBuildStart?.Invoke();
 
             _build = execBuild();
             while (_build.MoveNext()) yield return null;
@@ -186,12 +189,8 @@ namespace fwp.buildor.editor
 
             BuildReport report = BuildPipeline.BuildPlayer(buildPlayerOptions);
             build_summary = report.summary;
-
-            if (onBuilt == null) log("-no reaction-");
-            else
-            {
-                onBuilt?.Invoke(build_summary.Value);
-            }
+            
+            onBuildEnd?.Invoke(build_summary.Value);
         }
 
         /// <summary>
