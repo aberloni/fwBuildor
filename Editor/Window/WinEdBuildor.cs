@@ -213,8 +213,8 @@ namespace fwp.buildor.editor
 
 			foreach (var m in mods)
 			{
-				if(m == null) continue;
-				
+				if (m == null) continue;
+
 				GUILayout.BeginHorizontal();
 				// GUILayout.Label(m.name, GUILayout.Width(200f));
 				GUI.enabled = false;
@@ -389,12 +389,20 @@ namespace fwp.buildor.editor
 
 			if (aProfil.build != null)
 			{
-				foreach (var mod in aProfil.build.modules) GUILayout.Label("+ " + mod.strOneLine());
+				foreach (var mod in aProfil.build.modules)
+				{
+					if (mod == null) continue;
+					GUILayout.Label("+ " + mod.strOneLine());
+				}
 			}
 
 			if (BuildorVars.IsDebug && aProfil.debug != null)
 			{
-				foreach (var mod in aProfil.debug.modules) GUILayout.Label("+ " + mod.strOneLine());
+				foreach (var mod in aProfil.debug.modules)
+				{
+					if (mod == null) continue;
+					GUILayout.Label("+ " + mod.strOneLine());
+				}
 			}
 
 			// ProfilLogLevels logs = aProfil.Logs;
