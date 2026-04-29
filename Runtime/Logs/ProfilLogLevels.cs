@@ -33,12 +33,15 @@ namespace fwp.logs
 			public string stringify() => type + ":" + stackTrace;
 		}
 
-		public LogLevel[] levels = levels_scripts_only;
-
-		/// <summary>
-		/// scriptable symbols linked to verbosity
-		/// </summary>
-		public string[] symbolsVerbose = new string[0];
+		[SerializeField]
+		LogLevel[] levels = new LogLevel[]
+		{
+			new LogLevel(){ type = LogType.Exception, stackTrace = StackTraceLogType.ScriptOnly},
+			new LogLevel(){ type = LogType.Assert, stackTrace = StackTraceLogType.ScriptOnly},
+			new LogLevel(){ type = LogType.Error, stackTrace = StackTraceLogType.ScriptOnly},
+			new LogLevel(){ type = LogType.Warning, stackTrace = StackTraceLogType.ScriptOnly},
+			new LogLevel(){ type = LogType.Log, stackTrace = StackTraceLogType.ScriptOnly},
+		};
 
 		public void apply()
 		{
