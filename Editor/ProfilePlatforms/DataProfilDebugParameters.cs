@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
-using fwp.logs;
 using System.Linq;
-using System.Net.Configuration;
 
 /// <summary>
 /// (ratio iphone)
@@ -23,8 +21,6 @@ namespace fwp.buildor.editor
             deep,
         }
 
-        public ProfilLogLevels logs;
-
         [Tooltip("unity dev build ticked")]
         public bool developement_build = false; // match : EditorUserBuildSettings.development
 
@@ -34,6 +30,8 @@ namespace fwp.buildor.editor
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
 
         public BuildModule[] modules = new BuildModule[0];
+
+        public BoduleSymbols Symbols => modules.OfType<BoduleSymbols>().FirstOrDefault();
 
         void clear()
         {

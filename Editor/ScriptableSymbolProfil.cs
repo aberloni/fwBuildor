@@ -27,7 +27,7 @@ namespace fwp.symbols.editor
 
             if (watermark) ret += "watermark;";
 
-            if (langs != null) ret += BuildorHelpers.formatSymbols(langs);
+            if (langs != null) ret += BoduleSymbols.formatSymbols(langs);
 
             return ret;
         }

@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using fwp.logs;
 using UnityEditor;
 using UnityEngine;
 
@@ -9,10 +8,8 @@ namespace fwp.buildor.editor
     public class DataProfilBuildParameters
     {
         /// <summary>
-        /// sdks, lang_en, ...
+        /// enum flag
         /// </summary>
-        public string[] symbols = new string[0];
-
         public TargetFeatures features;
 
         public string SymbolsFeatures
@@ -30,9 +27,9 @@ namespace fwp.buildor.editor
         }
 
         public DataBuildorScenesMerger merger;
-        public ProfilLogLevels logs;
-
         public BuildModule[] modules = new BuildModule[0];
+
+        public BoduleSymbols Symbols => modules.OfType<BoduleSymbols>().FirstOrDefault();
 
         [Header("post process")]
         [Tooltip("remove any folder from buidl matching given pattern(s)")]
@@ -54,7 +51,7 @@ namespace fwp.buildor.editor
             if (modules == null) return;
 
             if (merger != null) merger.Apply();
-            if (logs != null) logs.Apply();
+            // if (logs != null) logs.Apply();
 
             foreach (var m in modules)
             {

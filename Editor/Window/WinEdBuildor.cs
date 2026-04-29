@@ -48,7 +48,6 @@ namespace fwp.buildor.editor
 				drawModules();
 
 				drawSymbols();
-				drawLogs();
 
 				if (aProfil != null && BuildorVars.IsDebug)
 				{
@@ -121,7 +120,7 @@ namespace fwp.buildor.editor
 			GUILayout.Label(Application.platform.ToString());
 			GUILayout.Label("unity.build.target", GUILayout.Width(100f));
 			GUILayout.Label(EditorUserBuildSettings.activeBuildTarget.ToString());
-			
+
 			GUILayout.EndHorizontal();
 
 		}
@@ -133,14 +132,17 @@ namespace fwp.buildor.editor
 			var p = BuildorVars.Profile;
 
 			// profil.build symbols
-			HelperGuiFields.drawField("symbols.build", BuildorHelpers.formatSymbols(p.build.symbols));
+			HelperGuiFields.drawField("symbols.build", p.build.Symbols?.Symbols);
+			HelperGuiFields.drawField("symbols.debug", p.debug.Symbols?.Symbols);
 
 			// profil.logs.symbols
+			/*
 			if (p.Logs != null)
 			{
 				// HelperGuiFields.drawObjectDisabled(logs);
 				HelperGuiFields.drawField("symbols.logs", BuildorHelpers.formatSymbols(p.Logs.symbolsVerbose));
 			}
+			*/
 
 			// profil.build.features
 
@@ -177,31 +179,6 @@ namespace fwp.buildor.editor
 
 			GUILayout.EndHorizontal();
 		}
-
-		void drawLogs()
-		{
-			var p = BuildorVars.Profile;
-			if (p == null) return;
-			var _logs = p.Logs;
-
-			if (_logs == null) return;
-
-			GUILayout.Label("Logs", HelperGui.gCategoryBold);
-
-			GUILayout.BeginHorizontal();
-			GUILayout.Label(_logs.name);
-			// GUILayout.BeginVertical();
-			HelperGuiFields.drawObjectDisabled(_logs);
-			if (GUILayout.Button("apply", HelperGui.bM)) _logs.Apply();
-			if (GUILayout.Button("reset", HelperGui.bM)) ProfilLogLevels.resetEditor();
-			GUILayout.EndHorizontal();
-
-			GUILayout.BeginHorizontal();
-			foreach (var lvl in _logs.levels) GUILayout.Label(lvl.stringify());
-			GUILayout.EndHorizontal();
-			// GUILayout.EndVertical();
-		}
-
 
 
 		void drawModules()
@@ -418,8 +395,8 @@ namespace fwp.buildor.editor
 				foreach (var mod in aProfil.debug.modules) GUILayout.Label("+ " + mod.strOneLine());
 			}
 
-			ProfilLogLevels logs = aProfil.Logs;
-			if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
+			// ProfilLogLevels logs = aProfil.Logs;
+			// if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
 
 		}
 	}

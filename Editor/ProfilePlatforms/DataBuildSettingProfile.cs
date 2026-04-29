@@ -66,12 +66,20 @@ namespace fwp.buildor.editor
 
                 if (build != null)
                 {
+                    // features list
                     ret += build.SymbolsFeatures;
-                    if (build.symbols != null) ret += BuildorHelpers.formatSymbols(build.symbols);
+
+                    // build.symbols (if any)
+                    var s = build.Symbols;
+                    if(s != null) ret += s.Symbols;
+
+                    // debug.symbols (if any)
+                    s = debug.Symbols;
+                    if(s != null) ret += s.Symbols;
                 }
 
                 // logs by debug level
-                if (Logs != null) ret += BuildorHelpers.formatSymbols(Logs.symbolsVerbose);
+                // if (Logs != null) ret += BuildorHelpers.formatSymbols(Logs.symbolsVerbose);
 
                 if (BuildorVars.IsDebug)
                 {
@@ -81,8 +89,6 @@ namespace fwp.buildor.editor
                 return ret;
             }
         }
-
-        public ProfilLogLevels Logs => BuildorVars.IsDebug ? debug.logs : build.logs;
 
         /// <summary>
         /// root/path/build.ext

@@ -12,15 +12,6 @@ namespace fwp.buildor
 		public const string _menuItem_basepath = "buildor/";
 		public const string _path_merger = _menuItem_basepath + "merger/";
 
-		static public string formatSymbols(string[] symbols)
-		{
-			if (symbols == null || symbols.Length <= 0) return string.Empty;
-
-			string ret = string.Empty;
-			foreach (var s in symbols) ret += s + ";";
-			return ret;
-		}
-		
         /// <summary>
         /// 
         /// </summary>

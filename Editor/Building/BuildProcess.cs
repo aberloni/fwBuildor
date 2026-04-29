@@ -63,7 +63,7 @@ namespace fwp.buildor.editor
 
         static public void ulog(string msg, object tar = null)
         {
-            Debug.Log((tar != null ? tar.GetType() : string.Empty) + " > " + msg);
+            Debug.Log((tar != null ? tar.GetType().Name : string.Empty) + " > " + msg);
         }
     }
 
