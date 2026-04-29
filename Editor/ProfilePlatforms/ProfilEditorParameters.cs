@@ -3,13 +3,14 @@
 namespace fwp.buildor.editor
 {
     [System.Serializable]
-    public class DataProfilEditorParameters
+    public class ProfilEditorParameters : ProfilParameter
     {
         public DataBuildorScenesMerger merger;
         public fwp.logs.ProfilLogLevels logLevels;
 
-        public void apply()
+        override public void applyProfil()
         {
+            base.applyProfil();
             merger?.Apply();
             logLevels?.apply();
         }

@@ -5,7 +5,7 @@ using UnityEngine;
 namespace fwp.buildor.editor
 {
     [System.Serializable]
-    public class DataProfilBuildParameters
+    public class ProfilBuildParameters : ProfilParameter
     {
         /// <summary>
         /// enum flag
@@ -27,7 +27,6 @@ namespace fwp.buildor.editor
         }
 
         public DataBuildorScenesMerger merger;
-        public BuildModule[] modules = new BuildModule[0];
 
         public BoduleSymbols Symbols => modules.OfType<BoduleSymbols>().FirstOrDefault();
 
@@ -46,23 +45,13 @@ namespace fwp.buildor.editor
         public Sprite splashscreen;
         public Texture2D icon;
 
-        public void ApplyModules()
+        public override void applyProfil()
         {
-            if (modules == null) return;
+            base.applyProfil();
 
-            if (merger != null) merger.Apply();
-            // if (logs != null) logs.Apply();
-
-            foreach (var m in modules)
-            {
-                if (m == null) continue;
-
-                if (EditorUtility.DisplayDialog("module", "apply module: " + m.GetType() + "." + m.name + " ?", "yes", "no"))
-                {
-                    m.Apply();
-                }
-            }
+            merger?.Apply();
         }
+
     }
 
 }

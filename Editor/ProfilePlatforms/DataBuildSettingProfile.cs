@@ -51,8 +51,8 @@ namespace fwp.buildor.editor
 
         // exe name is located in BUILD scriptable
 
-        public DataProfilBuildParameters build;
-        public DataProfilDebugParameters debug;
+        public ProfilBuildParameters build;
+        public ProfilDebugParameters debug;
 
         public string Symbols
         {

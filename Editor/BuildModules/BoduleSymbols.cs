@@ -20,9 +20,6 @@ namespace fwp.buildor
             foreach (var s in symbols) ret += s + ";";
             return ret;
         }
-
-        public override void Apply()
-        { }
     }
 
 }

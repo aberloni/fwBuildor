@@ -12,7 +12,7 @@ namespace fwp.buildor.editor
 {
     // [CreateAssetMenu(menuName = "buildor/profil/+debug.params", order = 100)]
     [System.Serializable]
-    public class DataProfilDebugParameters
+    public class ProfilDebugParameters
     {
         public enum ProfilingLevel
         {
@@ -54,11 +54,11 @@ namespace fwp.buildor.editor
 
             switch (debugProfiling)
             {
-                case DataProfilDebugParameters.ProfilingLevel.deep:
+                case ProfilDebugParameters.ProfilingLevel.deep:
                     EditorUserBuildSettings.connectProfiler = true;
                     EditorUserBuildSettings.buildWithDeepProfilingSupport = true;
                     break;
-                case DataProfilDebugParameters.ProfilingLevel.profiling:
+                case ProfilDebugParameters.ProfilingLevel.profiling:
                     EditorUserBuildSettings.connectProfiler = true;
                     EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
                     break;
@@ -97,17 +97,17 @@ namespace fwp.buildor.editor
                 // UnityEditor.EditorUtility.SetDirty(this);
             }
 
-            var level = (DataProfilDebugParameters.ProfilingLevel)EditorGUILayout.EnumPopup("profiling", debugProfiling);
+            var level = (ProfilDebugParameters.ProfilingLevel)EditorGUILayout.EnumPopup("profiling", debugProfiling);
 
             if (level != debugProfiling)
             {
                 switch (level)
                 {
-                    case DataProfilDebugParameters.ProfilingLevel.deep:
+                    case ProfilDebugParameters.ProfilingLevel.deep:
                         EditorUserBuildSettings.connectProfiler = true;
                         EditorUserBuildSettings.buildWithDeepProfilingSupport = true;
                         break;
-                    case DataProfilDebugParameters.ProfilingLevel.profiling:
+                    case ProfilDebugParameters.ProfilingLevel.profiling:
                         EditorUserBuildSettings.connectProfiler = true;
                         EditorUserBuildSettings.buildWithDeepProfilingSupport = false;
                         break;

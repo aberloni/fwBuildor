@@ -5,12 +5,15 @@ namespace fwp.logs
 	[CreateAssetMenu(menuName = "buildor/profil/+logs", order = 100)]
 	public class ProfilLogLevels : ScriptableObject
 	{
+
+#if UNITY_EDITOR
 		[UnityEditor.MenuItem("Window/Logs/all script only")]
 		static void menuScriptOnly()
 		{
 			Debug.Log("[LOGS] apply full script only");
 			applyToEditor(levels_scripts_only);
 		}
+#endif
 
 		static public LogLevel[] levels_scripts_only = new LogLevel[]
 		{
@@ -31,14 +34,11 @@ namespace fwp.logs
 		}
 
 		public LogLevel[] levels = levels_scripts_only;
-		
+
 		/// <summary>
 		/// scriptable symbols linked to verbosity
 		/// </summary>
-		public string[] symbolsVerbose = new string[]
-		{
-			"verbosity"
-		};
+		public string[] symbolsVerbose = new string[0];
 
 		public void apply()
 		{

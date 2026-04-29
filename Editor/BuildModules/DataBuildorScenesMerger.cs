@@ -88,9 +88,10 @@ namespace fwp.buildor
             inject();
         }
 
-        [ContextMenu("apply")]
-        override public void Apply()
+        protected override void doApply()
         {
+            base.doApply();
+
             scenesToInject.Clear();
             inject();
         }
