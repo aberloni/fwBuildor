@@ -213,6 +213,8 @@ namespace fwp.buildor.editor
 
 			foreach (var m in mods)
 			{
+				if(m == null) continue;
+				
 				GUILayout.BeginHorizontal();
 				// GUILayout.Label(m.name, GUILayout.Width(200f));
 				GUI.enabled = false;
