@@ -45,7 +45,7 @@ namespace fwp.buildor.editor
 
 				drawMergers();
 
-				drawModules();
+				drawProfilModules();
 
 				drawSymbols();
 
@@ -181,7 +181,7 @@ namespace fwp.buildor.editor
 		}
 
 
-		void drawModules()
+		void drawProfilModules()
 		{
 			if (aProfil.build == null) return;
 

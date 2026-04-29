@@ -11,8 +11,9 @@ namespace fwp.buildor.editor
 			GUILayout.Label("Version", HelperGui.gCategoryBold);
 
 			var p = BuildorVars.Profile;
-			drawVersion(p.versionInternal);
-			drawVersion(p.versionPublish);
+
+			if (p.versionInternal != null) drawVersion(p.versionInternal);
+			if (p.versionPublish != null) drawVersion(p.versionPublish);
 
 			GUILayout.Label("unity.player.settings: " + fwp.version.VersionManager.getPlayerSettingsVersion());
 		}

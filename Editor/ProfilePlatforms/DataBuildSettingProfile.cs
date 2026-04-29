@@ -73,9 +73,6 @@ namespace fwp.buildor.editor
                     var s = build.Symbols;
                     if(s != null) ret += s.Symbols;
 
-                    // debug.symbols (if any)
-                    s = debug.Symbols;
-                    if(s != null) ret += s.Symbols;
                 }
 
                 // logs by debug level
@@ -84,6 +81,10 @@ namespace fwp.buildor.editor
                 if (BuildorVars.IsDebug)
                 {
                     ret += "debug;";
+                    
+                    // debug.symbols (if any)
+                    var s = debug.Symbols;
+                    if(s != null) ret += s.Symbols;
                 }
 
                 return ret;

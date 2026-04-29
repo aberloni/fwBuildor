@@ -7,8 +7,8 @@ namespace fwp.buildor
 
     static public class BuildorVars
     {
-        static public readonly string pref_prefix = Application.companyName + "." + Application.productName;
-        
+        static public readonly string pref_prefix = EditorUserBuildSettings.activeBuildTarget + "." + Application.companyName + "." + Application.productName;
+
         /// <summary>
         /// buffed, don't refetch all scriptables each time
         /// </summary>
@@ -16,7 +16,7 @@ namespace fwp.buildor
         static public DataBuildSettingProfile Profile
         {
             get
-                {
+            {
                 if (_profil != null && _profil.Is(BuildorVars.TargetPublish, BuildorVars.TargetSdk))
                 {
                     // Debug.Log("recycling : "+_active, _active);
@@ -93,7 +93,7 @@ namespace fwp.buildor
         static public readonly string pref_include_date = pref_prefix + "date";
         static public readonly string pref_include_version = pref_prefix + "version";
         static public readonly string pref_suffix = pref_prefix + "suffix";
-        
+
     }
 
 }
