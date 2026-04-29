@@ -2,10 +2,25 @@ using UnityEngine;
 
 namespace fwp.logs
 {
-
 	[CreateAssetMenu(menuName = "buildor/profil/+logs", order = 100)]
-	public class ProfilLogLevels : BuildModule
+	public class ProfilLogLevels : ScriptableObject
 	{
+		[UnityEditor.MenuItem("Window/Logs/all script only")]
+		static void menuScriptOnly()
+		{
+			Debug.Log("[LOGS] apply full script only");
+			applyToEditor(levels_scripts_only);
+		}
+
+		static public LogLevel[] levels_scripts_only = new LogLevel[]
+		{
+			new LogLevel(){ type = LogType.Exception, stackTrace = StackTraceLogType.ScriptOnly},
+			new LogLevel(){ type = LogType.Assert, stackTrace = StackTraceLogType.ScriptOnly},
+			new LogLevel(){ type = LogType.Error, stackTrace = StackTraceLogType.ScriptOnly},
+			new LogLevel(){ type = LogType.Warning, stackTrace = StackTraceLogType.ScriptOnly},
+			new LogLevel(){ type = LogType.Log, stackTrace = StackTraceLogType.ScriptOnly},
+		};
+
 		[System.Serializable]
 		public struct LogLevel
 		{
@@ -15,15 +30,8 @@ namespace fwp.logs
 			public string stringify() => type + ":" + stackTrace;
 		}
 
-		public LogLevel[] levels = new LogLevel[]
-		{
-			new LogLevel(){ type = LogType.Exception, stackTrace = StackTraceLogType.ScriptOnly},
-			new LogLevel(){ type = LogType.Assert, stackTrace = StackTraceLogType.ScriptOnly},
-			new LogLevel(){ type = LogType.Error, stackTrace = StackTraceLogType.ScriptOnly},
-			new LogLevel(){ type = LogType.Warning, stackTrace = StackTraceLogType.None},
-			new LogLevel(){ type = LogType.Log, stackTrace = StackTraceLogType.None},
-		};
-
+		public LogLevel[] levels = levels_scripts_only;
+		
 		/// <summary>
 		/// scriptable symbols linked to verbosity
 		/// </summary>
@@ -32,7 +40,7 @@ namespace fwp.logs
 			"verbosity"
 		};
 
-		override public void Apply()
+		public void apply()
 		{
 			applyToEditor(levels);
 		}
@@ -62,11 +70,6 @@ namespace fwp.logs
 				new LogLevel(){ type = LogType.Warning, stackTrace = StackTraceLogType.ScriptOnly},
 				new LogLevel(){ type = LogType.Log, stackTrace = StackTraceLogType.ScriptOnly},
 			});
-		}
-
-		public override string strOneLine()
-		{
-			return base.strOneLine() + " x" + levels.Length;
 		}
 	}
 

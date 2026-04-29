@@ -11,7 +11,7 @@ namespace fwp.buildor.editor
         public void apply()
         {
             merger?.Apply();
-            logLevels?.Apply();
+            logLevels?.apply();
         }
     }
 
