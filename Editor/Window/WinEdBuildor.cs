@@ -99,7 +99,7 @@ namespace fwp.buildor.editor
 				GUILayout.Label("no active profil");
 				if (GUILayout.Button("open bridge"))
 				{
-					Selection.activeObject = BuildorHelpers.getScriptableDataBuildSettings();
+					Selection.activeObject = BuildorHelpers.GetBridge();
 				}
 				GUILayout.EndHorizontal();
 			}
@@ -110,7 +110,7 @@ namespace fwp.buildor.editor
 				EditorGUILayout.ObjectField(aProfil, typeof(DataBuildSettingProfile), true);
 				GUI.enabled = true;
 				if (GUILayout.Button("refresh", HelperGui.bS)) onProfilRefresh();
-				if (aProfil != null && GUILayout.Button("apply", HelperGui.bS)) aProfil.injectProfilToEditor();
+				if (aProfil != null && GUILayout.Button("apply", HelperGui.bS)) aProfil.applyProfilToEditor();
 				if (GUILayout.Button(">>", HelperGui.bS)) Selection.activeObject = aProfil;
 				GUILayout.EndHorizontal();
 			}
@@ -171,7 +171,7 @@ namespace fwp.buildor.editor
 			if (string.IsNullOrEmpty(symbs)) GUILayout.Label("no symbols to inject");
 			else HelperGuiFields.drawField("inject", symbs);
 
-			if (GUILayout.Button("apply", HelperGui.bS))
+			if (GUILayout.Button("inject", HelperGui.bS))
 			{
 				Debug.LogWarning("apply.symbols: " + symbs, p);
 				ScriptSymbolsView.setPlayerSymbols(p.getBuildTargetGroup(), symbs);
@@ -241,14 +241,20 @@ namespace fwp.buildor.editor
 			var merg = aProfil.build.merger;
 
 			GUILayout.Label("Mergers", HelperGui.gCategoryBold);
-			if (merg == null) return;
+			if (merg == null)
+			{
+				GUILayout.Label("-none-");
+				return;
+			}
 
+			// draw object line
 			GUILayout.BeginHorizontal();
 			GUILayout.Label("merger.build");
 			HelperGuiFields.drawObjectDisabled(merg);
 			if (GUILayout.Button("apply", HelperGui.bM)) merg.Apply();
 			GUILayout.EndHorizontal();
 
+			// see more details
 			foldMerger = EditorGUILayout.Foldout(foldMerger, merg.strOneLine(), true);
 			if (foldMerger) GUILayout.Label(merg.stringify());
 		}

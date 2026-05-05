@@ -24,9 +24,9 @@ namespace fwp.buildor.editor
 
         public override string getExtension() => "";
 
-        public override void injectProfilToEditor()
+        public override void applyProfilToEditor()
         {
-            base.injectProfilToEditor();
+            base.applyProfilToEditor();
 
             //ios specific
             PlayerSettings.iOS.targetDevice = target_device;

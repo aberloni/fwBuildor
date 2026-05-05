@@ -23,7 +23,7 @@ namespace fwp.buildor
                     return _profil;
                 }
 
-                var settings = BuildorHelpers.getScriptableDataBuildSettings();
+                var settings = BuildorHelpers.GetBridge();
 
                 if (settings == null)
                 {

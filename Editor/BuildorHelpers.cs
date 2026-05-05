@@ -9,31 +9,14 @@ namespace fwp.buildor
 
 	static public class BuildorHelpers
 	{
+		public const int menu_order = 100;
 		public const string _menuItem_basepath = "buildor/";
 		public const string _path_merger = _menuItem_basepath + "merger/";
 
         /// <summary>
         /// 
         /// </summary>
-        static public DataBuildSettingsBridge getScriptableDataBuildSettings()
-        {
-            string[] all = AssetDatabase.FindAssets("t:DataBuildSettingsBridge");
-
-            if (all.Length > 0)
-            {
-                for (int i = 0; i < all.Length; i++)
-                {
-                    Object obj = AssetDatabase.LoadAssetAtPath(AssetDatabase.GUIDToAssetPath(all[i]), typeof(DataBuildSettingsBridge));
-                    DataBuildSettingsBridge data = obj as DataBuildSettingsBridge;
-                    if (data != null) return data;
-                }
-            }
-            //Debug.LogWarning("no objects returned by AssetDatabase for type : DataBuildSettingsBridge");
-
-            //Debug.LogError("could not find object of type : DataBuildSettingsBridge");
-            return null;
-        }
-
+        static public DataBuildSettingsBridge GetBridge() => DataBuildSettingsBridge.instance;
 
 		static public ScriptableObject[] getScriptableObjectsInEditor(System.Type scriptableType)
 		{

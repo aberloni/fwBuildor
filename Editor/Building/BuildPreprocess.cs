@@ -90,7 +90,7 @@ namespace fwp.buildor.editor
             }
 
             // apply PlayerSettings vars
-            profil.injectProfilToEditor();
+            profil.applyProfilToEditor();
 
             yield return null;
 

@@ -1,22 +1,11 @@
 ﻿using UnityEngine;
 using System.Linq;
-
-#if UNITY_EDITOR
 using UnityEditor;
-#endif
-
-/// <summary>
-/// (ratio iphone)
-/// 562x1000 
-/// 506x900
-/// </summary>
 
 namespace fwp.buildor.editor
 {
-
-
-    [CreateAssetMenu(menuName = "buildor/new brdge settings", order = 100)]
-    public class DataBuildSettingsBridge : ScriptableObject
+    [CreateAssetMenu(menuName = BuildorHelpers._menuItem_basepath + "+bridge", order = BuildorHelpers.menu_order)]
+    public class DataBuildSettingsBridge : ScriptableSingleton<DataBuildSettingsBridge>
     {
         [Header("desktop")]
         public DataBuildSettingProfile[] windows;

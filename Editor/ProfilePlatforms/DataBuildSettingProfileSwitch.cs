@@ -101,9 +101,9 @@ namespace fwp.buildor.editor
             return bn;
         }
 
-        public override void injectProfilToEditor()
+        public override void applyProfilToEditor()
         {
-            base.injectProfilToEditor();
+            base.applyProfilToEditor();
 
             EditorUserBuildSettings.switchCreateRomFile = build_rom;
 

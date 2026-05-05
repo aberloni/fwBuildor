@@ -121,7 +121,7 @@ namespace fwp.buildor.editor
 
         virtual protected void OnValidate()
         {
-            if (isSelectedPlatform()) injectProfilToEditor(); // on validate
+            if (isSelectedPlatform()) applyProfilToEditor(); // on validate
         }
 
         public bool isSelectedPlatform() => getPlatformTarget() == EditorUserBuildSettings.activeBuildTarget;
@@ -253,12 +253,9 @@ namespace fwp.buildor.editor
         virtual public string getProductName() => product_name;
 
         [ContextMenu("apply to player settings")]
-        protected void cmApply()
-        {
-            injectProfilToEditor(); // contextmenu on profile
-        }
+        protected void cmApply() => applyProfilToEditor(); // contextmenu on profile
 
-        virtual public void injectProfilToEditor()
+        virtual public void applyProfilToEditor()
         {
             Debug.Log("applying scriptable profile : <b>" + name + "</b>", this);
             Debug.Log("current platform ? " + GetType());
