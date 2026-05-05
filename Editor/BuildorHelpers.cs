@@ -16,7 +16,11 @@ namespace fwp.buildor
         /// <summary>
         /// 
         /// </summary>
-        static public DataBuildSettingsBridge GetBridge() => DataBuildSettingsBridge.instance;
+        static public DataBuildSettingsBridge GetBridge()
+		{
+			return getScriptableObjectInEditor<DataBuildSettingsBridge>();
+			// return DataBuildSettingsBridge.instance;
+		}
 
 		static public ScriptableObject[] getScriptableObjectsInEditor(System.Type scriptableType)
 		{

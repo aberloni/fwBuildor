@@ -5,8 +5,9 @@ using UnityEditor;
 namespace fwp.buildor.editor
 {
     [CreateAssetMenu(menuName = BuildorHelpers._menuItem_basepath + "+bridge", order = BuildorHelpers.menu_order)]
-    public class DataBuildSettingsBridge : ScriptableSingleton<DataBuildSettingsBridge>
+    public class DataBuildSettingsBridge : ScriptableObject
     {
+
         [Header("desktop")]
         public DataBuildSettingProfile[] windows;
         public DataBuildSettingProfile[] linux;

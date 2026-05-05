@@ -100,6 +100,7 @@ namespace fwp.buildor.editor
 				if (GUILayout.Button("open bridge"))
 				{
 					Selection.activeObject = BuildorHelpers.GetBridge();
+					if (Selection.activeObject == null) Debug.LogError("no bridge ?");
 				}
 				GUILayout.EndHorizontal();
 			}
