@@ -8,6 +8,11 @@ namespace fwp.buildor
     {
         [SerializeField] string[] symbols = new string[0];
 
+        protected override void doApply()
+        {
+            //nothing
+        }
+
         public bool Has => symbols != null && symbols.Length > 0;
 
         public string Symbols => Has ? formatSymbols(symbols) : string.Empty;

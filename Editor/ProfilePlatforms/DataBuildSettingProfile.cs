@@ -108,10 +108,9 @@ namespace fwp.buildor.editor
         {
             get
             {
-
-                if (!string.IsNullOrEmpty(build.build_folder_specific))
-                    return build.build_folder_specific;
-
+                if(BuildorVars.IsDebug && debug.HasSpecificFolder) return debug.output_folder_specific;
+                else if(!BuildorVars.IsDebug && build.HasSpecificFolder) return build.output_folder_specific;
+                
                 // drive:to/root/Assets + relative/folder/
                 return Path.Combine(
                     Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/")),

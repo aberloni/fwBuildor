@@ -90,8 +90,6 @@ namespace fwp.buildor
 
         protected override void doApply()
         {
-            base.doApply();
-
             scenesToInject.Clear();
             inject();
         }

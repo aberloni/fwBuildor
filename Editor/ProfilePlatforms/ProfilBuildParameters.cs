@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace fwp.buildor.editor
@@ -7,6 +6,8 @@ namespace fwp.buildor.editor
     [System.Serializable]
     public class ProfilBuildParameters : ProfilParameter
     {
+        public override string GetUid() => "build";
+        
         /// <summary>
         /// enum flag
         /// </summary>
@@ -36,10 +37,6 @@ namespace fwp.buildor.editor
 
         [Tooltip("project name used to generate output file")]
         public string build_prefix;
-
-        [Tooltip("meant for override, folder where build is located each time, build name is then static")]
-        public string build_folder_specific;
-        public bool HasSpecificFolder => !string.IsNullOrEmpty(build_folder_specific);
 
         [Header("bundle")]
         public Sprite splashscreen;

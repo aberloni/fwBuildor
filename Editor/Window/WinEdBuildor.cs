@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEditor;
 
-using fwp.logs;
 using fwp.symbols;
 
 namespace fwp.buildor.editor
@@ -23,11 +22,8 @@ namespace fwp.buildor.editor
 
 		private void OnEnable()
 		{
-
 			if (subVersion == null) subVersion = new();
-
 			onProfilRefresh();
-
 		}
 
 		readonly GUIContent _title = new("Buildor");
@@ -56,10 +52,11 @@ namespace fwp.buildor.editor
 
 				drawPathModifiers();
 				drawPreprocessVars();
-				drawBuildButton();
 			}
 
 			GUILayout.EndScrollView();
+
+			drawBuildButton();
 		}
 
 		void onProfilRefresh()
@@ -146,7 +143,7 @@ namespace fwp.buildor.editor
 			*/
 
 			// profil.build.features
-
+			/*
 			HelperGuiFields.drawField("symbols.features", p.build.SymbolsFeatures);
 
 			foreach (TargetFeatures f in System.Enum.GetValues(typeof(TargetFeatures)))
@@ -157,11 +154,19 @@ namespace fwp.buildor.editor
 				else p.build.features &= ~f;
 			}
 
+			*/
+
 			GUILayout.Space(10f);
 
+			GUILayout.BeginHorizontal();
 			// current unity context value
 			string sCurrent = ScriptSymbolsView.getPlayerSetSymbols(p.getBuildTargetGroup());
 			HelperGuiFields.drawField("unity.settings", sCurrent);
+			if (GUILayout.Button("playersetts", HelperGui.bS))
+			{
+				SettingsService.OpenProjectSettings("Project/Player");
+			}
+			GUILayout.EndHorizontal();
 
 			// wrap test
 			// HelperGuiFields.drawLabel("IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;IOAHFOADOIA;");
@@ -285,29 +290,9 @@ namespace fwp.buildor.editor
 			GUI.enabled = true;
 
 			// force to a specific folder
-			GUILayout.Label("build/ specific", HelperGui.gBold);
 
-			GUILayout.BeginHorizontal();
-			if (GUILayout.Button(gui_btn_browse, GUILayout.Width(100f)))
-			{
-				string _path = EditorUtility.OpenFolderPanel(
-					"Select export folder", aProfil.build.build_folder_specific, string.Empty);
-
-				if (aProfil.build.build_folder_specific != _path)
-				{
-					aProfil.build.build_folder_specific = _path;
-				}
-			}
-			else if (!string.IsNullOrEmpty(aProfil.build.build_folder_specific))
-			{
-				GUILayout.Label(aProfil.build.build_folder_specific);
-
-				if (aProfil.build.build_folder_specific.Length > 0 && GUILayout.Button("clear", GUILayout.Width(100f)))
-				{
-					aProfil.build.build_folder_specific = string.Empty;
-				}
-			}
-			GUILayout.EndHorizontal();
+			aProfil.build.drawFolderSelector();
+			aProfil.debug.drawFolderSelector();
 		}
 
 		void drawPreprocessVars()
@@ -368,6 +353,7 @@ namespace fwp.buildor.editor
 		void drawBuildButton()
 		{
 			drawPrevisualization();
+
 			GUILayout.Space(20f);
 
 			/// BUILD
@@ -375,11 +361,16 @@ namespace fwp.buildor.editor
 			{
 				new BuildExecutor().launch();
 			}
-
 		}
 
+
+		/// <summary>
+		/// sum up
+		/// </summary>
 		void drawPrevisualization()
 		{
+			GUILayout.Label("Summary", HelperGui.gCategoryBold);
+
 			if (aProfil == null)
 			{
 				GUILayout.Label("no active profil");
@@ -419,3 +410,4 @@ namespace fwp.buildor.editor
 	}
 
 }
+

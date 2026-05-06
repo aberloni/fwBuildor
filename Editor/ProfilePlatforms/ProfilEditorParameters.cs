@@ -5,6 +5,8 @@ namespace fwp.buildor.editor
     [System.Serializable]
     public class ProfilEditorParameters : ProfilParameter
     {
+        public override string GetUid() => "editor";
+        
         public DataBuildorScenesMerger merger;
         public fwp.logs.ProfilLogLevels logLevels;
 

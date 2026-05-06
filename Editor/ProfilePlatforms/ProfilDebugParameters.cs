@@ -12,8 +12,10 @@ namespace fwp.buildor.editor
 {
     // [CreateAssetMenu(menuName = "buildor/profil/+debug.params", order = 100)]
     [System.Serializable]
-    public class ProfilDebugParameters
+    public class ProfilDebugParameters : ProfilParameter
     {
+        public override string GetUid() => "debug";
+
         public enum ProfilingLevel
         {
             none,
@@ -28,8 +30,6 @@ namespace fwp.buildor.editor
         public bool debugScripting = false;
 
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
-
-        public BuildModule[] modules = new BuildModule[0];
 
         public BoduleSymbols Symbols => modules.OfType<BoduleSymbols>().FirstOrDefault();
 

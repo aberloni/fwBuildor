@@ -72,8 +72,6 @@ namespace fwp.buildor
         /// </summary>
         protected override void doApply()
         {
-            base.doApply();
-            
             string src = ResolvedSourcePath;
             string dst = ResolvedDestinationPath;
 

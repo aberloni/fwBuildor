@@ -17,10 +17,7 @@ abstract public class BuildModule : ScriptableObject
         doApply();
     }
 
-    virtual protected void doApply()
-    {
-        
-    }
+    abstract protected void doApply();
 
     virtual public string strOneLine()
     {
