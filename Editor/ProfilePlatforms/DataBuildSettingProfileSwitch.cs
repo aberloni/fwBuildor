@@ -34,14 +34,14 @@ namespace fwp.buildor.editor
 
         public bool reduceProductName = false;
 
-        public bool build_rom = false;
-
         [Tooltip("leave blank for debug app id")]
         public string appId = string.Empty;
 
         [Header("not implem")]
         public Il2CppCompilerConfiguration compilerConfig = Il2CppCompilerConfiguration.Release;
         public int maxControllerCount = 8;
+
+        public bool BuildRom => !BuildorVars.IsDebug;
 
         // .../builds/(roms/)app.ext
         public override string getRelativeBuildFolderPath()
@@ -58,7 +58,7 @@ namespace fwp.buildor.editor
 
         public override string getExtension()
         {
-            if (build_rom) return "nsp";
+            if (BuildRom) return "nsp";
             return "nspd";
         }
 
@@ -105,7 +105,7 @@ namespace fwp.buildor.editor
         {
             base.applyProfilToEditor();
 
-            EditorUserBuildSettings.switchCreateRomFile = build_rom;
+            EditorUserBuildSettings.switchCreateRomFile = BuildRom;
 
 #if !UNITY_6000_0_OR_NEWER
 
@@ -157,6 +157,15 @@ namespace fwp.buildor.editor
             }
 
             return output;
+        }
+
+        public override string stringifySummary()
+        {
+            string ret = base.stringifySummary();
+
+            if (BuildRom) ret += "\n+rom";
+
+            return ret;
         }
 
     }

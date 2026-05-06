@@ -3,7 +3,6 @@ using UnityEditor;
 using System.IO;
 
 using fwp.version;
-using fwp.logs;
 
 /// <summary>
 /// (ratio iphone)
@@ -71,7 +70,7 @@ namespace fwp.buildor.editor
 
                     // build.symbols (if any)
                     var s = build.Symbols;
-                    if(s != null) ret += s.Symbols;
+                    if (s != null) ret += s.Symbols;
 
                 }
 
@@ -81,10 +80,10 @@ namespace fwp.buildor.editor
                 if (BuildorVars.IsDebug)
                 {
                     ret += "debug;";
-                    
+
                     // debug.symbols (if any)
                     var s = debug.Symbols;
-                    if(s != null) ret += s.Symbols;
+                    if (s != null) ret += s.Symbols;
                 }
 
                 return ret;
@@ -108,9 +107,9 @@ namespace fwp.buildor.editor
         {
             get
             {
-                if(BuildorVars.IsDebug && debug.HasSpecificFolder) return debug.output_folder_specific;
-                else if(!BuildorVars.IsDebug && build.HasSpecificFolder) return build.output_folder_specific;
-                
+                if (BuildorVars.IsDebug && debug.HasSpecificFolder) return debug.output_folder_specific;
+                else if (!BuildorVars.IsDebug && build.HasSpecificFolder) return build.output_folder_specific;
+
                 // drive:to/root/Assets + relative/folder/
                 return Path.Combine(
                     Application.dataPath.Substring(0, Application.dataPath.LastIndexOf("/")),
@@ -274,7 +273,7 @@ namespace fwp.buildor.editor
 
             if (versionPublish != null) versionPublish.applyVersionToEditor();
             else versionInternal.applyVersionToEditor();
-            
+
             EditorUtility.SetDirty(this);
         }
 
@@ -290,6 +289,40 @@ namespace fwp.buildor.editor
             }
         }
 
+        /// <summary>
+        /// list details that will be used/applied when build is called
+        /// </summary>
+        virtual public string stringifySummary()
+        {
+            string ret = name;
+
+            if (versionInternal != null) ret += "\n+v.internal " + versionInternal;
+            if (versionPublish != null) ret += "\n+v.publish " + versionPublish;
+
+            ret += "\nn+output path : " + FullPath;
+
+            if (build != null && build.modules.Length > 0)
+            {
+                ret += "\n+modules.build";
+                foreach (var mod in build.modules)
+                {
+                    if (mod == null) continue;
+                    ret += "\n+" + mod.strOneLine();
+                }
+            }
+
+            if (BuildorVars.IsDebug && debug != null && debug.modules.Length > 0)
+            {
+                ret += "\n+modules.debug";
+                foreach (var mod in debug.modules)
+                {
+                    if (mod == null) continue;
+                    ret += "\n+" + mod.strOneLine();
+                }
+            }
+
+            return ret;
+        }
 
         /// <summary>
         /// yyyy-mm-dd_hh:mm

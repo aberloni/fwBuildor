@@ -299,7 +299,7 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.Space(20f);
 			GUILayout.Label("outputs", HelperGui.gCategoryBold);
-
+	
 			GUILayout.BeginHorizontal(GUILayout.Height(20f));
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_pre_incVersion, "version.incr");
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_openFolder, "open folder");
@@ -377,35 +377,11 @@ namespace fwp.buildor.editor
 				return;
 			}
 
-			if (BuildorVars.PreIncVersion)
-			{
-				if (aProfil.versionInternal != null) GUILayout.Label("+ v.internal " + aProfil.versionInternal);
-				if (aProfil.versionPublish != null) GUILayout.Label("+ v.publish " + aProfil.versionPublish);
-			}
-
-			GUILayout.Label("+ path : " + aProfil.FullPath);
-
-			if (aProfil.build != null)
-			{
-				foreach (var mod in aProfil.build.modules)
-				{
-					if (mod == null) continue;
-					GUILayout.Label("+ " + mod.strOneLine());
-				}
-			}
-
-			if (BuildorVars.IsDebug && aProfil.debug != null)
-			{
-				foreach (var mod in aProfil.debug.modules)
-				{
-					if (mod == null) continue;
-					GUILayout.Label("+ " + mod.strOneLine());
-				}
-			}
-
+			if (BuildorVars.PreIncVersion) GUILayout.Label("+ inc.version");
 			// ProfilLogLevels logs = aProfil.Logs;
 			// if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
 
+			GUILayout.Label(aProfil.stringifySummary());
 		}
 	}
 
