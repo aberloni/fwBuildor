@@ -23,4 +23,6 @@ abstract public class BuildModule : ScriptableObject
     {
         return "module:" + name;
     }
+    
+    public override string ToString() => strOneLine();
 }

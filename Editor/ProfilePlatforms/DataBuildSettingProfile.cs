@@ -296,28 +296,33 @@ namespace fwp.buildor.editor
         {
             string ret = name;
 
-            if (versionInternal != null) ret += "\n+v.internal " + versionInternal;
-            if (versionPublish != null) ret += "\n+v.publish " + versionPublish;
+            if (versionInternal != null) ret += "\n + v.internal    " + versionInternal;
+            if (versionPublish != null) ret += "\n + v.publish  " + versionPublish;
 
-            ret += "\nn+output path : " + FullPath;
+            ret += "\n + path.output    " + FullPath;
+
+            if (build.merger != null)
+            {
+                ret += "\n + merger    " + build.merger.ToString();
+            }
 
             if (build != null && build.modules.Length > 0)
             {
-                ret += "\n+modules.build";
+                ret += "\n + modules.build";
                 foreach (var mod in build.modules)
                 {
                     if (mod == null) continue;
-                    ret += "\n+" + mod.strOneLine();
+                    ret += "\n + " + mod.strOneLine();
                 }
             }
 
             if (BuildorVars.IsDebug && debug != null && debug.modules.Length > 0)
             {
-                ret += "\n+modules.debug";
+                ret += "\n + modules.debug";
                 foreach (var mod in debug.modules)
                 {
                     if (mod == null) continue;
-                    ret += "\n+" + mod.strOneLine();
+                    ret += "\n + " + mod.strOneLine();
                 }
             }
 

@@ -377,7 +377,8 @@ namespace fwp.buildor.editor
 				return;
 			}
 
-			if (BuildorVars.PreIncVersion) GUILayout.Label("+ inc.version");
+			if (BuildorVars.PreIncVersion) GUILayout.Label(" + inc.version");
+
 			// ProfilLogLevels logs = aProfil.Logs;
 			// if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
 
