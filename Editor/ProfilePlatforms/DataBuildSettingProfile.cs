@@ -258,7 +258,7 @@ namespace fwp.buildor.editor
             Debug.Log("applying scriptable profile : <b>" + name + "</b>", this);
             Debug.Log("current platform ? " + GetType());
             Debug.Log("Debug ? " + BuildorVars.IsDebug);
-
+        
             //Debug.Log("applying " + name);
             //fwp.build.BuildHelperBase.applySettings(this);
             BuildPreprocess.applyCompagny(this);

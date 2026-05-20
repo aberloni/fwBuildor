@@ -81,12 +81,16 @@ namespace fwp.buildor.editor
             profil.versionInternal?.event_build();
             profil.versionPublish?.event_build();
 
-            // merger & others
             profil.build.ApplyModules(); // build.pre
 
             if (BuildorVars.IsDebug)
             {
                 foreach (var m in profil.debug.modules) m?.Apply();
+            }
+
+            if(profil.build.merger != null)
+            {
+                profil.build.merger.Apply();
             }
 
             // apply PlayerSettings vars
