@@ -67,12 +67,20 @@ namespace fwp.buildor.editor
             build_prepro.onBuildStart += () =>
             {
                 log("build..");
-                UnityEditor.EditorUtility.DisplayProgressBar("build " + Profile.FullPath, "build...", 0.25f);
+                if(EditorUtility.DisplayCancelableProgressBar("build " + Profile.FullPath, "build...", 0.25f))
+                {
+                    Debug.LogError("cancel:build start");
+                }
             };
 
             build_prepro.onBuildEnd += (summary) =>
             {
-                UnityEditor.EditorUtility.DisplayProgressBar("build " + Profile.FullPath, "postprocess...", 0.75f);
+                if(EditorUtility.DisplayCancelableProgressBar("build " + Profile.FullPath, "postprocess...", 0.75f))
+                {
+                    Debug.LogError("cancel:build end");
+                    return;
+                }
+
                 log("build.post..");
                 build_postpro.doLaunch(Profile, summary);
 
@@ -83,7 +91,6 @@ namespace fwp.buildor.editor
                 };
             };
 
-            UnityEditor.EditorUtility.DisplayProgressBar("build " + Profile.FullPath, "preprocess...", 0f);
             log("build.pre..");
             build_prepro.doLaunch(Profile);
         }
