@@ -68,7 +68,7 @@ namespace fwp.buildor.editor
 				// aProfil.injectProfilToEditor();
 			}
 
-			fwp.buildor.configs.ConfigDemo.Instance.Usage = aProfil.publish == TargetPublish.demo;
+			fwp.configs.ConfigDemo.Instance.Usage = aProfil.publish == TargetPublish.demo;
 		}
 
 		void drawProfilSelector()

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace fwp.buildor.configs
+namespace fwp.configs
 {
 
     [CreateAssetMenu(menuName = "buildor/configs/+demo", order = 100)]

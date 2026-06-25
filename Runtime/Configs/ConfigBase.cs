@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace fwp.buildor.configs
+namespace fwp.configs
 {
     public class ConfigBase : ScriptableObject
     {
