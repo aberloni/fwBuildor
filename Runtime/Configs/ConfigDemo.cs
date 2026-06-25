@@ -14,7 +14,7 @@ namespace fwp.buildor.configs
             Debug.Log("demo ? " + IsDemo);
         }
 
-
+        [SerializeField]
         bool _usage = false;
 
         public bool Usage
