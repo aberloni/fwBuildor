@@ -67,6 +67,8 @@ namespace fwp.buildor.editor
 				Debug.Log("*new* " + aProfil, aProfil);
 				// aProfil.injectProfilToEditor();
 			}
+
+			fwp.buildor.configs.ConfigDemo.Instance.Usage = aProfil.publish == TargetPublish.demo;
 		}
 
 		void drawProfilSelector()
@@ -299,7 +301,7 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.Space(20f);
 			GUILayout.Label("outputs", HelperGui.gCategoryBold);
-	
+
 			GUILayout.BeginHorizontal(GUILayout.Height(20f));
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_pre_incVersion, "version.incr");
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_openFolder, "open folder");
