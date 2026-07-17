@@ -27,7 +27,7 @@ namespace fwp.buildor
 
                 if (settings == null)
                 {
-                    if (settings == null) Debug.LogWarning("could not locate any bridge: DataBuildSettingsBridge");
+                    if (settings == null) Debug.LogWarning("could not locate any bridge <DataBuildSettingsBridge>");
                     return null;
                 }
 

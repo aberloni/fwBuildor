@@ -62,12 +62,14 @@ namespace fwp.buildor.editor
 		void onProfilRefresh()
 		{
 			aProfil = BuildorVars.Profile;
-			if (aProfil != null)
+			if (aProfil == null)
 			{
-				Debug.Log("*new* " + aProfil, aProfil);
-				// aProfil.injectProfilToEditor();
+				Debug.LogWarning("(refresh) no active profil");
+				return;
 			}
 
+			Debug.Log("*new* " + aProfil, aProfil);
+			// aProfil.injectProfilToEditor();
 			fwp.configs.ConfigDemo.Instance.Usage = aProfil.publish == TargetPublish.demo;
 		}
 
