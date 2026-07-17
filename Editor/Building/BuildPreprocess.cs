@@ -230,6 +230,8 @@ namespace fwp.buildor.editor
             //α,β,Ω
             string productName = profil.getProductName();
 
+            // if(ConfigDemo.IsDemo) productName += "-demo";
+
             PlayerSettings.productName = productName;
             if (verbose) Debug.Log("productName : " + PlayerSettings.productName);
 

@@ -8,8 +8,9 @@ namespace fwp.buildor
     public enum TargetPublish
     {
         release = 0,
-        demo,
-        festival,
+        demo, // specific version with #demo symbol
+        festival, // specific version with #festival symbol
+        custom, // custom launch #custom symbol
     }
 
     public enum TargetDebug
@@ -29,8 +30,8 @@ namespace fwp.buildor
     {
         none = 0,
         debugTools = 1 << 1,
-        watermark  = 1 << 2,
-        achievements  = 1 << 3,
+        watermark = 1 << 2,
+        achievements = 1 << 3,
         lang_en = 1 << 4,
         metrics = 1 << 5,
     }

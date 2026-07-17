@@ -122,7 +122,6 @@ namespace fwp.buildor.editor
 			GUILayout.Label(EditorUserBuildSettings.activeBuildTarget.ToString());
 
 			GUILayout.EndHorizontal();
-
 		}
 
 		void drawSymbols()
