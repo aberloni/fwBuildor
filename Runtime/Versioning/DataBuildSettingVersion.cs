@@ -26,9 +26,9 @@ namespace fwp.version
 		/// <summary>
 		/// incremental number
 		/// </summary>
-		[SerializeField]protected int buildNumber = 1;
+		[SerializeField] protected int buildNumber = 1;
 		public int BuildNumber => buildNumber;
-		
+
 		public string Version => major + "." + minor + "." + patch;
 
 		[Header("timestamp")]
@@ -62,10 +62,10 @@ namespace fwp.version
 			return "incr? " + timestamp_incr + " & build? " + timestamp_build;
 		}
 
-        public override string ToString()
-        {
-            return getFormated();
-        }
+		public override string ToString()
+		{
+			return getFormated();
+		}
 
 #if UNITY_EDITOR
 		public void event_build()
@@ -83,6 +83,8 @@ namespace fwp.version
 
 		public void incrementMajor()
 		{
+			patch = 0;
+			minor = 0;
 			major++;
 			buildNumber++;
 			applyVersionToEditor();
@@ -91,6 +93,7 @@ namespace fwp.version
 
 		public void incrementMinor()
 		{
+			patch = 0;
 			minor++;
 			buildNumber++;
 			applyVersionToEditor();
