@@ -12,53 +12,84 @@ namespace fwp.buildor.editor
     {
         protected DataBuildSettingProfile profil;
 
-        public Action onCompletion;
-
         IEnumerator _exec = null;
 
-        double time;
+        /// <summary>
+        /// override to display progress in cancel bar
+        /// </summary>
+        protected float procProgress = 0f;
+
+        double _time;
+
+        double Delta => EditorApplication.timeSinceStartup - _time;
+        string UID => $"process<{GetType().FullName}";
 
         protected BuildProcess launch(DataBuildSettingProfile profil)
         {
-            time = EditorApplication.timeSinceStartup;
+            _time = EditorApplication.timeSinceStartup;
 
             this.profil = profil;
 
-            EditorApplication.update += update_check_process;
-
-            // log("exec..start");
             _exec = exec();
+            EditorApplication.update += update_check_process;
 
             return this;
         }
 
+        /// <summary>
+        /// do something during this process
+        /// </summary>
         abstract protected IEnumerator exec();
 
+        /// <summary>
+        /// called each editor frame to update coroutine
+        /// </summary>
         void update_check_process()
         {
-            if (_exec != null)
+            try
             {
-                if (!_exec.MoveNext())
+                bool cancel = EditorUtility.DisplayCancelableProgressBar(UID, "processing...", procProgress);
+
+                if (cancel)
                 {
-                    // log("exec..finished");
-                    _exec = null;
+                    log("cancelled");
+                    stop();
+                    return;
                 }
-                else
+
+                if (_exec != null)
                 {
-                    // log("exec..");
+                    if (!_exec.MoveNext())
+                    {
+                        _exec = null; // done
+                        log("done!");
+
+                        stop();
+                        log($"process<{GetType()} took : {Delta} secondes");
+                    }
+                    // log("frame!");
                     return;
                 }
             }
+            catch (Exception e)
+            {
+                Debug.LogException(e);
+                stop();
+            }
+        }
 
-            // log("exec..done");
-            onCompletion?.Invoke();
+        void stop()
+        {
+            _exec = null;
             EditorApplication.update -= update_check_process;
+            EditorUtility.ClearProgressBar();
+
+            log("stopped");
         }
 
         protected void log(string msg)
         {
-            var dt = EditorApplication.timeSinceStartup - time;
-            ulog(dt + " | " + msg, this);
+            ulog(Delta.ToString("F3") + " | " + msg, this);
         }
 
         static public void ulog(string msg, object tar = null)

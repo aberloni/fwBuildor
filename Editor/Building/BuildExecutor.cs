@@ -53,6 +53,7 @@ namespace fwp.buildor.editor
         BuildPostprocess build_postpro;
 
         double time = 0f;
+        double Delta => EditorApplication.timeSinceStartup - time;
 
         public BuildExecutor()
         {
@@ -64,41 +65,19 @@ namespace fwp.buildor.editor
         {
             time = EditorApplication.timeSinceStartup;
 
-            build_prepro.onBuildStart += () =>
-            {
-                log("build..");
-                if(EditorUtility.DisplayCancelableProgressBar("build " + Profile.FullPath, "build...", 0.25f))
-                {
-                    Debug.LogError("cancel:build start");
-                }
-            };
-
-            build_prepro.onBuildEnd += (summary) =>
-            {
-                if(EditorUtility.DisplayCancelableProgressBar("build " + Profile.FullPath, "postprocess...", 0.75f))
-                {
-                    Debug.LogError("cancel:build end");
-                    return;
-                }
-
-                log("build.post..");
-                build_postpro.doLaunch(Profile, summary);
-
-                build_postpro.onPostEnded += () =>
-                {
-                    log("build.end");
-                    EditorUtility.ClearProgressBar();
-                };
-            };
-
             log("build.pre..");
             build_prepro.doLaunch(Profile);
+
+            build_prepro.onBuildEnd += (summary) =>
+            {   
+                log("build.post..");
+                build_postpro.doLaunch(Profile, summary);
+            };
         }
 
         void log(string msg)
         {
-            var dt = EditorApplication.timeSinceStartup - time;
-            Debug.Log("[dt:" + (int)dt + "] <<< <color=#FF00FF><b>" + msg + "</b></color> >>>");
+            Debug.Log("[dt:" + Delta.ToString("F3") + "] <<< <color=#FF00FF><b>" + msg + "</b></color> >>>");
         }
 
 

@@ -3,6 +3,7 @@ using UnityEditor;
 using System.IO;
 
 using fwp.version;
+using UnityEditor.EditorTools;
 
 /// <summary>
 /// (ratio iphone)
@@ -30,12 +31,38 @@ namespace fwp.buildor.editor
         public DataVersionInternal versionInternal;     // local iterations
         public DataBuildSettingVersion versionPublish;  // can be null, alternate wat to count versions
 
+        [Tooltip("drop a text file with version number at build/")]
+        public bool dumpVersion;
+
+        /// <summary>
+        /// filter version
+        /// publish || internal
+        /// </summary>
         public DataBuildSettingVersion Version
         {
             get
             {
                 if (versionPublish != null) return versionPublish;
                 return versionInternal;
+            }
+        }
+
+        /// <summary>
+        /// X.Y.Z@B
+        /// X.Y.Z@B
+        /// </summary>
+        public string VersionFull
+        {
+            get
+            {
+                string ret = string.Empty;
+                if (versionInternal != null) ret += "intern:" + versionInternal;
+                if (versionPublish != null)
+                {
+                    if (!string.IsNullOrEmpty(ret)) ret += "\n";
+                    ret += "publish:" + versionPublish;
+                }
+                return ret;
             }
         }
 
@@ -255,10 +282,10 @@ namespace fwp.buildor.editor
 
         virtual public void applyProfilToEditor()
         {
-            Debug.Log("applying scriptable profile : <b>" + name + "</b>", this);
-            Debug.Log("current platform ? " + GetType());
-            Debug.Log("Debug ? " + BuildorVars.IsDebug);
-        
+            Debug.Log("apply.profile : <b>" + name + "</b>", this);
+            Debug.Log("apply.current platform ? " + GetType());
+            Debug.Log("apply.debug ? " + BuildorVars.IsDebug);
+
             //Debug.Log("applying " + name);
             //fwp.build.BuildHelperBase.applySettings(this);
             BuildPreprocess.applyCompagny(this);

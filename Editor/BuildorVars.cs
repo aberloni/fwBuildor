@@ -7,7 +7,13 @@ namespace fwp.buildor
 
     static public class BuildorVars
     {
-        static public readonly string pref_prefix = EditorUserBuildSettings.activeBuildTarget + "." + Application.companyName + "." + Application.productName;
+        /// <summary>
+        /// filter by platform
+        /// </summary>
+        static public readonly string Ppref_prefix = 
+            EditorUserBuildSettings.activeBuildTarget + "." + 
+            Application.companyName + "." + 
+            Application.productName;
 
         /// <summary>
         /// buffed, don't refetch all scriptables each time
@@ -36,21 +42,21 @@ namespace fwp.buildor
             }
         }
 
-        static public readonly string ppref_sdk = pref_prefix + "sdk";
+        static public readonly string ppref_sdk = Ppref_prefix + "sdk";
         static public TargetSdks TargetSdk
         {
             get => (TargetSdks)EditorPrefs.GetInt(ppref_sdk, 0);
             set => EditorPrefs.SetInt(ppref_sdk, (int)value);
         }
 
-        static public readonly string ppref_publish = pref_prefix + "level_publish";
+        static public readonly string ppref_publish = Ppref_prefix + "level_publish";
         static public TargetPublish TargetPublish
         {
             get => (TargetPublish)EditorPrefs.GetInt(ppref_publish, (int)TargetPublish.release);
             set => EditorPrefs.SetInt(ppref_publish, (int)value);
         }
 
-        static public readonly string ppref_debug = pref_prefix + "level_debug";
+        static public readonly string ppref_debug = Ppref_prefix + "level_debug";
         static public TargetDebug TargetDebug
         {
             get => (TargetDebug)EditorPrefs.GetInt(ppref_debug, (int)TargetDebug.release);
@@ -59,40 +65,47 @@ namespace fwp.buildor
 
         static public bool IsDebug => TargetDebug == TargetDebug.debug;
 
-        static public readonly string ppref_pre_incVersion = pref_prefix + "pre_inc_version";
+        static public readonly string ppref_pre_incVersion = Ppref_prefix + "pre_inc_version";
         static public bool PreIncVersion
         {
             get => EditorPrefs.GetBool(ppref_pre_incVersion);
             set => EditorPrefs.SetBool(ppref_pre_incVersion, value);
         }
 
-        static public readonly string ppref_post_openFolder = pref_prefix + "post_open_folder";
+        static public readonly string ppref_post_openFolder = Ppref_prefix + "post_open_folder";
         static public bool PostOpenFolder
         {
             get => EditorPrefs.GetBool(ppref_post_openFolder);
             set => EditorPrefs.SetBool(ppref_post_openFolder, value);
         }
 
-        static public readonly string ppref_post_zip = pref_prefix + "post_zip";
+        static public readonly string ppref_post_zip = Ppref_prefix + "post_zip";
         static public bool PostZip
         {
             get => EditorPrefs.GetBool(ppref_post_zip);
             set => EditorPrefs.SetBool(ppref_post_zip, value);
         }
 
-        static public readonly string ppref_post_autorun = pref_prefix + "ppref_post_autorun";
+        static public readonly string ppref_post_autorun = Ppref_prefix + "ppref_post_autorun";
         static public bool PostAutorun
         {
             get => EditorPrefs.GetBool(ppref_post_autorun);
             set => EditorPrefs.SetBool(ppref_post_autorun, value);
         }
 
+        static public readonly string ppref_post_dropVersion = Ppref_prefix + "ppref_post_dropVersion";
+        static public bool PostDropVersion
+        {
+            get => EditorPrefs.GetBool(ppref_post_dropVersion);
+            set => EditorPrefs.SetBool(ppref_post_dropVersion, value);
+        }
+
         // modifiers
-        static public readonly string pref_include_prefix = pref_prefix + "prefix";
-        static public readonly string pref_include_platform = pref_prefix + "platform";
-        static public readonly string pref_include_date = pref_prefix + "date";
-        static public readonly string pref_include_version = pref_prefix + "version";
-        static public readonly string pref_suffix = pref_prefix + "suffix";
+        static public readonly string pref_include_prefix = Ppref_prefix + "prefix";
+        static public readonly string pref_include_platform = Ppref_prefix + "platform";
+        static public readonly string pref_include_date = Ppref_prefix + "date";
+        static public readonly string pref_include_version = Ppref_prefix + "version";
+        static public readonly string pref_suffix = Ppref_prefix + "suffix";
 
     }
 

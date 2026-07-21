@@ -6,13 +6,12 @@ using UnityEditor;
 namespace fwp.buildor.editor
 {
     using System;
+    using System.IO;
     using UnityEditor.Build.Reporting;
 
     public class BuildPostprocess : BuildProcess
     {
         BuildSummary summary;
-
-        public Action onPostEnded;
 
         public BuildProcess doLaunch(DataBuildSettingProfile profil, BuildSummary summary)
         {
@@ -32,7 +31,7 @@ namespace fwp.buildor.editor
             switch (summary.result)
             {
                 case BuildResult.Succeeded:
-                    
+
                     onSuccess();
 
                     break;
@@ -46,8 +45,6 @@ namespace fwp.buildor.editor
 
                     break;
             }
-
-            onPostEnded?.Invoke();
 
         }
 
@@ -64,7 +61,7 @@ namespace fwp.buildor.editor
 
         void onSuccess()
         {
-            
+
             // autorun will inject a flag, no need to do it by hand
             /*
             if (_parameters.buildFlags.autorun)
@@ -108,6 +105,13 @@ namespace fwp.buildor.editor
             {
                 log($"+AUTORUN  @{profil.FullPath}");
                 shellOpenFile(profil.FullPath);
+            }
+
+            if (BuildorVars.PostDropVersion)
+            {
+                string p = Path.Combine(profil.BuildPath, "version.txt");
+                log($"+VERSION DROP  @{p}");
+                System.IO.File.WriteAllText(p, profil.VersionFull);
             }
 
         }

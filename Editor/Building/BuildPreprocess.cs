@@ -18,9 +18,14 @@ namespace fwp.buildor.editor
 
         public BuildSummary? build_summary;
 
-        public Action onBuildStart;
+        /// <summary>
+        /// to react at process end
+        /// </summary>
         public Action<BuildSummary> onBuildEnd;
 
+        /// <summary>
+        /// entry point
+        /// </summary>
         public BuildProcess doLaunch(DataBuildSettingProfile profil)
         {
             if (profil == null)
@@ -38,16 +43,22 @@ namespace fwp.buildor.editor
 
         protected override IEnumerator exec()
         {
+            log("pre.pre");
+            procProgress = 0f;
             _pre = execPre();
             while (_pre.MoveNext()) yield return null;
 
+            log("pre.wait");
+            procProgress = 0.33f;
             _wait = execWait();
             while (_wait.MoveNext()) yield return null;
 
-            onBuildStart?.Invoke();
-
+            log("pre.build");
+            procProgress = 0.66f;
             _build = execBuild();
             while (_build.MoveNext()) yield return null;
+
+            procProgress = 1f;
         }
 
         IEnumerator execPre()
@@ -88,7 +99,7 @@ namespace fwp.buildor.editor
                 foreach (var m in profil.debug.modules) m?.Apply();
             }
 
-            if(profil.build.merger != null)
+            if (profil.build.merger != null)
             {
                 profil.build.merger.Apply();
             }
@@ -135,6 +146,7 @@ namespace fwp.buildor.editor
                 }
             }
 
+            log("pre.pre √");
             //BuildPipeline.BuildPlayer(buildPlayerOptions);
         }
 
