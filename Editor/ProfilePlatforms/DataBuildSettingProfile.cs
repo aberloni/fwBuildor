@@ -146,7 +146,7 @@ namespace fwp.buildor.editor
 
         virtual protected void OnValidate()
         {
-            if (isSelectedPlatform()) applyProfilToEditor(); // on validate
+            // if (isSelectedPlatform()) applyProfilToEditor(); // on validate
         }
 
         public bool isSelectedPlatform() => getPlatformTarget() == EditorUserBuildSettings.activeBuildTarget;

@@ -42,7 +42,11 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.Label(_title, HelperGui.gWinTitle);
 
-			if (Application.isPlaying) return;
+			if (Application.isPlaying)
+			{
+				GUILayout.Label("not at runtime");
+				return;
+			}
 
 			drawProfilSelector();
 
