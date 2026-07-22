@@ -54,10 +54,10 @@ namespace fwp.logs
 			foreach (var lvl in levels)
 			{
 				Application.SetStackTraceLogType(lvl.type, lvl.stackTrace);
-				output += "\n" + lvl.stringify();
+				output += " | " + lvl.stringify();
 			}
 
-			Debug.Log("->| logs.applied: " + output);
+			Debug.Log("logs > " + output);
 		}
 
 		/// <summary>

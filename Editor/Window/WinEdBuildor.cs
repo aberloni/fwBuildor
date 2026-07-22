@@ -7,6 +7,16 @@ namespace fwp.buildor.editor
 {
 	public class WinEdBuildor : EditorWindow
 	{
+		/// <summary>
+		/// verbose when opened
+		/// </summary>
+		static bool verbose = false;
+		static public void log(string msg, Object tar = null)
+		{
+			if (!verbose) return;
+			Debug.Log("[buildor] " + msg, tar);
+		}
+
 		[MenuItem(BuildorVerbosity._buildor_menuitem_path + "buildor (win)", false, 0)]
 		static void init()
 		{
@@ -22,6 +32,7 @@ namespace fwp.buildor.editor
 
 		private void OnEnable()
 		{
+			verbose = true;
 			if (subVersion == null) subVersion = new();
 			onProfilRefresh();
 		}
@@ -30,6 +41,8 @@ namespace fwp.buildor.editor
 		void OnGUI()
 		{
 			GUILayout.Label(_title, HelperGui.gWinTitle);
+
+			if (Application.isPlaying) return;
 
 			drawProfilSelector();
 

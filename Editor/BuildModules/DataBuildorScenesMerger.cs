@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
+using fwp.buildor.editor;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -102,7 +104,7 @@ namespace fwp.buildor
             inject(menus);
 
             EditorBuildSettings.scenes = scenesToInject.ToArray();
-            Debug.Log("->| merger.applied (" + name + ") x" + EditorBuildSettings.scenes.Length, this);
+            WinEdBuildor.log("->| merger.applied (" + name + ") x" + EditorBuildSettings.scenes.Length, this);
         }
 
         void inject(DataBuildorScenesFilter[] profils)
@@ -146,7 +148,7 @@ namespace fwp.buildor
                 string completePath = getSceneCompletePath(sceneName);
                 buildsettingScenes.Add(new EditorBuildSettingsScene(completePath, true));
 
-                Debug.Log("ADDED " + completePath);
+                // Debug.Log("ADDED " + completePath);
             }
 
             EditorBuildSettings.scenes = buildsettingScenes.ToArray();
@@ -193,7 +195,7 @@ namespace fwp.buildor
                 }
             }
 
-            Debug.LogWarning("didn't find to inject : " + level);
+            WinEdBuildor.log("didn't find to inject : " + level);
         }
 
         public static void injectAll(string filter = "everything")
@@ -203,7 +205,7 @@ namespace fwp.buildor
 
             merger.Apply();
 
-            Debug.Log("re-applied all scenes from scriptable " + merger.name, merger);
+            WinEdBuildor.log("re-applied all scenes from scriptable " + merger.name, merger);
         }
 #endif
 
