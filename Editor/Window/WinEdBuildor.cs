@@ -48,6 +48,13 @@ namespace fwp.buildor.editor
 				return;
 			}
 
+			if (BuildExecutor.IsBusy)
+			{
+				GUILayout.Label("building..." + BuildExecutor.State);
+				drawPrevisualization();
+				return;
+			}
+
 			drawProfilSelector();
 
 			_scroll = GUILayout.BeginScrollView(_scroll);

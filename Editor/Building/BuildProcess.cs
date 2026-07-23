@@ -8,8 +8,10 @@ using System.Collections;
 namespace fwp.buildor.editor
 {
 
-    abstract public class BuildProcess
+    abstract public class BuildProcess : IDisposable
     {
+        public bool IsBusy => _exec != null;
+
         protected DataBuildSettingProfile profil;
 
         IEnumerator _exec = null;
@@ -62,10 +64,9 @@ namespace fwp.buildor.editor
                     if (!_exec.MoveNext())
                     {
                         _exec = null; // done
-                        log("done!");
-
+                        
+                        onCompletion();
                         stop();
-                        log($"process<{GetType()} took : {Delta} secondes");
                     }
                     // log("frame!");
                     return;
@@ -74,7 +75,9 @@ namespace fwp.buildor.editor
             catch (Exception e)
             {
                 Debug.LogException(e);
+
                 stop();
+                onFailed();
             }
         }
 
@@ -85,6 +88,22 @@ namespace fwp.buildor.editor
             EditorUtility.ClearProgressBar();
 
             log("stopped");
+        }
+
+        virtual protected void onCompletion()
+        {
+            log("done!");
+            log($"process<{GetType()} took : {Delta} secondes");
+        }
+
+        virtual protected void onFailed()
+        {
+            log("failed!");
+        }
+
+        public void Dispose()
+        {
+            stop();
         }
 
         protected void log(string msg)

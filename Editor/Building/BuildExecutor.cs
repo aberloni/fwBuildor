@@ -42,6 +42,19 @@ namespace fwp.buildor.editor
     /// </summary>
     public class BuildExecutor
     {
+        static public bool IsBusy => time > 0;
+
+        static double time;
+        static double Delta => EditorApplication.timeSinceStartup - time;
+
+        static public string State
+        {
+            get
+            {
+                return "elapsed: " + Delta + " secondes";
+            }
+        }
+
         public const string pref_prefix = "buildor_";
 
         static public readonly string pref_uid = pref_prefix + "." + Application.productName + "." + Application.productName;
@@ -52,8 +65,7 @@ namespace fwp.buildor.editor
         BuildPreprocess build_prepro;
         BuildPostprocess build_postpro;
 
-        double time = 0f;
-        double Delta => EditorApplication.timeSinceStartup - time;
+
 
         public BuildExecutor()
         {
@@ -69,10 +81,36 @@ namespace fwp.buildor.editor
             build_prepro.doLaunch(Profile);
 
             build_prepro.onBuildEnd += (summary) =>
-            {   
+            {
                 log("build.post..");
                 build_postpro.doLaunch(Profile, summary);
             };
+
+            EditorApplication.update += track;
+        }
+
+        void track()
+        {
+            if (build_prepro != null)
+            {
+                if (build_prepro.IsBusy) return;
+            }
+
+            if (build_postpro != null)
+            {
+                if (build_postpro.IsBusy) return;
+            }
+
+            onCompletion();
+        }
+
+        void onCompletion()
+        {
+            EditorApplication.update -= track;
+
+            log("finished");
+
+            time = 0;
         }
 
         void log(string msg)
