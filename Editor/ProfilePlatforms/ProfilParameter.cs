@@ -7,7 +7,6 @@ abstract public class ProfilParameter
 
     public BuildModule[] modules = new BuildModule[0];
 
-    readonly GUIContent gui_btn_browse = new GUIContent("browse");
 
     virtual public void applyProfil()
     { }

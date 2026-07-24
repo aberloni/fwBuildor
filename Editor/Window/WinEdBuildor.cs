@@ -2,8 +2,6 @@ using UnityEngine;
 using UnityEditor;
 
 using fwp.symbols;
-using PlasticGui;
-using NUnit.Framework;
 
 namespace fwp.buildor.editor
 {
