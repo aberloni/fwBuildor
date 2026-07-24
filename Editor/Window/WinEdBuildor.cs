@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEditor;
 
 using fwp.symbols;
+using PlasticGui;
+using NUnit.Framework;
 
 namespace fwp.buildor.editor
 {
@@ -160,29 +162,6 @@ namespace fwp.buildor.editor
 			HelperGuiFields.drawField("symbols.build", p.build.Symbols?.Symbols);
 			HelperGuiFields.drawField("symbols.debug", p.debug.Symbols?.Symbols);
 
-			// profil.logs.symbols
-			/*
-			if (p.Logs != null)
-			{
-				// HelperGuiFields.drawObjectDisabled(logs);
-				HelperGuiFields.drawField("symbols.logs", BuildorHelpers.formatSymbols(p.Logs.symbolsVerbose));
-			}
-			*/
-
-			// profil.build.features
-			/*
-			HelperGuiFields.drawField("symbols.features", p.build.SymbolsFeatures);
-
-			foreach (TargetFeatures f in System.Enum.GetValues(typeof(TargetFeatures)))
-			{
-				if (f == TargetFeatures.none) continue;
-				bool toggled = HelperGuiFields.drawToggle(p.build.features.HasFlag(f), f.ToString());
-				if (toggled) p.build.features |= f;
-				else p.build.features &= ~f;
-			}
-
-			*/
-
 			GUILayout.Space(10f);
 
 			GUILayout.BeginHorizontal();
@@ -300,13 +279,20 @@ namespace fwp.buildor.editor
 		void drawPathModifiers()
 		{
 			GUILayout.Label("Path modifiers", HelperGui.gCategoryBold);
-			GUILayout.Label("build/ modifiers", HelperGui.gBold);
 
+			GUILayout.Label("specific path", HelperGui.gBold);
+			
+			drawFolderSelector(TargetDebug.release);
+			drawFolderSelector(TargetDebug.debug);
 
-			//EditorGUI.BeginDisabledGroup(true);
-			GUI.enabled = !aProfil.build.HasSpecificFolder;
+			GUILayout.Label("dynamic path", HelperGui.gBold);
+		
 			// do not provide current value to drawer, must regen value on opening from ppref
 			GUILayout.BeginHorizontal();
+
+			bool use = HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_use_specific_path, "specific");
+			GUI.enabled = !use;
+
 			HelperGuiFields.drawPrefToggle(BuildorVars.pref_include_prefix, "prefix");
 			HelperGuiFields.drawPrefToggle(BuildorVars.pref_include_platform, "platform");
 			HelperGuiFields.drawPrefToggle(BuildorVars.pref_include_date, "date");
@@ -315,11 +301,44 @@ namespace fwp.buildor.editor
 
 			HelperGuiFields.editText(BuildorVars.pref_suffix, "suffix");
 			GUI.enabled = true;
+		}
 
-			// force to a specific folder
+		public void drawFolderSelector(TargetDebug category)
+		{
+			GUI.enabled = category == BuildorVars.TargetDebug;
 
-			aProfil.build.drawFolderSelector();
-			aProfil.debug.drawFolderSelector();
+			GUILayout.BeginHorizontal();
+
+			GUILayout.Label(category + " specific/", HelperGui.gBold);
+
+			string pUID = BuildorHelpers.GetPrefUidSpecificPath(category);
+			string path = EditorPrefs.GetString(pUID, string.Empty);
+
+			if (!string.IsNullOrEmpty(path))
+			{
+				
+				GUILayout.Label(path);
+
+				if (path.Length > 0 && GUILayout.Button("clear", GUILayout.Width(100f)))
+				{
+					EditorPrefs.SetString(pUID, string.Empty);
+				}
+			}
+
+			if (GUILayout.Button(gui_btn_browse, GUILayout.Width(100f)))
+			{
+				string _path = UnityEditor.EditorUtility.OpenFolderPanel(
+					"Select export folder", path, string.Empty);
+
+				if (path != _path)
+				{
+					path = _path;
+					EditorPrefs.SetString(pUID, path);
+				}
+			}
+
+			GUILayout.EndHorizontal();
+			GUI.enabled = true;
 		}
 
 		void drawPreprocessVars()

@@ -9,6 +9,20 @@ namespace fwp.buildor
 
 	static public class BuildorHelpers
 	{
+		static public string GetPrefUidSpecificPath(TargetDebug category)
+		{
+			return Identifier + category;
+		}
+
+		public static string Identifier
+		{
+			get
+			{
+				// return Application.dataPath.GetHashCode().ToString();
+				return PlayerSettings.productGUID.ToString();
+			}
+		}
+
 		public const int menu_order = 100;
 		public const string _menuItem_basepath = "buildor/";
 		public const string _path_merger = _menuItem_basepath + "merger/";

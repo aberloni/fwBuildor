@@ -10,10 +10,16 @@ namespace fwp.buildor
         /// <summary>
         /// filter by platform
         /// </summary>
-        static public readonly string Ppref_prefix = 
-            EditorUserBuildSettings.activeBuildTarget + "." + 
-            Application.companyName + "." + 
-            Application.productName;
+        static public string Ppref_prefix
+        {
+            get
+            {
+                return BuildorHelpers.Identifier +
+                EditorUserBuildSettings.activeBuildTarget + "." +
+                Application.companyName + "." + Application.productName;
+            }
+        }
+
 
         /// <summary>
         /// buffed, don't refetch all scriptables each time
@@ -77,6 +83,13 @@ namespace fwp.buildor
         {
             get => EditorPrefs.GetBool(ppref_post_openFolder);
             set => EditorPrefs.SetBool(ppref_post_openFolder, value);
+        }
+
+        static public readonly string ppref_post_use_specific_path = Ppref_prefix + "post_use_specific_path";
+        static public bool PostUseSpecificPath
+        {
+            get => EditorPrefs.GetBool(ppref_post_use_specific_path);
+            set => EditorPrefs.SetBool(ppref_post_use_specific_path, value);
         }
 
         static public readonly string ppref_post_zip = Ppref_prefix + "post_zip";

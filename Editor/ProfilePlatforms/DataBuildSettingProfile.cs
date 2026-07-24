@@ -134,8 +134,12 @@ namespace fwp.buildor.editor
         {
             get
             {
-                if (BuildorVars.IsDebug && debug.HasSpecificFolder) return debug.output_folder_specific;
-                else if (!BuildorVars.IsDebug && build.HasSpecificFolder) return build.output_folder_specific;
+                // specific path ?
+                if (BuildorVars.PostUseSpecificPath)
+                {
+                    string path = EditorPrefs.GetString(BuildorHelpers.GetPrefUidSpecificPath(BuildorVars.TargetDebug), string.Empty);
+                    if (!string.IsNullOrEmpty(path)) return path;
+                }
 
                 // drive:to/root/Assets + relative/folder/
                 return Path.Combine(
@@ -263,7 +267,8 @@ namespace fwp.buildor.editor
         {
             get
             {
-                string parent = Path.GetDirectoryName(Path.GetDirectoryName(FullPath));
+                string path = Path.GetDirectoryName(FullPath);
+                string parent = Path.GetDirectoryName(path);
                 return Path.Combine(parent, getZipName());
             }
         }
