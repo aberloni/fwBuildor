@@ -17,6 +17,15 @@ namespace fwp.version
     public class DataVersionSwitch : DataBuildSettingVersion
     {
 
+        /// <summary>
+        /// on switch we can use MAJOR as release increment version
+        /// </summary>
+        // [SerializedField] protected int releaseVersion;
+
+        /// <summary>
+        /// incremental version, cannot jump
+        /// use for inital rom (0) and patches (1,2,...)
+        /// </summary>
         public int VersionRelease
         {
             get
