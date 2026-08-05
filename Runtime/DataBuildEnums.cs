@@ -19,10 +19,14 @@ namespace fwp.buildor
         debug,
     }
 
+    /// <summary>
+    /// must be uppercase
+    /// used as symbols #if
+    /// </summary>
     public enum TargetSdks
     {
         none = 0,
-        steam = 1,
+        STEAM = 1,
     }
 
     [Flags]
