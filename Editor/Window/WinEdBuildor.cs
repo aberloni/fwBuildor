@@ -3,6 +3,11 @@ using UnityEditor;
 
 using fwp.symbols;
 
+using System.IO;
+using System.Diagnostics;
+
+using Debug = UnityEngine.Debug;
+
 namespace fwp.buildor.editor
 {
 	public class WinEdBuildor : EditorWindow
@@ -21,7 +26,7 @@ namespace fwp.buildor.editor
 		static void init()
 		{
 			var win = EditorWindow.GetWindow(typeof(WinEdBuildor));
-			win.titleContent = new GUIContent("Buildor");
+			win.titleContent = new("Buildor");
 		}
 
 		Vector2 _scroll;
@@ -270,6 +275,7 @@ namespace fwp.buildor.editor
 		}
 
 		readonly GUIContent gui_btn_browse = new GUIContent("browse");
+		readonly GUIContent gui_btn_open = new GUIContent("open");
 
 		/// <summary>
 		/// change destination folder
@@ -279,12 +285,12 @@ namespace fwp.buildor.editor
 			GUILayout.Label("Path modifiers", HelperGui.gCategoryBold);
 
 			GUILayout.Label("specific path", HelperGui.gBold);
-			
+
 			drawFolderSelector(TargetDebug.release);
 			drawFolderSelector(TargetDebug.debug);
 
 			GUILayout.Label("dynamic path", HelperGui.gBold);
-		
+
 			// do not provide current value to drawer, must regen value on opening from ppref
 			GUILayout.BeginHorizontal();
 
@@ -314,10 +320,10 @@ namespace fwp.buildor.editor
 
 			if (!string.IsNullOrEmpty(path))
 			{
-				
+
 				GUILayout.Label(path);
 
-				if (path.Length > 0 && GUILayout.Button("clear", GUILayout.Width(100f)))
+				if (path.Length > 0 && GUILayout.Button("x", GUILayout.Width(35f)))
 				{
 					EditorPrefs.SetString(pUID, string.Empty);
 				}
@@ -334,6 +340,13 @@ namespace fwp.buildor.editor
 					EditorPrefs.SetString(pUID, path);
 				}
 			}
+
+			if (GUILayout.Button(gui_btn_open, GUILayout.Width(60f)))
+			{
+				OpenFolder(path);
+				// EditorUtility.RevealInFinder(path);
+			}
+
 
 			GUILayout.EndHorizontal();
 			GUI.enabled = true;
@@ -428,6 +441,25 @@ namespace fwp.buildor.editor
 			// if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
 
 			GUILayout.Label(aProfil.stringifySummary());
+		}
+
+		static void OpenFolder(string path)
+		{
+			// this will open parent folder and highlight target folder
+			//EditorUtility.RevealInFinder(fullPath);
+
+			// this will open the target folder
+			string fullPath = Path.GetFullPath(path).TrimEnd('\\', '/');
+
+			Debug.Log("folder.open:" + fullPath);
+
+#if UNITY_EDITOR_WIN
+			Process.Start("explorer.exe", "\"" + fullPath + "\"");
+#elif UNITY_EDITOR_OSX
+			Process.Start("open", "\"" + fullPath + "\"");
+#else
+			Process.Start("xdg-open", "\"" + fullPath + "\"");
+#endif
 		}
 	}
 
