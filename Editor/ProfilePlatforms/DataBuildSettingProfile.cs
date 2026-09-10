@@ -4,6 +4,9 @@ using System.IO;
 
 using fwp.version;
 using UnityEditor.EditorTools;
+using Codice.Client.Common;
+using System.Linq;
+using System.Collections.Generic;
 
 /// <summary>
 /// (ratio iphone)
@@ -117,6 +120,22 @@ namespace fwp.buildor.editor
             }
         }
 
+        [Header("paths")]
+
+        [SerializeField] List<SpecificPathOwner> specifics = new();
+
+        public SpecificPaths UserSpecific
+        {
+            get
+            {
+                foreach (var s in specifics)
+                {
+                    if (s.Is()) return s.Get();
+                }
+                return null;
+            }
+        }
+
         /// <summary>
         /// root/path/build.ext
         /// </summary>
@@ -137,8 +156,13 @@ namespace fwp.buildor.editor
                 // specific path ?
                 if (BuildorVars.PostUseSpecificPath)
                 {
-                    string path = EditorPrefs.GetString(BuildorHelpers.GetPrefUidSpecificPath(BuildorVars.TargetDebug), string.Empty);
-                    if (!string.IsNullOrEmpty(path)) return path;
+                    var _spec = UserSpecific;
+                    if (_spec != null)
+                    {
+                        // string path = EditorPrefs.GetString(BuildorHelpers.GetPrefUidSpecificPath(BuildorVars.TargetDebug), string.Empty);
+                        string path = _spec.ActivePath;
+                        if (!string.IsNullOrEmpty(path)) return path;
+                    }
                 }
 
                 // drive:to/root/Assets + relative/folder/
@@ -319,6 +343,14 @@ namespace fwp.buildor.editor
             {
                 PlayerSettings.bundleVersion = versionInternal.Version;
             }
+        }
+
+        public SpecificPathOwner AddSpecificUser()
+        {
+            var elmt = new SpecificPathOwner();
+            specifics.Add(elmt);
+            Debug.Log("+"+elmt);
+            return elmt;
         }
 
         /// <summary>

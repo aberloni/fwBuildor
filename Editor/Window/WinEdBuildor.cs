@@ -7,6 +7,8 @@ using System.IO;
 using System.Diagnostics;
 
 using Debug = UnityEngine.Debug;
+using System.ComponentModel.Composition.Hosting;
+using Codice.CM.Client.Gui;
 
 namespace fwp.buildor.editor
 {
@@ -284,10 +286,25 @@ namespace fwp.buildor.editor
 		{
 			GUILayout.Label("Path modifiers", HelperGui.gCategoryBold);
 
-			GUILayout.Label("specific path", HelperGui.gBold);
 
-			drawFolderSelector(TargetDebug.release);
-			drawFolderSelector(TargetDebug.debug);
+			GUILayout.Label("specific path", HelperGui.gBold);
+			SpecificPaths spec = aProfil.UserSpecific;
+			if (spec == null)
+			{
+				if (GUILayout.Button("+user"))
+				{
+					spec = aProfil.AddSpecificUser().Get();
+					Debug.Assert(spec != null);
+				}
+
+			}
+
+			if (spec != null)
+			{
+				drawFolderSelector(TargetDebug.release);
+				drawFolderSelector(TargetDebug.debug);
+			}
+
 
 			GUILayout.Label("dynamic path", HelperGui.gBold);
 
@@ -309,42 +326,58 @@ namespace fwp.buildor.editor
 
 		public void drawFolderSelector(TargetDebug category)
 		{
-			GUI.enabled = category == BuildorVars.TargetDebug;
+			bool active_specpath = EditorPrefs.GetBool(BuildorVars.ppref_post_use_specific_path);
+			GUI.enabled = category == BuildorVars.TargetDebug
+				&& active_specpath;
 
 			GUILayout.BeginHorizontal();
 
 			GUILayout.Label(category + " specific/", HelperGui.gBold);
 
-			string pUID = BuildorHelpers.GetPrefUidSpecificPath(category);
-			string path = EditorPrefs.GetString(pUID, string.Empty);
-
-			if (!string.IsNullOrEmpty(path))
+			SpecificPaths spec = aProfil.UserSpecific;
+			if (spec == null)
 			{
-
-				GUILayout.Label(path);
-
-				if (path.Length > 0 && GUILayout.Button("x", GUILayout.Width(35f)))
+				if (GUILayout.Button("+user"))
 				{
-					EditorPrefs.SetString(pUID, string.Empty);
+					aProfil.AddSpecificUser();
+					spec = aProfil.UserSpecific;
+					Debug.Assert(spec != null);
 				}
+
 			}
 
-			if (GUILayout.Button(gui_btn_browse, GUILayout.Width(100f)))
+			if (spec != null)
 			{
-				string _path = UnityEditor.EditorUtility.OpenFolderPanel(
-					"Select export folder", path, string.Empty);
+				spec.Get(category);
+				string catSpecPath = spec.Get(category);
 
-				if (path != _path)
+				if (!string.IsNullOrEmpty(catSpecPath)) GUILayout.Label(catSpecPath);
+
+				if (active_specpath)
 				{
-					path = _path;
-					EditorPrefs.SetString(pUID, path);
-				}
-			}
+					if (catSpecPath.Length > 0 && GUILayout.Button("x", GUILayout.Width(35f)))
+					{
+						spec.clear(category);
+					}
 
-			if (GUILayout.Button(gui_btn_open, GUILayout.Width(60f)))
-			{
-				OpenFolder(path);
-				// EditorUtility.RevealInFinder(path);
+					if (GUILayout.Button(gui_btn_browse, GUILayout.Width(100f)))
+					{
+						string _path = UnityEditor.EditorUtility.OpenFolderPanel(
+							"Select export folder", catSpecPath, string.Empty);
+
+						if (!spec.match(category, _path))
+						{
+							spec.Set(category, _path);
+						}
+					}
+
+					if (GUILayout.Button(gui_btn_open, GUILayout.Width(60f)))
+					{
+						OpenFolder(catSpecPath);
+						// EditorUtility.RevealInFinder(path);
+					}
+
+				}
 			}
 
 

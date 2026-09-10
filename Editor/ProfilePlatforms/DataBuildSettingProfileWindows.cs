@@ -6,8 +6,6 @@ using UnityEditor;
 /// 562x1000 
 /// 506x900
 /// </summary>
-
-
 namespace fwp.buildor.editor
 {
     [CreateAssetMenu(menuName = BuildorHelpers._menuItem_basepath + "profils/+windows", order = 100)]
