@@ -12,7 +12,8 @@ using System.Collections.Generic;
 
 namespace fwp.buildor.editor
 {
-
+    using UnityEditor;
+    
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
     ///  it's meant to be used as a build flow tool params
