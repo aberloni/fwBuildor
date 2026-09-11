@@ -1,11 +1,7 @@
 ﻿using UnityEngine;
-using UnityEditor;
 using System.IO;
 
 using fwp.version;
-using UnityEditor.EditorTools;
-using Codice.Client.Common;
-using System.Linq;
 using System.Collections.Generic;
 
 /// <summary>

@@ -7,8 +7,6 @@ using System.IO;
 using System.Diagnostics;
 
 using Debug = UnityEngine.Debug;
-using System.ComponentModel.Composition.Hosting;
-using Codice.CM.Client.Gui;
 
 namespace fwp.buildor.editor
 {
