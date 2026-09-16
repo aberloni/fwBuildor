@@ -18,6 +18,30 @@ namespace fwp.version
 	{
 		public const char separator = '.';
 
+		[System.Serializable]
+		public struct VersionSlot
+		{
+			[Header("version")]
+			public int[] slots; // major, minor, patch
+
+			/// <summary>
+			/// X.Y.Z
+			/// </summary>
+			public string Display
+			{
+				get
+				{
+					string ret = string.Empty;
+					for (int i = 0; i < slots.Length; i++)
+					{
+						if (i > 0 && slots.Length > 1) ret += separator;
+						ret += slots[i];
+					}
+					return ret;
+				}
+			}
+		}
+
 		[Header("version")]
 		[SerializeField] protected int major;
 		[SerializeField] protected int minor;
