@@ -31,10 +31,6 @@ namespace fwp.buildor.editor
 
         public BoduleSymbols Symbols => modules.OfType<BoduleSymbols>().FirstOrDefault();
 
-        [Header("post process")]
-        [Tooltip("remove any folder from buidl matching given pattern(s)")]
-        public string[] clearFolders = new string[0];
-
         [Tooltip("project name used to generate output file")]
         public string build_prefix;
 

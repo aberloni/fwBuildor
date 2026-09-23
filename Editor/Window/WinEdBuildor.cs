@@ -390,10 +390,7 @@ namespace fwp.buildor.editor
 
 			GUILayout.BeginHorizontal(GUILayout.Height(20f));
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_pre_incVersion, "version.incr");
-			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_openFolder, "open folder");
-			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_zip, "zip folder");
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_autorun, "autorun");
-			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_dropVersion, "drop version");
 			GUILayout.EndHorizontal();
 
 			GUILayout.BeginHorizontal();

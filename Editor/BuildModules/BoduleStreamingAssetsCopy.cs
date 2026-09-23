@@ -70,7 +70,7 @@ namespace fwp.buildor
         /// <summary>
         /// Executes the copy. Call this from a build pre-process step or manually from the editor.
         /// </summary>
-        protected override void doApply()
+        protected override void doApply(BuildContext ctx)
         {
             string src = ResolvedSourcePath;
             string dst = ResolvedDestinationPath;

@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace fwp.buildor.editor
 {
     using UnityEditor;
-    
+
     /// <summary>
     ///  ALL DATA contains into those files won't be usable in build
     ///  it's meant to be used as a build flow tool params
@@ -30,9 +30,6 @@ namespace fwp.buildor.editor
 
         public DataVersionInternal versionInternal;     // local iterations
         public DataBuildSettingVersion versionPublish;  // can be null, alternate wat to count versions
-
-        [Tooltip("drop a text file with version number at build/")]
-        public bool dumpVersion;
 
         /// <summary>
         /// filter version
@@ -226,7 +223,8 @@ namespace fwp.buildor.editor
         // windows, osx, ios, ...
         public string getPlatformUid()
         {
-            switch (getPlatformTarget())
+            var tar = getPlatformTarget();
+            switch (tar)
             {
                 case BuildTarget.StandaloneOSX:
                     return "osx";
@@ -247,7 +245,7 @@ namespace fwp.buildor.editor
                 case BuildTarget.NoTarget:
                     return string.Empty;
                 default:
-                    Debug.LogError(getPlatformUid() + " : UID unknown ? or un-supported");
+                    Debug.LogError("platform.target:" + tar + " : UID unknown ? or un-supported");
                     return string.Empty;
             }
         }
@@ -346,7 +344,7 @@ namespace fwp.buildor.editor
         {
             var elmt = new SpecificPathOwner();
             specifics.Add(elmt);
-            Debug.Log("+"+elmt);
+            Debug.Log("+" + elmt);
             return elmt;
         }
 

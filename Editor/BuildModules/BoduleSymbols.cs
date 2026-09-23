@@ -8,7 +8,7 @@ namespace fwp.buildor
     {
         [SerializeField] string[] symbols = new string[0];
 
-        protected override void doApply()
+        protected override void doApply(BuildContext ctx)
         {
             //nothing
         }

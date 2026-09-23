@@ -61,16 +61,6 @@ namespace fwp.buildor.editor
 
         void onSuccess()
         {
-
-            // autorun will inject a flag, no need to do it by hand
-            /*
-            if (_parameters.buildFlags.autorun)
-            {
-                Debug.Log("<color=orange>AUTORUN</color>");
-                WinEdBuildor.winExecute(summary.outputPath); // autorun flag
-            }
-            */
-
             log("<color=green>build.Success</color>");
 
             log("<b>Build finished</b>");
@@ -88,32 +78,14 @@ namespace fwp.buildor.editor
             log("  L size : " + summary.totalSize + " bytes ; " + size + " Mo");
             log("  L path : " + summary.outputPath);
 
-            if (BuildorVars.PostOpenFolder)
+            BuildContext ctx = new(profil, BodulePhase.post, summary);
+
+            profil.build.ApplyModules(ctx); // build.post
+
+            if (BuildorVars.IsDebug)
             {
-                log($"+OPEN FOLDER of build : {summary.outputPath}");
-                openBuildFolder(summary.outputPath); // success.open
+                profil.debug.ApplyModules(ctx);
             }
-
-            if (BuildorVars.PostZip)
-            {
-                log($"+ZIP");
-
-                zipBuildFolder(profil.BuildPath, profil.ZipFullPath); // autozip after build
-            }
-
-            if (BuildorVars.PostAutorun)
-            {
-                log($"+AUTORUN  @{profil.FullPath}");
-                shellOpenFile(profil.FullPath);
-            }
-
-            if (BuildorVars.PostDropVersion)
-            {
-                string p = Path.Combine(profil.BuildPath, "version.txt");
-                log($"+VERSION DROP  @{p}");
-                System.IO.File.WriteAllText(p, profil.VersionFull);
-            }
-
         }
 
         /// <summary>

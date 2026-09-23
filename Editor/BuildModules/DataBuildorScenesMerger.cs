@@ -90,7 +90,7 @@ namespace fwp.buildor
             inject();
         }
 
-        protected override void doApply()
+        protected override void doApply(BuildContext ctx)
         {
             scenesToInject.Clear();
             inject();

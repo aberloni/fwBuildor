@@ -11,13 +11,17 @@ abstract public class ProfilParameter
     virtual public void applyProfil()
     { }
 
-    public void ApplyModules()
+    /// <summary>
+    /// apply all modules matching context phase
+    /// </summary>
+    public void ApplyModules(BuildContext ctx)
     {
         if (modules == null) return;
 
         foreach (var m in modules)
         {
-            m?.Apply();
+            if (m == null || m.Phase != ctx.phase) continue;
+            m.Apply(ctx);
         }
     }
 }

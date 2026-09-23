@@ -3,9 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-using UnityEditor;
-using System.IO;
-
 /// <summary>
 /// this is meant to store an abstract of the version number of the app
 /// is base on each platform format and accessor
@@ -96,13 +93,13 @@ namespace fwp.version
 		{
 			timestamp_build = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-			EditorUtility.SetDirty(this);
+			UnityEditor.EditorUtility.SetDirty(this);
 		}
 
 		void event_incr()
 		{
 			timestamp_incr = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-			EditorUtility.SetDirty(this);
+			UnityEditor.EditorUtility.SetDirty(this);
 		}
 
 		public void incrementMajor()
@@ -140,20 +137,20 @@ namespace fwp.version
 
 		static public DataBuildSettingVersion[] getScriptables(string filter = null)
 		{
-			string[] all = AssetDatabase.FindAssets("t:DataBuildSettingVersion");
+			string[] all = UnityEditor.AssetDatabase.FindAssets("t:DataBuildSettingVersion");
 			if (all.Length <= 0) return null;
 
 			List<DataBuildSettingVersion> ret = new();
 			for (int i = 0; i < all.Length; i++)
 			{
-				string path = AssetDatabase.GUIDToAssetPath(all[i]);
+				string path = UnityEditor.AssetDatabase.GUIDToAssetPath(all[i]);
 
 				if (!string.IsNullOrEmpty(filter))
 				{
 					if (!path.Contains(filter)) continue;
 				}
 
-				UnityEngine.Object obj = AssetDatabase.LoadAssetAtPath(path, typeof(DataBuildSettingVersion));
+				UnityEngine.Object obj = UnityEditor.AssetDatabase.LoadAssetAtPath(path, typeof(DataBuildSettingVersion));
 				DataBuildSettingVersion data = obj as DataBuildSettingVersion;
 				if (data != null) ret.Add(data);
 			}

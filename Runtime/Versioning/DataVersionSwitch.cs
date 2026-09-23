@@ -31,7 +31,7 @@ namespace fwp.version
         {
             get
             {
-                return (minor + separator + patch).ToString();
+                return minor.ToString() + separator + patch.ToString();
             }
         }
 
@@ -56,6 +56,7 @@ namespace fwp.version
             // user visible version
             UnityEditor.PlayerSettings.Switch.displayVersion = version;
 #endif
+
         }
 #endif
 

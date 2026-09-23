@@ -92,16 +92,18 @@ namespace fwp.buildor.editor
             profil.versionInternal?.event_build();
             profil.versionPublish?.event_build();
 
-            profil.build.ApplyModules(); // build.pre
+            BuildContext ctx = new(profil, BodulePhase.pre);
+
+            profil.build.ApplyModules(ctx); // build.pre
 
             if (BuildorVars.IsDebug)
             {
-                foreach (var m in profil.debug.modules) m?.Apply();
+                profil.debug.ApplyModules(ctx);
             }
 
             if (profil.build.merger != null)
             {
-                profil.build.merger.Apply();
+                profil.build.merger.Apply(ctx);
             }
 
             // apply PlayerSettings vars

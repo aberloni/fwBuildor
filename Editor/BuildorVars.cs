@@ -78,13 +78,6 @@ namespace fwp.buildor
             set => EditorPrefs.SetBool(ppref_pre_incVersion, value);
         }
 
-        static public readonly string ppref_post_openFolder = Ppref_prefix + "post_open_folder";
-        static public bool PostOpenFolder
-        {
-            get => EditorPrefs.GetBool(ppref_post_openFolder);
-            set => EditorPrefs.SetBool(ppref_post_openFolder, value);
-        }
-
         static public readonly string ppref_post_use_specific_path = Ppref_prefix + "post_use_specific_path";
         static public bool PostUseSpecificPath
         {
@@ -92,25 +85,11 @@ namespace fwp.buildor
             set => EditorPrefs.SetBool(ppref_post_use_specific_path, value);
         }
 
-        static public readonly string ppref_post_zip = Ppref_prefix + "post_zip";
-        static public bool PostZip
-        {
-            get => EditorPrefs.GetBool(ppref_post_zip);
-            set => EditorPrefs.SetBool(ppref_post_zip, value);
-        }
-
         static public readonly string ppref_post_autorun = Ppref_prefix + "ppref_post_autorun";
         static public bool PostAutorun
         {
             get => EditorPrefs.GetBool(ppref_post_autorun);
             set => EditorPrefs.SetBool(ppref_post_autorun, value);
-        }
-
-        static public readonly string ppref_post_dropVersion = Ppref_prefix + "ppref_post_dropVersion";
-        static public bool PostDropVersion
-        {
-            get => EditorPrefs.GetBool(ppref_post_dropVersion);
-            set => EditorPrefs.SetBool(ppref_post_dropVersion, value);
         }
 
         // modifiers
