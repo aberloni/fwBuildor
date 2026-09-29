@@ -163,7 +163,7 @@ namespace fwp.buildor.editor
 
 			// profil.build symbols
 			HelperGuiFields.drawField("symbols.build", p.build.Symbols?.Symbols);
-			HelperGuiFields.drawField("symbols.debug", p.debug.Symbols?.Symbols);
+			if (p.Level != null) HelperGuiFields.drawField("symbols." + p.Level.GetUid(), p.Level.Symbols?.Symbols);
 
 			GUILayout.Space(10f);
 
@@ -205,10 +205,12 @@ namespace fwp.buildor.editor
 			GUILayout.Label("modules.build");
 			drawModules(aProfil.build.modules);
 
-			if (BuildorVars.IsDebug)
+			// release or debug
+			var level = aProfil.Level;
+			if (level != null)
 			{
-				GUILayout.Label("modules.debug");
-				drawModules(aProfil.debug.modules);
+				GUILayout.Label("modules." + level.GetUid());
+				drawModules(level.modules);
 			}
 		}
 
@@ -390,6 +392,7 @@ namespace fwp.buildor.editor
 
 			GUILayout.BeginHorizontal(GUILayout.Height(20f));
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_pre_incVersion, "version.incr");
+			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_openFolder, "open folder");
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_autorun, "autorun");
 			GUILayout.EndHorizontal();
 

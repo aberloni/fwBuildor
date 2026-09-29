@@ -81,10 +81,13 @@ namespace fwp.buildor.editor
             BuildContext ctx = new(profil, BodulePhase.post, summary);
 
             profil.build.ApplyModules(ctx); // build.post
+            profil.Level?.ApplyModules(ctx); // release.post or debug.post
 
-            if (BuildorVars.IsDebug)
+            // window toggle, same as BodulePostOpenFolder (will open twice if both are used)
+            if (BuildorVars.PostOpenFolder)
             {
-                profil.debug.ApplyModules(ctx);
+                log($"+OPEN FOLDER of build : {summary.outputPath}");
+                openBuildFolder(summary.outputPath);
             }
         }
 

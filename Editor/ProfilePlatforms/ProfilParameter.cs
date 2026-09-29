@@ -1,3 +1,4 @@
+using System.Linq;
 using fwp.buildor;
 using UnityEngine;
 
@@ -7,6 +8,10 @@ abstract public class ProfilParameter
 
     public BuildModule[] modules = new BuildModule[0];
 
+    /// <summary>
+    /// first symbols bodule of modules (if any)
+    /// </summary>
+    public BoduleSymbols Symbols => modules?.OfType<BoduleSymbols>().FirstOrDefault();
 
     virtual public void applyProfil()
     { }

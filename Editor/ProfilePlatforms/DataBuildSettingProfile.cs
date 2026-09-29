@@ -74,8 +74,14 @@ namespace fwp.buildor.editor
 
         // exe name is located in BUILD scriptable
 
-        public ProfilBuildParameters build;
-        public ProfilDebugParameters debug;
+        public ProfilBuildParameters build;     // all levels
+        public ProfilReleaseParameters release; // release level only
+        public ProfilDebugParameters debug;     // debug level only
+
+        /// <summary>
+        /// parameters of active debug level : release or debug
+        /// </summary>
+        public ProfilParameter Level => BuildorVars.IsDebug ? debug : release;
 
         public string Symbols
         {
@@ -101,14 +107,11 @@ namespace fwp.buildor.editor
                 // logs by debug level
                 // if (Logs != null) ret += BuildorHelpers.formatSymbols(Logs.symbolsVerbose);
 
-                if (BuildorVars.IsDebug)
-                {
-                    ret += "debug;";
+                if (BuildorVars.IsDebug) ret += "debug;";
 
-                    // debug.symbols (if any)
-                    var s = debug.Symbols;
-                    if (s != null) ret += s.Symbols;
-                }
+                // release.symbols or debug.symbols (if any)
+                var ls = Level?.Symbols;
+                if (ls != null) ret += ls.Symbols;
 
                 return ret;
             }
@@ -375,10 +378,11 @@ namespace fwp.buildor.editor
                 }
             }
 
-            if (BuildorVars.IsDebug && debug != null && debug.modules.Length > 0)
+            var level = Level;
+            if (level != null && level.modules.Length > 0)
             {
-                ret += "\n + modules.debug";
-                foreach (var mod in debug.modules)
+                ret += "\n + modules." + level.GetUid();
+                foreach (var mod in level.modules)
                 {
                     if (mod == null) continue;
                     ret += "\n + " + mod.strOneLine();

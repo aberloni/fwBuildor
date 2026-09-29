@@ -78,6 +78,13 @@ namespace fwp.buildor
             set => EditorPrefs.SetBool(ppref_pre_incVersion, value);
         }
 
+        static public readonly string ppref_post_openFolder = Ppref_prefix + "post_open_folder";
+        static public bool PostOpenFolder
+        {
+            get => EditorPrefs.GetBool(ppref_post_openFolder);
+            set => EditorPrefs.SetBool(ppref_post_openFolder, value);
+        }
+
         static public readonly string ppref_post_use_specific_path = Ppref_prefix + "post_use_specific_path";
         static public bool PostUseSpecificPath
         {

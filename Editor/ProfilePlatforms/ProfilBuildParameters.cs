@@ -29,8 +29,6 @@ namespace fwp.buildor.editor
 
         public DataBuildorScenesMerger merger;
 
-        public BoduleSymbols Symbols => modules.OfType<BoduleSymbols>().FirstOrDefault();
-
         [Tooltip("project name used to generate output file")]
         public string build_prefix;
 

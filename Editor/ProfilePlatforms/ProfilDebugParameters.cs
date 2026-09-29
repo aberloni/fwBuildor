@@ -31,8 +31,6 @@ namespace fwp.buildor.editor
 
         public ProfilingLevel debugProfiling = ProfilingLevel.none;
 
-        public BoduleSymbols Symbols => modules.OfType<BoduleSymbols>().FirstOrDefault();
-
         void clear()
         {
             EditorUserBuildSettings.development = false;
