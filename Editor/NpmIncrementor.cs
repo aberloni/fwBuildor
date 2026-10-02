@@ -26,15 +26,11 @@ namespace fwp.buildor.editor
         [MenuItem(_menu + "PATCH++", false, 2002)] static void miPatch() => incrementSelection(2);
 
         // bump & commit, +20 priority : separator
-        [MenuItem(_menu + "MAJOR++ & commit", false, 2020)] static void miMajorCommit() => incrementSelection(0, true);
-        [MenuItem(_menu + "MINOR++ & commit", false, 2021)] static void miMinorCommit() => incrementSelection(1, true);
         [MenuItem(_menu + "PATCH++ & commit", false, 2022)] static void miPatchCommit() => incrementSelection(2, true);
 
         [MenuItem(_menu + "MAJOR++", true)]
         [MenuItem(_menu + "MINOR++", true)]
         [MenuItem(_menu + "PATCH++", true)]
-        [MenuItem(_menu + "MAJOR++ & commit", true)]
-        [MenuItem(_menu + "MINOR++ & commit", true)]
         [MenuItem(_menu + "PATCH++ & commit", true)]
         static bool miValidate() => getSelectedPackages().Count > 0;
 
@@ -45,15 +41,11 @@ namespace fwp.buildor.editor
         [MenuItem(_menuBuildor + "MINOR++", false, 201)] static void miwMinor() => incrementPackages(getWindowPackages(), 1);
         [MenuItem(_menuBuildor + "PATCH++", false, 202)] static void miwPatch() => incrementPackages(getWindowPackages(), 2);
 
-        [MenuItem(_menuBuildor + "MAJOR++ & commit", false, 220)] static void miwMajorCommit() => incrementPackages(getWindowPackages(), 0, true);
-        [MenuItem(_menuBuildor + "MINOR++ & commit", false, 221)] static void miwMinorCommit() => incrementPackages(getWindowPackages(), 1, true);
         [MenuItem(_menuBuildor + "PATCH++ & commit", false, 222)] static void miwPatchCommit() => incrementPackages(getWindowPackages(), 2, true);
 
         [MenuItem(_menuBuildor + "MAJOR++", true)]
         [MenuItem(_menuBuildor + "MINOR++", true)]
         [MenuItem(_menuBuildor + "PATCH++", true)]
-        [MenuItem(_menuBuildor + "MAJOR++ & commit", true)]
-        [MenuItem(_menuBuildor + "MINOR++ & commit", true)]
         [MenuItem(_menuBuildor + "PATCH++ & commit", true)]
         static bool miwValidate() => getWindowPackages().Count > 0;
 

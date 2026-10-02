@@ -232,6 +232,6 @@ two layers, so that multiple platforms can share the same version
 - also in `Window/Buildor/package version/` : selected package(s), or buildor package itself if nothing of a package is selected
 - embedded or local (`file:`) packages only
 - rewrites only `"version"` value (X.Y.Z), refreshes package manager, selects updated package.json
-- `* & commit` : save assets, bump, then per package, in package folder : `git add -A .`, `git commit -m "X.Y.Z"` (new version)
+- `PATCH++ & commit` : save assets, bump patch, then per package, in package folder : `git add -A .`, `git commit -m "X.Y.Z"` (new version)
   - `HelperGit`, git in PATH, no commit if add fails
   - `.` : package folder only (own repo : whole repo, embedded in project repo : package only)
