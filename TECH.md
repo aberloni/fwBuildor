@@ -213,6 +213,9 @@ two layers, so that multiple platforms can share the same version
 - `SwitchNmeta.checkSdk()` is also the switch build requirement (preprocess)
 - profile `versionInternal` & `versionPublish` can share the same `DataVersion` : "version.incr" increments it once
 - menus `Version/Internal/*` & `Version/Publish/*` : increment active profile versions
+- `Window/Buildor/version (win)` (`WinEdVersion`), refreshed on focus
+  - active profile (bridge, active build target, publish & sdk) : its `versionInternal` & `versionPublish`, MAJOR / MINOR / FIX buttons
+  - no bridge or no active profile : lists all `DataBuildSettingVersion` assets, radio selector, focused one gets the buttons
 - `DataVersionSwitch` : `release` field (rom 0, patches 1,2,3...), `InjectVersionToRom` to patch .nmeta
 
 ## symbols

@@ -21,19 +21,23 @@ namespace fwp.buildor.editor
         [Header("console")]
         public DataBuildSettingProfile[] ninSwitch;
 
-        public DataBuildSettingProfile getPlatformProfil(TargetPublish tarState, TargetSdks sdk)
+        /// <summary>
+        /// profil of active build target matching publish & sdk
+        /// verbose : warning when none
+        /// </summary>
+        public DataBuildSettingProfile getPlatformProfil(TargetPublish tarState, TargetSdks sdk, bool verbose = true)
         {
             var target = EditorUserBuildSettings.activeBuildTarget;
 
             var profils = getPlatformProfils(target);
             if (profils == null)
             {
-                Debug.LogWarning(" ? no profil list for active build target : " + target);
+                if (verbose) Debug.LogWarning(" ? no profil list for active build target : " + target);
                 return null;
             }
 
             var ret = profils.FirstOrDefault(x => x != null && x.Is(tarState, sdk));
-            if (ret == null) Debug.LogWarning("no profil possible for " + tarState + " & " + sdk);
+            if (ret == null && verbose) Debug.LogWarning("no profil possible for " + tarState + " & " + sdk);
             return ret;
         }
 
