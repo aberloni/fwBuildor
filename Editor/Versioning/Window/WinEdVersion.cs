@@ -9,7 +9,7 @@ namespace fwp.version.editor
 
 	/// <summary>
 	/// versions of active profile (bridge, active build target, publish & sdk)
-	/// no bridge or no active profile : all version scriptables, focused one has increment controls
+	/// no bridge or no active profile : all DataVersion, focused one has increment controls
 	/// </summary>
 	public class WinEdVersion : UnityEditor.EditorWindow
 	{
@@ -30,8 +30,8 @@ namespace fwp.version.editor
 		/// </summary>
 		string fallbackReason;
 
-		DataBuildSettingVersion[] versions;
-		[SerializeField] DataBuildSettingVersion focused;
+		DataVersion[] versions;
+		[SerializeField] DataVersion focused;
 
 		Vector2 scroll;
 
@@ -63,8 +63,8 @@ namespace fwp.version.editor
 
 			if (profile != null) return;
 
-			versions = DataBuildSettingVersion.getScriptables();
-			if (versions == null || versions.Length <= 0) return;
+			versions = System.Array.ConvertAll(BuildorHelpers.getScriptableObjectsInEditor(typeof(DataVersion)), x => (DataVersion)x);
+			if (versions.Length <= 0) return;
 
 			if (focused == null || System.Array.IndexOf(versions, focused) < 0) focused = versions[0];
 		}
@@ -99,11 +99,11 @@ namespace fwp.version.editor
 
 		void drawAll()
 		{
-			EditorGUILayout.HelpBox(fallbackReason + "\nlisting all versions", MessageType.Info);
+			EditorGUILayout.HelpBox(fallbackReason + "\nlisting all DataVersion, increments are not applied to PlayerSettings", MessageType.Info);
 
 			if (versions == null || versions.Length <= 0)
 			{
-				GUILayout.Label("no version scriptable in project");
+				GUILayout.Label("no DataVersion in project");
 				return;
 			}
 
@@ -121,7 +121,7 @@ namespace fwp.version.editor
 
 			GUILayout.Space(10f);
 
-			if (focused != null) subVersion.drawVersion(focused);
+			if (focused != null) subVersion.drawData(focused);
 		}
 
 	}

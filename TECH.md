@@ -215,7 +215,7 @@ two layers, so that multiple platforms can share the same version
 - menus `Version/Internal/*` & `Version/Publish/*` : increment active profile versions
 - `Window/Buildor/version (win)` (`WinEdVersion`), refreshed on focus
   - active profile (bridge, active build target, publish & sdk) : its `versionInternal` & `versionPublish`, MAJOR / MINOR / FIX buttons
-  - no bridge or no active profile : lists all `DataBuildSettingVersion` assets, radio selector, focused one gets the buttons
+  - no bridge or no active profile : lists all `DataVersion` assets, radio selector, focused one gets the buttons (not applied to PlayerSettings)
 - `DataVersionSwitch` : `release` field (rom 0, patches 1,2,3...), `InjectVersionToRom` to patch .nmeta
 
 ## symbols

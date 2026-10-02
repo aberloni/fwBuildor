@@ -52,9 +52,38 @@ namespace fwp.version.editor
             }
             GUILayout.EndHorizontal();
 
+            drawTimestamps(version.Data);
+        }
+
+        /// <summary>
+        /// shared X.Y.Z, increments are not applied to PlayerSettings (done by platform versions)
+        /// </summary>
+        public void drawData(DataVersion data)
+        {
+            if (data == null) return;
+
             GUILayout.BeginHorizontal();
-            GUILayout.Label("last incremented: " + version.Data.timestamp_incr);
-            GUILayout.Label("last built: " + version.Data.timestamp_build);
+
+            GUI.enabled = false;
+            EditorGUILayout.ObjectField(data, typeof(DataVersion), true);
+            GUI.enabled = true;
+
+            GUILayout.Label(data.getFormated(), bS);
+
+            if (GUILayout.Button("MAJOR", bS)) data.incrementMajor();
+            if (GUILayout.Button("MINOR", bSM)) data.incrementMinor();
+            if (GUILayout.Button("FIX", bM)) data.incrementFix();
+
+            GUILayout.EndHorizontal();
+
+            drawTimestamps(data);
+        }
+
+        void drawTimestamps(DataVersion data)
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("last incremented: " + data.timestamp_incr);
+            GUILayout.Label("last built: " + data.timestamp_build);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10f);
