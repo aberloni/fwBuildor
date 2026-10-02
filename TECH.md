@@ -7,6 +7,7 @@
   - enums (`TargetPublish`, `TargetDebug`, `TargetSdks`, `TargetFeatures`), configs (`ConfigDemo`), log levels
 - `Editor/` : `ab.fwp.buildor.editor`, editor only
   - everything related to profiles, building, bodules, symbols, windows
+  - optional : `com.unity.addressables` (>= 1.20), referenced by name, `BUILDOR_ADDRESSABLES` version define, compiles without it
 
 ## folders
 
@@ -22,6 +23,7 @@
 | `Editor/Window/` | buildor window (`WinEdBuildor`) & sub sections |
 | `Editor/Systems/` | specific paths per machine/user, system detection |
 | `Editor/NpmIncrementor.cs` | package.json version incrementor |
+| `Editor/HelperGit.cs` | git calls in a given folder (add all & commit) |
 
 ## profile selection
 
@@ -91,6 +93,7 @@ a Bodule (`BuildModule`) is a scriptable object action executed pre or post buil
 - post bodules are only executed after a successful build
 - can be applied manually (context menu "apply" or buildor window), with a context built from active profile
 - `askBeforeApply()` : override to show a confirm dialog before applying
+- a pre bodule can cancel the build by throwing (ie: `BuildFailedException`), export folder is already cleared & version already incremented at that point
 
 ### BuildContext
 
@@ -106,6 +109,7 @@ a Bodule (`BuildModule`) is a scriptable object action executed pre or post buil
 | `BoduleSymbols` | pre | list of scripting define symbols, gathered by `profile.Symbols` (no action) |
 | `BoduleStreamingAssetsCopy` | pre | copy an external folder into StreamingAssets/, extension & path filters |
 | `DataBuildorScenesMerger` | pre | replace build settings scenes with scenes of its `DataBuildorScenesFilter` sets |
+| `BoduleAddressables` | pre | addressables content : purge build cache, clean, build (see addressables) |
 | `BoduleDoNoShip` | post | remove unity folders not meant to ship (`*_DoNotShip`, `*_ButDontShipItWithYourGame`), root of export folder only, can plug a `BodulePostClearFolders` |
 | `BodulePostClearFolders` | post | remove specific folders, paths relative to export folder |
 | `BodulePostClearFiles` | post | remove specific files at root of export folder (file names only, no sub path) |
@@ -140,6 +144,26 @@ same rules as clear folders for the folder part, then a file name or pattern (`*
 | `*.pdb` | all .pdb files at root of export folder |
 
 skipped : wildcards in folder part, path ending with `/` (folder), catch-all pattern at root (`*`, `*.*`)
+
+### addressables
+
+`BoduleAddressables`, needs `com.unity.addressables`, logs a warning and does nothing without it
+
+executed in order, each step toggled
+
+| step | what |
+|---|---|
+| `purgeBuildCache` | delete scriptable build pipeline cache (`Library/BuildCache`), next content build is a full rebuild |
+| `cleanContent` | delete content built by all addressables builders |
+| `rebuildAddressable` | mark `saveBeforeBuild` assets dirty, save assets, build content of active build target |
+
+- no "content is outdated" check : content build is incremental (scriptable build pipeline cache), unchanged assets are not rebuilt
+  - recommended : `rebuildAddressable` only, `purgeBuildCache` / `cleanContent` to force a full rebuild (ie: release, broken cache)
+- content build failure : throws, build is cancelled
+- addressables settings "Build Addressables on Player Build" (or its preference value, default on) : unity builds content during `BuildPlayer`
+  - during a build, the bodule skips its own content build (no double build), clean steps still apply
+  - manual apply : always builds
+- content built by the bodule happens before the profile is applied to PlayerSettings (symbols), let unity build content with player if symbols change serialized data
 
 ### writing a bodule
 
@@ -180,6 +204,13 @@ two layers, so that multiple platforms can share the same version
 | `DataVersionWindows` / `DataVersionOsx` | `bundleVersion` |
 | `DataVersionSwitch` | `bundleVersion`, before u6 : `Switch.releaseVersion` (`release`), `Switch.displayVersion` |
 
+- `DataVersionSwitch` inspector : RELEASE++ button, increments `release`, adds an entry (release, timestamp) to `release_history`, applies to PlayerSettings
+- `DataVersionSwitch` inspector & `Window/Buildor/nmeta version injector (win)` share the same nmeta section (`SwitchNmeta`)
+  - .nmeta file path (EditorPrefs, per machine & project)
+  - nmeta `ReleaseVersion` / `DisplayVersion` vs switch version (`release` / X.Y.Z), mismatch in red
+  - inject version into nmeta, open file, open Authoring tool (`NINTENDO_SDK_ROOT/Tools/Authoring*.exe`)
+  - `NINTENDO_SDK_ROOT` status, button to open system env vars when invalid
+- `SwitchNmeta.checkSdk()` is also the switch build requirement (preprocess)
 - profile `versionInternal` & `versionPublish` can share the same `DataVersion` : "version.incr" increments it once
 - menus `Version/Internal/*` & `Version/Publish/*` : increment active profile versions
 - `DataVersionSwitch` : `release` field (rom 0, patches 1,2,3...), `InjectVersionToRom` to patch .nmeta
@@ -198,3 +229,6 @@ two layers, so that multiple platforms can share the same version
 - also in `Window/Buildor/package version/` : selected package(s), or buildor package itself if nothing of a package is selected
 - embedded or local (`file:`) packages only
 - rewrites only `"version"` value (X.Y.Z), refreshes package manager, selects updated package.json
+- `* & commit` : save assets, bump, then per package, in package folder : `git add -A .`, `git commit -m "X.Y.Z"` (new version)
+  - `HelperGit`, git in PATH, no commit if add fails
+  - `.` : package folder only (own repo : whole repo, embedded in project repo : package only)

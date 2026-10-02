@@ -76,52 +76,9 @@ namespace fwp.buildor.editor
             switch (EditorUserBuildSettings.activeBuildTarget)
             {
                 case BuildTarget.Switch:
-                    return checkNintendoSdk();
+                    return fwp.version.SwitchNmeta.checkSdk(); // NINTENDO_SDK_ROOT set & has Tools/
             }
 
-            return true;
-        }
-
-        const string env_nintendo_sdk = "NINTENDO_SDK_ROOT";
-
-        /// <summary>
-        /// NINTENDO_SDK_ROOT env var is set
-        /// and points to a folder containing Tools/
-        /// </summary>
-        static public bool checkNintendoSdk()
-        {
-            // unity process env : what the switch build pipeline will see
-            string root = Environment.GetEnvironmentVariable(env_nintendo_sdk);
-
-            if (string.IsNullOrEmpty(root))
-            {
-                Debug.LogError(env_nintendo_sdk + " is not set");
-
-                // set after unity was launched ?
-                string user = Environment.GetEnvironmentVariable(env_nintendo_sdk, EnvironmentVariableTarget.User);
-                string machine = Environment.GetEnvironmentVariable(env_nintendo_sdk, EnvironmentVariableTarget.Machine);
-                if (!string.IsNullOrEmpty(user) || !string.IsNullOrEmpty(machine))
-                {
-                    Debug.LogError(env_nintendo_sdk + " exists in system env vars : restart unity (and hub) to catch it");
-                }
-
-                return false;
-            }
-
-            if (!Directory.Exists(root))
-            {
-                Debug.LogError(env_nintendo_sdk + " folder doesn't exist @" + root);
-                return false;
-            }
-
-            string tools = Path.Combine(root, "Tools");
-            if (!Directory.Exists(tools))
-            {
-                Debug.LogError(env_nintendo_sdk + " has no Tools/ folder, wrong sdk root ? @" + root);
-                return false;
-            }
-
-            ulog(env_nintendo_sdk + " ok @" + root);
             return true;
         }
 

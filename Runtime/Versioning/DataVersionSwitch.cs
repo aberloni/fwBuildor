@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.IO;
+using System.Collections.Generic;
 
 namespace fwp.version
 {
@@ -26,6 +27,23 @@ namespace fwp.version
         [SerializeField] protected int release = 0;
 
         public int VersionRelease => release;
+
+        [System.Serializable]
+        public struct ReleaseStamp
+        {
+            public int release;
+            public string timestamp;
+
+            public override string ToString() => release + " @ " + timestamp;
+        }
+
+        /// <summary>
+        /// one entry per release increment, oldest first
+        /// </summary>
+        public List<ReleaseStamp> release_history = new();
+
+        public bool HasReleaseHistory => release_history != null && release_history.Count > 0;
+        public ReleaseStamp LastReleaseStamp => release_history[release_history.Count - 1];
 
         public string VersionMinorPatch
         {
@@ -58,6 +76,25 @@ namespace fwp.version
             UnityEditor.PlayerSettings.Switch.displayVersion = Version;
 #endif
 
+        }
+
+        /// <summary>
+        /// next release (rom 0 → patch 1, 2, ...)
+        /// </summary>
+        public void incrementRelease()
+        {
+            release++;
+
+            release_history ??= new();
+            release_history.Add(new ReleaseStamp()
+            {
+                release = release,
+                timestamp = System.DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"),
+            });
+
+            UnityEditor.EditorUtility.SetDirty(this);
+
+            applyVersionToEditor();
         }
 #endif
 
@@ -92,5 +129,34 @@ namespace fwp.version
         }
 
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// shared version summary (base) + release increment
+    /// </summary>
+    [UnityEditor.CustomEditor(typeof(DataVersionSwitch))]
+    public class DataVersionSwitchEditor : DataBuildSettingVersionEditor
+    {
+        public override void OnInspectorGUI()
+        {
+            var v = (DataVersionSwitch)target;
+
+            GUILayout.BeginHorizontal();
+            string last = v.HasReleaseHistory ? v.LastReleaseStamp.timestamp : "-never-";
+            GUILayout.Label("release : " + v.VersionRelease + " (last incr : " + last + ")");
+            if (GUILayout.Button("RELEASE++", GUILayout.Width(100f)))
+            {
+                UnityEditor.Undo.RecordObject(v, "RELEASE++");
+                v.incrementRelease();
+            }
+            GUILayout.EndHorizontal();
+
+            base.OnInspectorGUI();
+
+            GUILayout.Space(10f);
+            SwitchNmeta.drawGUI(v);
+        }
+    }
+#endif
 
 }
