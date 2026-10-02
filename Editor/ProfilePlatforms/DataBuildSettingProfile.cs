@@ -360,6 +360,7 @@ namespace fwp.buildor.editor
 
             if (versionInternal != null) ret += "\n + v.internal    " + versionInternal;
             if (versionPublish != null) ret += "\n + v.publish  " + versionPublish;
+            ret += "\n + v.player    " + PlayerSettings.bundleVersion;
 
             ret += "\n + path.output    " + FullPath;
 

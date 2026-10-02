@@ -56,8 +56,9 @@ namespace fwp.buildor
         /// <summary>
         /// absolute path of relative folder
         /// null if empty or outside of build folder
+        /// root : full path, no trailing separator
         /// </summary>
-        string solvePath(string root, string relative)
+        static public string solvePath(string root, string relative)
         {
             if (string.IsNullOrWhiteSpace(relative)) return null;
 

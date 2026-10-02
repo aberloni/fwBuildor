@@ -3,7 +3,7 @@
 ## assemblies
 
 - `Runtime/` : `ab.fwp.buildor`, all platforms
-  - app version data (`DataBuildSettingVersion` & per platform), `VersionManager` (display in app)
+  - app version data (`DataVersion`, `DataBuildSettingVersion` & per platform), `VersionManager` (display in app)
   - enums (`TargetPublish`, `TargetDebug`, `TargetSdks`, `TargetFeatures`), configs (`ConfigDemo`), log levels
 - `Editor/` : `ab.fwp.buildor.editor`, editor only
   - everything related to profiles, building, bodules, symbols, windows
@@ -12,7 +12,7 @@
 
 | folder | content |
 |---|---|
-| `Runtime/Versioning/` | `DataBuildSettingVersion` (X.Y.Z + build number) & platform variants (Internal, Windows, Osx, Switch) |
+| `Runtime/Versioning/` | `DataVersion` (X.Y.Z + build number), `DataBuildSettingVersion` & platform variants (Internal, Windows, Osx, Switch) |
 | `Runtime/Configs/` | `ConfigBase`, `ConfigDemo` : runtime configs stored in Resources/buildor/ |
 | `Editor/ProfilePlatforms/` | `DataBuildSettingProfile` & per platform profiles, `ProfilBuildParameters`, `ProfilDebugParameters` |
 | `Editor/Building/` | `BuildExecutor`, `BuildPreprocess`, `BuildPostprocess`, `BuildProcess` (editor coroutine base) |
@@ -31,6 +31,8 @@
   - `TargetPublish` (release, demo, festival, custom) & `TargetSdks` (none, STEAM), set in buildor window
 - `TargetDebug` (release, debug) is not part of selection : it picks `release` or `debug` parameters of the active profile (`profile.Level`)
 - window selections are stored in EditorPrefs, per project & per platform (`BuildorVars`)
+- no matching profile : window "+profil" button creates one (platform type, publish & sdk set), saved next to other profiles of the same platform (or next to bridge), named `[platform]_[publish](_[sdk])`, added to bridge
+- opening buildor window (menu) applies active profile to PlayerSettings (`applyProfilToEditor`), not on domain reload, not in play mode or while building
 
 ## profile content
 
@@ -107,12 +109,13 @@ a Bodule (`BuildModule`) is a scriptable object action executed pre or post buil
 | `BoduleDoNoShip` | post | remove unity folders not meant to ship (`*_DoNotShip`, `*_ButDontShipItWithYourGame`), root of export folder only, can plug a `BodulePostClearFolders` |
 | `BodulePostClearFolders` | post | remove specific folders, paths relative to export folder |
 | `BodulePostClearFiles` | post | remove specific files at root of export folder (file names only, no sub path) |
+| `BodulePostClearFilePaths` | post | remove specific files, paths relative to export folder, `*` `?` allowed in file name (ie: `MyGame_Data/StreamingAssets/*.log`) |
 | `BoduleSteam` | post | remove `steam_appid.txt` from root of export folder, if present |
 | `BodulePostDropVersion` | post | write version file (default `version.txt`) in export folder |
 | `BodulePostZip` | post | zip export folder next to it |
 | `BodulePostOpenFolder` | post | open export folder |
 
-recommended post order : do not ship, clear folders, clear files, steam, drop version, zip, open folder
+recommended post order : do not ship, clear folders, clear files, clear file paths, steam, drop version, zip, open folder
 
 ### clear folders paths
 
@@ -124,6 +127,19 @@ relative to export folder, exact folder, `/` or `\`
 | osx | `MyGame.app/Contents/Resources/Data/StreamingAssets/` |
 
 skipped : empty, absolute, outside export folder (`../`), export folder itself
+
+### clear file paths
+
+same rules as clear folders for the folder part, then a file name or pattern (`*`, `?`) within that single folder (not recursive)
+
+| path | removes |
+|---|---|
+| `MyGame_Data/StreamingAssets/config.json` | that file |
+| `MyGame_Data/StreamingAssets/logs/*.log` | all .log files of `logs/` |
+| `MyGame_Data/StreamingAssets/test_??.json` | `test_01.json`, `test_ab.json`... |
+| `*.pdb` | all .pdb files at root of export folder |
+
+skipped : wildcards in folder part, path ending with `/` (folder), catch-all pattern at root (`*`, `*.*`)
 
 ### writing a bodule
 
@@ -148,8 +164,23 @@ public class BoduleMine : BuildModule
 
 ## app version
 
-- `DataBuildSettingVersion` : major.minor.patch + build number, timestamps (last increment, last build)
-- `applyVersionToEditor()` : per platform injection into PlayerSettings
+two layers, so that multiple platforms can share the same version
+
+- `DataVersion` : X.Y.Z + build number, timestamps (last increment, last build), platform agnostic
+  - inspector : MAJOR++ / MINOR++ / PATCH++ buttons (+ build number, refresh increment timestamp), not applied to PlayerSettings
+- `DataBuildSettingVersion` : platform version (`DataVersion[Platform]`), references a `DataVersion` (`Data`)
+  - increments are forwarded to its `DataVersion`, then applied to PlayerSettings
+  - `applyVersionToEditor()` : per platform injection into PlayerSettings
+  - subclasses add platform specific content (ie: switch `release`)
+  - inspector shows the shared version on top
+
+| platform version | PlayerSettings |
+|---|---|
+| `DataVersionInternal` | `bundleVersion`, `iOS.buildNumber`, `Android.bundleVersionCode` (build number) |
+| `DataVersionWindows` / `DataVersionOsx` | `bundleVersion` |
+| `DataVersionSwitch` | `bundleVersion`, before u6 : `Switch.releaseVersion` (`release`), `Switch.displayVersion` |
+
+- profile `versionInternal` & `versionPublish` can share the same `DataVersion` : "version.incr" increments it once
 - menus `Version/Internal/*` & `Version/Publish/*` : increment active profile versions
 - `DataVersionSwitch` : `release` field (rom 0, patches 1,2,3...), `InjectVersionToRom` to patch .nmeta
 
@@ -164,5 +195,6 @@ public class BoduleMine : BuildModule
 `NpmIncrementor` : package.json version, unrelated to app version
 
 - project window, right click any asset/folder of a package > Package version > MAJOR++ / MINOR++ / PATCH++
+- also in `Window/Buildor/package version/` : selected package(s), or buildor package itself if nothing of a package is selected
 - embedded or local (`file:`) packages only
 - rewrites only `"version"` value (X.Y.Z), refreshes package manager, selects updated package.json

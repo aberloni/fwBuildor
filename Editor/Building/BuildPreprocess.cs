@@ -150,7 +150,11 @@ namespace fwp.buildor.editor
             {
                 log("+inc.version");
                 profil.versionInternal?.incrementFix();
-                profil.versionPublish?.incrementFix();
+
+                // shared DataVersion : don't increment twice
+                bool shared = profil.versionInternal != null && profil.versionPublish != null
+                    && profil.versionInternal.Data == profil.versionPublish.Data;
+                if (!shared) profil.versionPublish?.incrementFix();
             }
 
             profil.versionInternal?.event_build();

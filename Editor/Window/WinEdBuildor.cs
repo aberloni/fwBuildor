@@ -27,6 +27,24 @@ namespace fwp.buildor.editor
 		{
 			var win = EditorWindow.GetWindow(typeof(WinEdBuildor));
 			win.titleContent = new("Buildor");
+
+			applyActiveProfil();
+		}
+
+		/// <summary>
+		/// on window opening (menu) : sync player settings with active profil
+		/// not on OnEnable, would apply on each domain reload
+		/// </summary>
+		static void applyActiveProfil()
+		{
+			if (EditorApplication.isPlayingOrWillChangePlaymode) return;
+			if (BuildExecutor.IsBusy) return;
+
+			var profil = BuildorVars.Profile;
+			if (profil == null) return;
+
+			log("open : apply active profil " + profil.name, profil);
+			profil.applyProfilToEditor();
 		}
 
 		Vector2 _scroll;
@@ -131,6 +149,26 @@ namespace fwp.buildor.editor
 				{
 					Selection.activeObject = BuildorHelpers.GetBridge();
 					if (Selection.activeObject == null) Debug.LogError("no bridge ?");
+				}
+
+				// create profil matching platform, publish & sdk
+				var target = EditorUserBuildSettings.activeBuildTarget;
+				if (DataBuildSettingsBridge.getProfilType(target) != null
+					&& GUILayout.Button("+profil " + target + " " + BuildorVars.TargetPublish + " " + BuildorVars.TargetSdk))
+				{
+					var bridge = BuildorHelpers.GetBridge();
+					if (bridge == null) Debug.LogError("no bridge ?");
+					else
+					{
+						var created = bridge.createPlatformProfil(target, BuildorVars.TargetPublish, BuildorVars.TargetSdk);
+						onProfilRefresh();
+						if (created != null)
+						{
+							Selection.activeObject = created;
+							EditorGUIUtility.PingObject(created);
+						}
+						GUIUtility.ExitGUI(); // active profil changed mid-draw
+					}
 				}
 				GUILayout.EndHorizontal();
 			}

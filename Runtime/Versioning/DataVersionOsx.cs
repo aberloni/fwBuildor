@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace fwp.version
 {
-    [CreateAssetMenu(menuName = "buildor/version/new OSX", order = 100)]
+    [CreateAssetMenu(menuName = "buildor/version/+OSX", order = 100)]
     public class DataVersionOsx : DataBuildSettingVersion
     {
         

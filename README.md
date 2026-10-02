@@ -9,6 +9,9 @@ see [TECH.md](TECH.md) for tech layout
 meant to store app versioning numbers
 and give tools to manage it
 
+`DataVersion` : X.Y.Z + build number, can be shared by multiple platforms
+`DataVersion[Platform]` : how a `DataVersion` applies to a platform
+
 # build
 
 buildor window : `Window/Buildor/buildor (win)`

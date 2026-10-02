@@ -22,9 +22,18 @@ namespace fwp.version.editor
 
             GUI.enabled = false;
             EditorGUILayout.ObjectField(version, typeof(DataBuildSettingVersion), true);
+            EditorGUILayout.ObjectField(version.Data, typeof(DataVersion), true); // shared X.Y.Z
             GUI.enabled = true;
 
-            if (version != null && controls)
+            if (!version.HasData)
+            {
+                GUILayout.Label("no DataVersion");
+                GUILayout.EndHorizontal();
+                GUILayout.Space(10f);
+                return;
+            }
+
+            if (controls)
             {
                 GUILayout.Label(version.getFormated(), bS);
 
@@ -44,8 +53,8 @@ namespace fwp.version.editor
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
-            GUILayout.Label("last incremented: " + version.timestamp_incr);
-            GUILayout.Label("last built: " + version.timestamp_build);
+            GUILayout.Label("last incremented: " + version.Data.timestamp_incr);
+            GUILayout.Label("last built: " + version.Data.timestamp_build);
             GUILayout.EndHorizontal();
 
             GUILayout.Space(10f);

@@ -2,7 +2,7 @@
 
 namespace fwp.version
 {
-	[CreateAssetMenu(menuName = "buildor/version/new Internal", order = 100)]
+	[CreateAssetMenu(menuName = "buildor/version/+internal", order = 100)]
 	public class DataVersionInternal : DataBuildSettingVersion
 	{
 		
@@ -13,7 +13,7 @@ namespace fwp.version
 			UnityEditor.PlayerSettings.iOS.buildNumber = Version;
 
 			//android bundle version code
-			UnityEditor.PlayerSettings.Android.bundleVersionCode = buildNumber;
+			UnityEditor.PlayerSettings.Android.bundleVersionCode = BuildNumber;
 
 			//version under compagny name & product name
 			UnityEditor.PlayerSettings.bundleVersion = Version;

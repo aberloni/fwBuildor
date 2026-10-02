@@ -4,8 +4,9 @@ using UnityEngine;
 using System;
 
 /// <summary>
-/// this is meant to store an abstract of the version number of the app
-/// is base on each platform format and accessor
+/// platform version : how a DataVersion (X.Y.Z + build number) is applied to a platform
+/// multiple platform versions can share the same DataVersion
+/// subclasses add platform specific content (ie: switch release)
 /// </summary>
 
 namespace fwp.version
@@ -13,124 +14,79 @@ namespace fwp.version
 	[System.Serializable]
 	abstract public class DataBuildSettingVersion : ScriptableObject
 	{
-		public const char separator = '.';
-
-		[System.Serializable]
-		public struct VersionSlot
-		{
-			[Header("version")]
-			public int[] slots; // major, minor, patch
-
-			/// <summary>
-			/// X.Y.Z
-			/// </summary>
-			public string Display
-			{
-				get
-				{
-					string ret = string.Empty;
-					for (int i = 0; i < slots.Length; i++)
-					{
-						if (i > 0 && slots.Length > 1) ret += separator;
-						ret += slots[i];
-					}
-					return ret;
-				}
-			}
-		}
+		public const char separator = DataVersion.separator;
 
 		[Header("version")]
-		[SerializeField] protected int major;
-		[SerializeField] protected int minor;
-		[SerializeField] protected int patch;
+		[Tooltip("X.Y.Z + build number, can be shared by multiple platforms")]
+		[SerializeField] protected DataVersion data;
+
+		public DataVersion Data => data;
+		public bool HasData => data != null;
+
+		public int BuildNumber => HasData ? data.BuildNumber : 0;
 
 		/// <summary>
-		/// incremental number
+		/// X.Y.Z
 		/// </summary>
-		[SerializeField] protected int buildNumber = 1;
-		public int BuildNumber => buildNumber;
-
-		public string Version => major + "." + minor + "." + patch;
-
-		[Header("timestamp")]
-
-		public string timestamp_incr = "-never-";
-		public string timestamp_build = "-never-";
+		public string Version => HasData ? data.Version : "0.0.0";
 
 		/// <summary>
 		/// x.y.z
 		/// </summary>
-		/// <returns></returns>
-		virtual public string getDataVersion()
-		{
-			//return VersionManager.getFormatedVersion(version);
-			return Version;
-		}
+		virtual public string getDataVersion() => Version;
 
 		/// <summary>
 		/// int[] [x],[y],[z]
 		/// </summary>
-		/// <returns></returns>
-		public int[] getDataVersionInts() => new int[] { major, minor, patch };
+		public int[] getDataVersionInts() => HasData ? data.getDataVersionInts() : new int[3];
 
-		virtual public string getFormated()
-		{
-			return Version + "@" + buildNumber;
-		}
+		/// <summary>
+		/// X.Y.Z@B
+		/// </summary>
+		virtual public string getFormated() => HasData ? data.getFormated() : "(no DataVersion)";
 
-		public string getTimestamps()
-		{
-			return "incr? " + timestamp_incr + " & build? " + timestamp_build;
-		}
+		public string getTimestamps() => HasData ? data.getTimestamps() : "(no DataVersion)";
 
-		public override string ToString()
-		{
-			return getFormated();
-		}
+		public override string ToString() => getFormated();
 
 #if UNITY_EDITOR
-		public void event_build()
-		{
-			timestamp_build = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-			UnityEditor.EditorUtility.SetDirty(this);
+		bool checkData()
+		{
+			if (HasData) return true;
+			Debug.LogError(name + " : no DataVersion assigned", this);
+			return false;
 		}
 
-		void event_incr()
+		public void event_build()
 		{
-			timestamp_incr = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-			UnityEditor.EditorUtility.SetDirty(this);
+			if (!checkData()) return;
+			data.event_build();
 		}
 
 		public void incrementMajor()
 		{
-			patch = 0;
-			minor = 0;
-			major++;
-			buildNumber++;
+			if (!checkData()) return;
+			data.incrementMajor();
 			applyVersionToEditor();
-			event_incr(); // +dirty
 		}
 
 		public void incrementMinor()
 		{
-			patch = 0;
-			minor++;
-			buildNumber++;
+			if (!checkData()) return;
+			data.incrementMinor();
 			applyVersionToEditor();
-			event_incr(); // +dirty
 		}
 
 		public void incrementFix()
 		{
-			patch++;
-			buildNumber++;
+			if (!checkData()) return;
+			data.incrementFix();
 			applyVersionToEditor();
-			event_incr(); // +dirty
 		}
 
 		/// <summary>
-		/// describe how to inject version into editor 
+		/// describe how to inject version into editor
 		/// project settings > player settings
 		/// </summary>
 		abstract public void applyVersionToEditor();
@@ -166,5 +122,30 @@ namespace fwp.version
 #endif
 
 	}
+
+#if UNITY_EDITOR
+	/// <summary>
+	/// platform version inspector : shared DataVersion summary on top
+	/// </summary>
+	[UnityEditor.CustomEditor(typeof(DataBuildSettingVersion), true)]
+	public class DataBuildSettingVersionEditor : UnityEditor.Editor
+	{
+		public override void OnInspectorGUI()
+		{
+			var v = (DataBuildSettingVersion)target;
+
+			if (v.HasData)
+			{
+				UnityEditor.EditorGUILayout.HelpBox("version : " + v.getFormated() + "\n" + v.getTimestamps(), UnityEditor.MessageType.None);
+			}
+			else
+			{
+				UnityEditor.EditorGUILayout.HelpBox("no DataVersion assigned", UnityEditor.MessageType.Warning);
+			}
+
+			base.OnInspectorGUI();
+		}
+	}
+#endif
 
 }

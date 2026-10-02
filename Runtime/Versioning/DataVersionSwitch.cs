@@ -4,14 +4,14 @@ using System.IO;
 namespace fwp.version
 {
     /// <summary>
-    /// MAJOR.MINOR.PATCH
-    /// 
-    /// MAJOR : PlayerSettings.Switch.releaseVersion
-    /// 
-    /// can't set in editor, must edit NMETA after building rom
-    /// MINOR : 
-    /// PATCH : 4 bits, max value = 15
-    /// 
+    /// X.Y.Z & build number : from shared DataVersion
+    ///
+    /// switch specific :
+    /// release : PlayerSettings.Switch.releaseVersion (rom 0, patches 1,2,3,...)
+    ///
+    /// NMETA version (InjectVersionToRom) : can't set in editor, must edit NMETA after building rom
+    /// MAJOR, MINOR : max 255
+    /// MICRO (patch) : 4 bits, max value = 15
     /// </summary>
     [CreateAssetMenu(menuName = "buildor/version/+switch", order = 100)]
     public class DataVersionSwitch : DataBuildSettingVersion
@@ -31,7 +31,8 @@ namespace fwp.version
         {
             get
             {
-                return minor.ToString() + separator + patch.ToString();
+                if (!HasData) return "0" + separator + "0";
+                return Data.Minor.ToString() + separator + Data.Patch.ToString();
             }
         }
 
@@ -49,12 +50,12 @@ namespace fwp.version
             // before u6000
             // switch section only exist with installed package
 
-            // num inc rom release inc number
+            // rom 0, patches 1,2,3,...
             // must be numeric string
-            UnityEditor.PlayerSettings.Switch.releaseVersion = buildNumber.ToString();
+            UnityEditor.PlayerSettings.Switch.releaseVersion = release.ToString();
 
             // user visible version
-            UnityEditor.PlayerSettings.Switch.displayVersion = version;
+            UnityEditor.PlayerSettings.Switch.displayVersion = Version;
 #endif
 
         }

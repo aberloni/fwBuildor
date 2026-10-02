@@ -30,10 +30,37 @@ namespace fwp.buildor.editor
         [MenuItem(_menu + "PATCH++", true)]
         static bool miValidate() => getSelectedPackages().Count > 0;
 
-        static void incrementSelection(int slot)
+        // buildor menu : selected package(s), or buildor package if none selected
+        const string _menuBuildor = BuildorVerbosity._buildor_menuitem_path + "package version/";
+
+        [MenuItem(_menuBuildor + "MAJOR++", false, 200)] static void miwMajor() => incrementPackages(getWindowPackages(), 0);
+        [MenuItem(_menuBuildor + "MINOR++", false, 201)] static void miwMinor() => incrementPackages(getWindowPackages(), 1);
+        [MenuItem(_menuBuildor + "PATCH++", false, 202)] static void miwPatch() => incrementPackages(getWindowPackages(), 2);
+
+        [MenuItem(_menuBuildor + "MAJOR++", true)]
+        [MenuItem(_menuBuildor + "MINOR++", true)]
+        [MenuItem(_menuBuildor + "PATCH++", true)]
+        static bool miwValidate() => getWindowPackages().Count > 0;
+
+        static List<PackageInfo> getWindowPackages()
+        {
+            var ret = getSelectedPackages();
+            if (ret.Count > 0) return ret;
+
+            // fallback : package containing this script
+            var self = PackageInfo.FindForAssembly(typeof(NpmIncrementor).Assembly);
+            if (isWritable(self)) ret.Add(self);
+            return ret;
+        }
+
+        static bool isWritable(PackageInfo p) => p != null && (p.source == PackageSource.Embedded || p.source == PackageSource.Local);
+
+        static void incrementSelection(int slot) => incrementPackages(getSelectedPackages(), slot);
+
+        static void incrementPackages(List<PackageInfo> packages, int slot)
         {
             List<string> updated = new();
-            foreach (var p in getSelectedPackages())
+            foreach (var p in packages)
             {
                 if (increment(p, slot)) updated.Add(p.assetPath + "/package.json"); // Packages/[name]/package.json
             }
@@ -69,8 +96,7 @@ namespace fwp.buildor.editor
                 if (string.IsNullOrEmpty(path)) continue;
 
                 var p = PackageInfo.FindForAssetPath(path);
-                if (p == null) continue;
-                if (p.source != PackageSource.Embedded && p.source != PackageSource.Local) continue;
+                if (!isWritable(p)) continue;
                 if (ret.Exists(x => x.name == p.name)) continue;
 
                 ret.Add(p);
