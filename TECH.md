@@ -204,15 +204,17 @@ two layers, so that multiple platforms can share the same version
 
 - `DataVersion` : X.Y.Z + build number, timestamps (last increment, last build), platform agnostic
   - inspector : MAJOR++ / MINOR++ / PATCH++ buttons (+ build number, refresh increment timestamp), not applied to PlayerSettings
-  - `VersionIncrementor.incrementPatch()` (editor) : patch++ & save a `DataVersion`, logs name, new version & count found (ie: `-executeMethod fwp.version.editor.VersionIncrementor.incrementPatch`)
-    - single `DataVersion` in project : that one
-    - multiple : `DataVersion` of active profile version (publish, or internal), no active profile : warning, nothing incremented
+  - `VersionIncrementor.getCurrentVersion()` (editor) : current `DataVersion`
+    - active profile (with version) : `DataVersion` of its version (publish, or internal)
+    - no active profile : the only `DataVersion` of project
+    - null : none, or multiple without active profile (`out origin` tells why)
+  - `VersionIncrementor.incrementPatch()` (editor) : patch++ & save current `DataVersion`, logs name, new version & origin (ie: `-executeMethod fwp.version.editor.VersionIncrementor.incrementPatch`)
 - `DataBuildSettingVersion` : platform version (`DataVersion[Platform]`), references a `DataVersion` (`Data`)
   - increments are forwarded to its `DataVersion`, then applied to PlayerSettings
   - `applyVersionToEditor()` : per platform injection into PlayerSettings
-  - `VersionIncrementor.applyVersion()` (editor) : apply a platform version to PlayerSettings, menu `Window/Buildor/apply version to player settings` (ie: `-executeMethod fwp.version.editor.VersionIncrementor.applyVersion`)
-    - active profile : its platform version (publish, or internal), platform specifics included
-    - no active profile : the only `DataVersion` of project, X.Y.Z to `bundleVersion` only (`DataVersion.applyVersionToEditor()`), multiple or none : warning, nothing applied
+  - `VersionIncrementor.applyVersion()` (editor) : apply current version to PlayerSettings, menu `Window/Buildor/apply version to player settings` (ie: `-executeMethod fwp.version.editor.VersionIncrementor.applyVersion`)
+    - active profile : its platform version, platform specifics included
+    - no active profile : X.Y.Z to `bundleVersion` only (`DataVersion.applyVersionToEditor()`)
   - subclasses add platform specific content (ie: switch `release`)
   - inspector shows the shared version on top
 

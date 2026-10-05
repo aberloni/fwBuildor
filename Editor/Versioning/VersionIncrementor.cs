@@ -9,49 +9,61 @@ namespace fwp.version.editor
     static public class VersionIncrementor
     {
         /// <summary>
-        /// patch++ & save a DataVersion of project
-        /// single DataVersion in project : that one
-        /// multiple : the one of active profile, no active profile : warning, nothing incremented
+        /// current DataVersion of project
+        /// active profile (with version) : its DataVersion
+        /// no active profile : the only DataVersion of project
+        /// null : none, or multiple without active profile
+        /// </summary>
+        static public DataVersion getCurrentVersion() => solveCurrent(out _, out _);
+
+        /// <param name="origin">where it comes from (or why none), for logs</param>
+        static public DataVersion getCurrentVersion(out string origin) => solveCurrent(out _, out origin);
+
+        /// <param name="platform">platform version of active profile, null when coming from project</param>
+        static DataVersion solveCurrent(out DataBuildSettingVersion platform, out string origin)
+        {
+            platform = null;
+
+            // active profile, not verbose : caller logs origin
+            var bridge = BuildorHelpers.GetBridge();
+            var profile = bridge != null ? bridge.getPlatformProfil(BuildorVars.TargetPublish, BuildorVars.TargetSdk, false) : null;
+            if (profile != null && profile.Version != null && profile.Version.HasData)
+            {
+                platform = profile.Version;
+                origin = "active profile " + profile.name;
+                return platform.Data;
+            }
+
+            // only DataVersion of project
+            string[] guids = AssetDatabase.FindAssets("t:" + nameof(DataVersion));
+            if (guids.Length == 1)
+            {
+                origin = "only DataVersion in project";
+                return AssetDatabase.LoadAssetAtPath<DataVersion>(AssetDatabase.GUIDToAssetPath(guids[0]));
+            }
+
+            origin = "no active profile (with version) & x" + guids.Length + " DataVersion in project";
+            return null;
+        }
+
+        /// <summary>
+        /// patch++ & save current DataVersion (see getCurrentVersion)
         /// command line : -executeMethod fwp.version.editor.VersionIncrementor.incrementPatch
         /// null : nothing incremented
         /// </summary>
         static public DataVersion incrementPatch()
         {
-            string[] guids = AssetDatabase.FindAssets("t:" + nameof(DataVersion));
-            if (guids.Length <= 0)
+            DataVersion v = getCurrentVersion(out string origin);
+            if (v == null)
             {
-                Debug.LogWarning("patch++ : no DataVersion in project");
+                Debug.LogWarning("patch++ : " + origin + ", nothing incremented");
                 return null;
-            }
-
-            DataVersion v;
-            string origin;
-
-            if (guids.Length == 1)
-            {
-                v = AssetDatabase.LoadAssetAtPath<DataVersion>(AssetDatabase.GUIDToAssetPath(guids[0]));
-                origin = "only one";
-            }
-            else
-            {
-                // not verbose : warning below is enough
-                var bridge = BuildorHelpers.GetBridge();
-                var profile = bridge != null ? bridge.getPlatformProfil(BuildorVars.TargetPublish, BuildorVars.TargetSdk, false) : null;
-
-                if (profile == null || profile.Version == null || !profile.Version.HasData)
-                {
-                    Debug.LogWarning("patch++ : x" + guids.Length + " DataVersion in project & no active profile (with version) to pick one, nothing incremented");
-                    return null;
-                }
-
-                v = profile.Version.Data;
-                origin = "active profile " + profile.name;
             }
 
             v.incrementFix();
             AssetDatabase.SaveAssetIfDirty(v);
 
-            Debug.Log("patch++ : " + v.name + " → <b>" + v.getFormated() + "</b> (x" + guids.Length + " in project, " + origin + ")", v);
+            Debug.Log("patch++ : " + v.name + " → <b>" + v.getFormated() + "</b> (" + origin + ")", v);
             return v;
         }
 
@@ -61,42 +73,32 @@ namespace fwp.version.editor
         static void miApply() => applyVersion();
 
         /// <summary>
-        /// apply version to player settings
-        /// active profile : its platform version (publish, else internal), platform specifics included
-        /// no active profile : the only DataVersion of project, X.Y.Z only (bundleVersion)
+        /// apply current version (see getCurrentVersion) to player settings
+        /// active profile : its platform version, platform specifics included
+        /// no active profile : X.Y.Z only (bundleVersion)
         /// command line : -executeMethod fwp.version.editor.VersionIncrementor.applyVersion
         /// null : nothing applied
         /// </summary>
         static public DataVersion applyVersion()
         {
-            // active profile : platform version
-            var bridge = BuildorHelpers.GetBridge();
-            var profile = bridge != null ? bridge.getPlatformProfil(BuildorVars.TargetPublish, BuildorVars.TargetSdk, false) : null;
-            if (profile != null && profile.Version != null)
+            DataVersion v = solveCurrent(out DataBuildSettingVersion platform, out string origin);
+            if (v == null)
             {
-                var pv = profile.Version;
-                if (!pv.HasData)
-                {
-                    Debug.LogWarning("apply version : " + pv.name + " has no DataVersion, nothing applied (active profile " + profile.name + ")", pv);
-                    return null;
-                }
-
-                pv.applyVersionToEditor();
-                Debug.Log("apply version : " + pv.name + " <b>" + pv.getFormated() + "</b> → player settings (active profile " + profile.name + ")", pv);
-                return pv.Data;
-            }
-
-            // no active profile : only DataVersion of project
-            string[] guids = AssetDatabase.FindAssets("t:" + nameof(DataVersion));
-            if (guids.Length != 1)
-            {
-                Debug.LogWarning("apply version : no active profile (with version) & x" + guids.Length + " DataVersion in project, nothing applied");
+                Debug.LogWarning("apply version : " + origin + ", nothing applied");
                 return null;
             }
 
-            var v = AssetDatabase.LoadAssetAtPath<DataVersion>(AssetDatabase.GUIDToAssetPath(guids[0]));
-            v.applyVersionToEditor();
-            Debug.Log("apply version : " + v.name + " <b>" + v.Version + "</b> → player settings bundleVersion (only DataVersion in project)", v);
+            if (platform != null)
+            {
+                platform.applyVersionToEditor();
+                Debug.Log("apply version : " + platform.name + " <b>" + platform.getFormated() + "</b> → player settings (" + origin + ")", platform);
+            }
+            else
+            {
+                v.applyVersionToEditor();
+                Debug.Log("apply version : " + v.name + " <b>" + v.Version + "</b> → player settings bundleVersion (" + origin + ")", v);
+            }
+
             return v;
         }
     }
