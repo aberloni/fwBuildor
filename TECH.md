@@ -19,7 +19,7 @@
 | `Editor/Building/` | `BuildExecutor`, `BuildPreprocess`, `BuildPostprocess`, `BuildProcess` (editor coroutine base) |
 | `Editor/BuildModules/` | `BuildModule`, `BuildContext`, all bodules |
 | `Editor/ScriptableSymbols/` | scripting define symbols window & helpers |
-| `Editor/Versioning/` | app version incrementor & window |
+| `Editor/Versioning/` | app version window, `VersionIncrementor` |
 | `Editor/Window/` | buildor window (`WinEdBuildor`) & sub sections |
 | `Editor/Systems/` | specific paths per machine/user, system detection |
 | `Editor/NpmIncrementor.cs` | package.json version incrementor |
@@ -54,7 +54,8 @@
 `WinEdBuildor` BUILD button → `BuildExecutor.launch()`
 
 1. `BuildPreprocess` (editor coroutine, cancelable progress bar)
-   - platform requirements, build is cancelled if not met (before anything is modified)
+   - requirements, build is cancelled if not met (before anything is modified)
+     - scripts compile check (if "compile.check" toggle), see below
      - switch : `NINTENDO_SDK_ROOT` env var is set & points to a folder containing `Tools/`
    - clear export folder (`profile.BuildPath`)
    - increment version (if "version.incr" toggle)
@@ -68,6 +69,16 @@
 2. `BuildPostprocess`
    - failure : logs only
    - success : logs, post bodules (`build.modules` then `release.modules` or `debug.modules`), then "open folder" window toggle
+
+## compile check
+
+`BuildCompileCheck` : compiles player scripts only (no scenes, no assets) with `PlayerBuildInterface.CompilePlayerScripts`, seconds instead of a full build
+
+- active build target, `profile.Symbols` as extra defines (no injection), development option at debug level
+- errors in console, editor assemblies untouched (output in `Temp/buildor_compile_check`)
+- buildor window : "check compile" button (above BUILD), "compile.check" toggle to run it as build requirement
+- menu `Window/Buildor/check compile` : same, active profile
+- needs target platform module installed
 
 ## export path
 
@@ -192,6 +203,9 @@ two layers, so that multiple platforms can share the same version
 
 - `DataVersion` : X.Y.Z + build number, timestamps (last increment, last build), platform agnostic
   - inspector : MAJOR++ / MINOR++ / PATCH++ buttons (+ build number, refresh increment timestamp), not applied to PlayerSettings
+  - `VersionIncrementor.incrementPatch()` (editor) : patch++ & save a `DataVersion`, logs name, new version & count found (ie: `-executeMethod fwp.version.editor.VersionIncrementor.incrementPatch`)
+    - single `DataVersion` in project : that one
+    - multiple : `DataVersion` of active profile version (publish, or internal), no active profile : warning, nothing incremented
 - `DataBuildSettingVersion` : platform version (`DataVersion[Platform]`), references a `DataVersion` (`Data`)
   - increments are forwarded to its `DataVersion`, then applied to PlayerSettings
   - `applyVersionToEditor()` : per platform injection into PlayerSettings
@@ -212,7 +226,6 @@ two layers, so that multiple platforms can share the same version
   - `NINTENDO_SDK_ROOT` status, button to open system env vars when invalid
 - `SwitchNmeta.checkSdk()` is also the switch build requirement (preprocess)
 - profile `versionInternal` & `versionPublish` can share the same `DataVersion` : "version.incr" increments it once
-- menus `Version/Internal/*` & `Version/Publish/*` : increment active profile versions
 - `Window/Buildor/version (win)` (`WinEdVersion`), refreshed on focus
   - active profile (bridge, active build target, publish & sdk) : its `versionInternal` & `versionPublish`, MAJOR / MINOR / FIX buttons
   - no bridge or no active profile : lists all `DataVersion` assets, radio selector, focused one gets the buttons (not applied to PlayerSettings)

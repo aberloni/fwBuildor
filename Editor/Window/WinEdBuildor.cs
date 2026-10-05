@@ -429,6 +429,7 @@ namespace fwp.buildor.editor
 			GUILayout.Label("outputs", HelperGui.gCategoryBold);
 
 			GUILayout.BeginHorizontal(GUILayout.Height(20f));
+			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_pre_compileCheck, "compile.check");
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_pre_incVersion, "version.incr");
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_openFolder, "open folder");
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_post_autorun, "autorun");
@@ -482,6 +483,14 @@ namespace fwp.buildor.editor
 			drawPrevisualization();
 
 			GUILayout.Space(20f);
+
+			// scripts only, active target & profil symbols
+			GUI.enabled = aProfil != null;
+			if (GUILayout.Button("check compile (" + EditorUserBuildSettings.activeBuildTarget + ")"))
+			{
+				BuildCompileCheck.check(aProfil);
+			}
+			GUI.enabled = true;
 
 			/// BUILD
 			if (GUILayout.Button(getBuildLabel(), HelperGui.gButtonBig))

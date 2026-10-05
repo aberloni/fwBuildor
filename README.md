@@ -16,6 +16,7 @@ and give tools to manage it
 
 buildor window : `Window/Buildor/buildor (win)`
 select a profile (publish, sdk, debug) and build
+"check compile" : fast check that scripts compile for the build (no full build)
 
 # Bodule
 

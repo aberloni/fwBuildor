@@ -78,6 +78,13 @@ namespace fwp.buildor
             set => EditorPrefs.SetBool(ppref_pre_incVersion, value);
         }
 
+        static public readonly string ppref_pre_compileCheck = Ppref_prefix + "pre_compile_check";
+        static public bool PreCompileCheck
+        {
+            get => EditorPrefs.GetBool(ppref_pre_compileCheck);
+            set => EditorPrefs.SetBool(ppref_pre_compileCheck, value);
+        }
+
         static public readonly string ppref_post_openFolder = Ppref_prefix + "post_open_folder";
         static public bool PostOpenFolder
         {
