@@ -74,10 +74,11 @@
 
 `BuildCompileCheck` : compiles player scripts only (no scenes, no assets) with `PlayerBuildInterface.CompilePlayerScripts`, seconds instead of a full build
 
-- active build target, `profile.Symbols` as extra defines (no injection), development option at debug level
+- active build target, symbols already set in player settings (same as build), `EditorUserBuildSettings.development`
+- no profile needed
 - errors in console, editor assemblies untouched (output in `Temp/buildor_compile_check`)
 - buildor window : "check compile" button (above BUILD), "compile.check" toggle to run it as build requirement
-- menu `Window/Buildor/check compile` : same, active profile
+- menu `Window/Buildor/check compile` : same
 - needs target platform module installed
 
 ## export path

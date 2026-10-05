@@ -73,8 +73,8 @@ namespace fwp.buildor.editor
         /// </summary>
         bool checkRequirements()
         {
-            // scripts compile with profile symbols (window toggle)
-            if (BuildorVars.PreCompileCheck && !BuildCompileCheck.check(profil)) return false;
+            // scripts compile with player settings symbols (window toggle)
+            if (BuildorVars.PreCompileCheck && !BuildCompileCheck.check()) return false;
 
             switch (EditorUserBuildSettings.activeBuildTarget)
             {

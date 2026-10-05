@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.Build.Player;
-using System.Linq;
 
 namespace fwp.buildor.editor
 {
     /// <summary>
-    /// compile player scripts only (no scenes, no assets) for a target & profile symbols
+    /// compile player scripts only (no scenes, no assets) for a target
+    /// with symbols already set in player settings (same as build)
     /// fast way to know if scripts will compile in build
     /// errors are logged in console, editor assemblies are not touched
     /// </summary>
@@ -17,44 +17,32 @@ namespace fwp.buildor.editor
         const string mi_check = BuildorVerbosity._buildor_menuitem_path + "check compile";
 
         /// <summary>
-        /// active profil, same as buildor window button
+        /// same as buildor window button
         /// </summary>
         [MenuItem(mi_check, false, 50)]
-        static void miCheck() => check(BuildorVars.Profile);
+        static void miCheck() => check();
 
         [MenuItem(mi_check, true)]
         static bool miCheckValidate() => !BuildExecutor.IsBusy && !EditorApplication.isPlayingOrWillChangePlaymode;
 
         /// <summary>
-        /// active build target, profile symbols & debug options
+        /// active build target & development build setting
         /// </summary>
-        static public bool check(DataBuildSettingProfile profil)
-        {
-            if (profil == null)
-            {
-                Debug.LogError("compile check : no profil");
-                return false;
-            }
+        static public bool check() => check(EditorUserBuildSettings.activeBuildTarget, EditorUserBuildSettings.development);
 
-            return check(EditorUserBuildSettings.activeBuildTarget, profil.Symbols,
-                BuildorVars.IsDebug && profil.debug != null && profil.debug.developement_build);
-        }
-
-        static public bool check(BuildTarget target, string symbols, bool development)
+        static public bool check(BuildTarget target, bool development)
         {
-            string[] defines = string.IsNullOrEmpty(symbols)
-                ? new string[0]
-                : symbols.Split(';').Where(x => !string.IsNullOrWhiteSpace(x)).ToArray();
+            BuildTargetGroup group = BuildPipeline.GetBuildTargetGroup(target);
 
             var settings = new ScriptCompilationSettings
             {
                 target = target,
-                group = BuildPipeline.GetBuildTargetGroup(target),
+                group = group,
                 options = development ? ScriptCompilationOptions.DevelopmentBuild : ScriptCompilationOptions.None,
-                extraScriptingDefines = defines,
             };
 
-            Debug.Log("compile check : " + target + (development ? " (dev)" : "") + " symbols : " + string.Join(";", defines));
+            Debug.Log("compile check : " + target + (development ? " (dev)" : "")
+                + " symbols : " + fwp.symbols.ScriptSymbolsView.getPlayerSetSymbols(group));
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
             ScriptCompilationResult result = PlayerBuildInterface.CompilePlayerScripts(settings, path_output);

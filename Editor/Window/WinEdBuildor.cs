@@ -484,13 +484,11 @@ namespace fwp.buildor.editor
 
 			GUILayout.Space(20f);
 
-			// scripts only, active target & profil symbols
-			GUI.enabled = aProfil != null;
+			// scripts only, active target & player settings symbols
 			if (GUILayout.Button("check compile (" + EditorUserBuildSettings.activeBuildTarget + ")"))
 			{
-				BuildCompileCheck.check(aProfil);
+				BuildCompileCheck.check();
 			}
-			GUI.enabled = true;
 
 			/// BUILD
 			if (GUILayout.Button(getBuildLabel(), HelperGui.gButtonBig))
