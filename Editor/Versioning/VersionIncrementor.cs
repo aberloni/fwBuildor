@@ -61,47 +61,42 @@ namespace fwp.version.editor
         static void miApply() => applyVersion();
 
         /// <summary>
-        /// apply a platform version to player settings
-        /// active profile version (if any), else the only platform version of project
+        /// apply version to player settings
+        /// active profile : its platform version (publish, else internal), platform specifics included
+        /// no active profile : the only DataVersion of project, X.Y.Z only (bundleVersion)
         /// command line : -executeMethod fwp.version.editor.VersionIncrementor.applyVersion
         /// null : nothing applied
         /// </summary>
-        static public DataBuildSettingVersion applyVersion()
+        static public DataVersion applyVersion()
         {
-            DataBuildSettingVersion v = null;
-            string origin = null;
-
-            // active profile
+            // active profile : platform version
             var bridge = BuildorHelpers.GetBridge();
             var profile = bridge != null ? bridge.getPlatformProfil(BuildorVars.TargetPublish, BuildorVars.TargetSdk, false) : null;
             if (profile != null && profile.Version != null)
             {
-                v = profile.Version;
-                origin = "active profile " + profile.name;
-            }
-            else
-            {
-                // only platform version of project
-                string[] guids = AssetDatabase.FindAssets("t:" + nameof(DataBuildSettingVersion));
-                if (guids.Length != 1)
+                var pv = profile.Version;
+                if (!pv.HasData)
                 {
-                    Debug.LogWarning("apply version : no active profile (with version) & x" + guids.Length + " platform versions in project, nothing applied");
+                    Debug.LogWarning("apply version : " + pv.name + " has no DataVersion, nothing applied (active profile " + profile.name + ")", pv);
                     return null;
                 }
 
-                v = AssetDatabase.LoadAssetAtPath<DataBuildSettingVersion>(AssetDatabase.GUIDToAssetPath(guids[0]));
-                origin = "only one in project";
+                pv.applyVersionToEditor();
+                Debug.Log("apply version : " + pv.name + " <b>" + pv.getFormated() + "</b> → player settings (active profile " + profile.name + ")", pv);
+                return pv.Data;
             }
 
-            if (!v.HasData)
+            // no active profile : only DataVersion of project
+            string[] guids = AssetDatabase.FindAssets("t:" + nameof(DataVersion));
+            if (guids.Length != 1)
             {
-                Debug.LogWarning("apply version : " + v.name + " has no DataVersion, nothing applied (" + origin + ")", v);
+                Debug.LogWarning("apply version : no active profile (with version) & x" + guids.Length + " DataVersion in project, nothing applied");
                 return null;
             }
 
+            var v = AssetDatabase.LoadAssetAtPath<DataVersion>(AssetDatabase.GUIDToAssetPath(guids[0]));
             v.applyVersionToEditor();
-
-            Debug.Log("apply version : " + v.name + " <b>" + v.getFormated() + "</b> → player settings (" + origin + ")", v);
+            Debug.Log("apply version : " + v.name + " <b>" + v.Version + "</b> → player settings bundleVersion (only DataVersion in project)", v);
             return v;
         }
     }

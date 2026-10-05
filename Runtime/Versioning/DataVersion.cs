@@ -80,6 +80,15 @@ namespace fwp.version
 
 #if UNITY_EDITOR
 
+		/// <summary>
+		/// platform agnostic : X.Y.Z to PlayerSettings.bundleVersion
+		/// platform specifics are applied by platform versions (DataBuildSettingVersion)
+		/// </summary>
+		public void applyVersionToEditor()
+		{
+			UnityEditor.PlayerSettings.bundleVersion = Version;
+		}
+
 		public void event_build()
 		{
 			timestamp_build = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");

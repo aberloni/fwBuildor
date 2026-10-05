@@ -211,8 +211,8 @@ two layers, so that multiple platforms can share the same version
   - increments are forwarded to its `DataVersion`, then applied to PlayerSettings
   - `applyVersionToEditor()` : per platform injection into PlayerSettings
   - `VersionIncrementor.applyVersion()` (editor) : apply a platform version to PlayerSettings, menu `Window/Buildor/apply version to player settings` (ie: `-executeMethod fwp.version.editor.VersionIncrementor.applyVersion`)
-    - active profile version (publish, or internal) if any
-    - else the only platform version of project, multiple or none : warning, nothing applied
+    - active profile : its platform version (publish, or internal), platform specifics included
+    - no active profile : the only `DataVersion` of project, X.Y.Z to `bundleVersion` only (`DataVersion.applyVersionToEditor()`), multiple or none : warning, nothing applied
   - subclasses add platform specific content (ie: switch `release`)
   - inspector shows the shared version on top
 
