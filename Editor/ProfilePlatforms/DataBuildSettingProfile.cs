@@ -325,10 +325,26 @@ namespace fwp.buildor.editor
                 debug.log();
             }
 
-            if (versionPublish != null) versionPublish.applyVersionToEditor();
-            else versionInternal.applyVersionToEditor();
+            applyVersionToEditor();
 
             EditorUtility.SetDirty(this);
+        }
+
+        /// <summary>
+        /// active version (publish, else internal) to player settings
+        /// false : no version assigned
+        /// </summary>
+        public bool applyVersionToEditor()
+        {
+            var v = Version;
+            if (v == null)
+            {
+                Debug.LogWarning(name + " : no version assigned, nothing applied to player settings", this);
+                return false;
+            }
+
+            v.applyVersionToEditor();
+            return true;
         }
 
         protected void applyVersionToEditorDefault(bool publish = false)
