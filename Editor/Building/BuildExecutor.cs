@@ -73,8 +73,19 @@ namespace fwp.buildor.editor
             build_postpro = new();
         }
 
+        /// <summary>
+        /// scripts compiling (or assets updating) : build must not start
+        /// </summary>
+        static public bool IsEditorBusy => EditorApplication.isCompiling || EditorApplication.isUpdating;
+
         public void launch()
         {
+            if (IsEditorBusy)
+            {
+                Debug.LogWarning("build : editor is compiling scripts, build not started");
+                return;
+            }
+
             time = EditorApplication.timeSinceStartup;
 
             log("build.pre..");

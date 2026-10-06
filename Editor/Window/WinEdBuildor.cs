@@ -491,10 +491,27 @@ namespace fwp.buildor.editor
 			}
 
 			/// BUILD
-			if (GUILayout.Button(getBuildLabel(), HelperGui.gButtonBig))
+			// no build while compiling
+			bool compiling = BuildExecutor.IsEditorBusy;
+			GUI.enabled = !compiling;
+			if (GUILayout.Button(compiling ? "compiling..." : getBuildLabel(), HelperGui.gButtonBig))
 			{
 				new BuildExecutor().launch();
 			}
+			GUI.enabled = true;
+		}
+
+		bool _wasCompiling;
+
+		/// <summary>
+		/// 10x/sec : repaint when compiling state changes (button gray/enabled)
+		/// </summary>
+		void OnInspectorUpdate()
+		{
+			bool compiling = BuildExecutor.IsEditorBusy;
+			if (compiling == _wasCompiling) return;
+			_wasCompiling = compiling;
+			Repaint();
 		}
 
 

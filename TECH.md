@@ -53,6 +53,8 @@
 
 `WinEdBuildor` BUILD button → `BuildExecutor.launch()`
 
+- not started while scripts are compiling or assets updating (`BuildExecutor.IsEditorBusy`) : BUILD button grayed ("compiling..."), `launch()` refuses with a warning
+
 1. `BuildPreprocess` (editor coroutine, cancelable progress bar)
    - requirements, build is cancelled if not met (before anything is modified)
      - scripts compile check (if "compile.check" toggle), see below
@@ -127,11 +129,22 @@ a Bodule (`BuildModule`) is a scriptable object action executed pre or post buil
 | `BodulePostClearFiles` | post | remove specific files at root of export folder (file names only, no sub path) |
 | `BodulePostClearFilePaths` | post | remove specific files, paths relative to export folder, `*` `?` allowed in file name (ie: `MyGame_Data/StreamingAssets/*.log`) |
 | `BoduleSteam` | post | remove `steam_appid.txt` from root of export folder, if present |
-| `BodulePostDropVersion` | post | write version file (default `version.txt`) in export folder |
+| `BodulePostDropVersion` | post | write version file (default `version.txt`) in export folder, see drop version |
 | `BodulePostZip` | post | zip export folder next to it |
 | `BodulePostOpenFolder` | post | open export folder |
 
 recommended post order : do not ship, clear folders, clear files, clear file paths, steam, drop version, zip, open folder
+
+### drop version
+
+`BodulePostDropVersion`, one entry per line
+
+| line | when |
+|---|---|
+| `intern:X.Y.Z@B` | profile has `versionInternal` |
+| `publish:X.Y.Z@B` | profile has `versionPublish` |
+| `dev build` | dev build : build summary options (post), `EditorUserBuildSettings.development` (manual) |
+| `#debug` | `debug` in PlayerSettings symbols of built target group (`#if debug` is on) |
 
 ### clear folders paths
 
