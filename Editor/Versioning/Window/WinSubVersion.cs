@@ -37,7 +37,7 @@ namespace fwp.version.editor
             {
                 GUILayout.Label(version.getFormated(), bS);
 
-                if (GUILayout.Button("MAJOR", bS))
+                if (GUILayout.Button("MAJOR", bS) && version.Data.confirmMajor())
                 {
                     version.incrementMajor();
                 }
@@ -70,7 +70,7 @@ namespace fwp.version.editor
 
             GUILayout.Label(data.getFormated(), bS);
 
-            if (GUILayout.Button("MAJOR", bS)) data.incrementMajor();
+            if (GUILayout.Button("MAJOR", bS) && data.confirmMajor()) data.incrementMajor();
             if (GUILayout.Button("MINOR", bSM)) data.incrementMinor();
             if (GUILayout.Button("FIX", bM)) data.incrementFix();
 

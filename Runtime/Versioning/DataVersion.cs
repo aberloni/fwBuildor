@@ -101,6 +101,16 @@ namespace fwp.version
 			UnityEditor.EditorUtility.SetDirty(this);
 		}
 
+		/// <summary>
+		/// "are you sure" dialog before a MAJOR++ (buttons only)
+		/// </summary>
+		public bool confirmMajor()
+		{
+			string next = (major + 1).ToString() + separator + 0 + separator + 0;
+			return UnityEditor.EditorUtility.DisplayDialog("MAJOR++",
+				name + "\n" + Version + " → " + next + "\n\nare you sure ?", "yes", "no");
+		}
+
 		public void incrementMajor()
 		{
 			patch = 0;
@@ -143,7 +153,7 @@ namespace fwp.version
 			UnityEditor.EditorGUILayout.HelpBox("version : " + v.getFormated() + "\n" + v.getTimestamps(), UnityEditor.MessageType.None);
 
 			GUILayout.BeginHorizontal();
-			if (GUILayout.Button("MAJOR++")) { UnityEditor.Undo.RecordObject(v, "MAJOR++"); v.incrementMajor(); }
+			if (GUILayout.Button("MAJOR++") && v.confirmMajor()) { UnityEditor.Undo.RecordObject(v, "MAJOR++"); v.incrementMajor(); }
 			if (GUILayout.Button("MINOR++")) { UnityEditor.Undo.RecordObject(v, "MINOR++"); v.incrementMinor(); }
 			if (GUILayout.Button("PATCH++")) { UnityEditor.Undo.RecordObject(v, "PATCH++"); v.incrementFix(); }
 			GUILayout.EndHorizontal();

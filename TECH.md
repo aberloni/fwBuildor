@@ -217,6 +217,7 @@ two layers, so that multiple platforms can share the same version
 
 - `DataVersion` : X.Y.Z + build number, timestamps (last increment, last build), platform agnostic
   - inspector : MAJOR++ / MINOR++ / PATCH++ buttons (+ build number, refresh increment timestamp), not applied to PlayerSettings
+  - MAJOR buttons (inspector & version window) ask for confirmation first (`DataVersion.confirmMajor()`)
   - `VersionIncrementor.getCurrentVersion()` (editor) : current `DataVersion`
     - active profile (with version) : `DataVersion` of its version (publish, or internal)
     - no active profile : the only `DataVersion` of project
