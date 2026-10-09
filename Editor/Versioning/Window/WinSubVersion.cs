@@ -14,7 +14,10 @@ namespace fwp.version.editor
         readonly GUILayoutOption bSM = GUILayout.Width(90f);
         readonly GUILayoutOption bM = GUILayout.Width(105f);
         
-        public void drawVersion(DataBuildSettingVersion version, bool controls = true)
+        /// <summary>
+        /// fixOnly : FIX button only (no MAJOR / MINOR)
+        /// </summary>
+        public void drawVersion(DataBuildSettingVersion version, bool controls = true, bool fixOnly = false)
         {
             if (version == null) return;
 
@@ -36,13 +39,16 @@ namespace fwp.version.editor
             {
                 GUILayout.Label(version.getFormated(), bS);
 
-                if (GUILayout.Button("MAJOR", bS) && version.Data.confirmMajor())
+                if (!fixOnly)
                 {
-                    version.incrementMajor();
-                }
-                if (GUILayout.Button("MINOR", bSM))
-                {
-                    version.incrementMinor();
+                    if (GUILayout.Button("MAJOR", bS) && version.Data.confirmMajor())
+                    {
+                        version.incrementMajor();
+                    }
+                    if (GUILayout.Button("MINOR", bSM))
+                    {
+                        version.incrementMinor();
+                    }
                 }
                 if (GUILayout.Button("FIX", bM))
                 {

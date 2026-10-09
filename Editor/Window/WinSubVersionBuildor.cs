@@ -12,8 +12,9 @@ namespace fwp.buildor.editor
 
 			var p = BuildorVars.Profile;
 
-			if (p.versionInternal != null) drawVersion(p.versionInternal);
-			if (p.versionPublish != null) drawVersion(p.versionPublish);
+			// FIX only : MAJOR / MINOR in version window
+			if (p.versionInternal != null) drawVersion(p.versionInternal, fixOnly: true);
+			if (p.versionPublish != null) drawVersion(p.versionPublish, fixOnly: true);
 
 			GUILayout.Label("unity.player.settings: " + fwp.version.VersionManager.getPlayerSettingsVersion());
 		}
