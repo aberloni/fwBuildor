@@ -22,7 +22,6 @@ namespace fwp.version.editor
 
             GUI.enabled = false;
             EditorGUILayout.ObjectField(version, typeof(DataBuildSettingVersion), true);
-            EditorGUILayout.ObjectField(version.Data, typeof(DataVersion), true); // shared X.Y.Z
             GUI.enabled = true;
 
             if (!version.HasData)

@@ -310,8 +310,10 @@ namespace fwp.buildor.editor
 			GUILayout.EndHorizontal();
 
 			// see more details
-			foldMerger = EditorGUILayout.Foldout(foldMerger, merg.strOneLine(), true);
-			if (foldMerger) GUILayout.Label(merg.stringify());
+			// wrapped & short foldout label : scene paths must not force window min width
+			HelperGuiFields.drawWrapLabel(merg.strOneLine());
+			foldMerger = EditorGUILayout.Foldout(foldMerger, "details", true);
+			if (foldMerger) HelperGuiFields.drawWrapLabel(merg.stringify());
 		}
 
 		readonly GUIContent gui_btn_browse = new GUIContent("browse");
@@ -533,7 +535,8 @@ namespace fwp.buildor.editor
 			// ProfilLogLevels logs = aProfil.Logs;
 			// if (logs != null) GUILayout.Label("+ logs : " + logs.ToString());
 
-			GUILayout.Label(aProfil.stringifySummary());
+			// wrapped : long paths must not force window min width
+			HelperGuiFields.drawWrapLabel(aProfil.stringifySummary());
 		}
 
 		static void OpenFolder(string path)

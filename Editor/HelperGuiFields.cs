@@ -62,7 +62,8 @@ namespace fwp.buildor.editor
 		static public bool drawPrefToggle(string ppref, string label = null)
 		{
 			bool value = EditorPrefs.GetBool(ppref);
-			bool _val = GUILayout.Toggle(value, label, GUILayout.Width(150f));
+			bool _val = GUILayout.Toggle(value, label, GUILayout.ExpandWidth(false)); // label width, rows of toggles can compress
+			GUILayout.Space(10f); // margin with next toggle
 			if (_val != value) EditorPrefs.SetBool(ppref, _val);
 			return _val;
 		}
