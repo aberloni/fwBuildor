@@ -195,7 +195,7 @@ namespace fwp.buildor.editor
 
 		void drawSymbols()
 		{
-			GUILayout.Label("Symbols", HelperGui.gCategoryBold);
+			if (!HelperGuiFields.drawCategoryFoldout("Symbols")) return;
 
 			var p = BuildorVars.Profile;
 
@@ -238,7 +238,7 @@ namespace fwp.buildor.editor
 		{
 			if (aProfil.build == null) return;
 
-			GUILayout.Label("Modules", HelperGui.gCategoryBold);
+			if (!HelperGuiFields.drawCategoryFoldout("Modules")) return;
 
 			GUILayout.Label("modules.build");
 			drawModules(aProfil.build.modules);
@@ -295,7 +295,7 @@ namespace fwp.buildor.editor
 		{
 			var merg = aProfil.build.merger;
 
-			GUILayout.Label("Mergers", HelperGui.gCategoryBold);
+			if (!HelperGuiFields.drawCategoryFoldout("Mergers")) return;
 			if (merg == null)
 			{
 				GUILayout.Label("-none-");
@@ -324,8 +324,7 @@ namespace fwp.buildor.editor
 		/// </summary>
 		void drawPathModifiers()
 		{
-			GUILayout.Label("Path modifiers", HelperGui.gCategoryBold);
-
+			if (!HelperGuiFields.drawCategoryFoldout("Path modifiers")) return;
 
 			GUILayout.Label("specific path", HelperGui.gBold);
 			SpecificPaths spec = aProfil.UserSpecific;
@@ -427,8 +426,7 @@ namespace fwp.buildor.editor
 
 		void drawPreprocessVars()
 		{
-			GUILayout.Space(20f);
-			GUILayout.Label("outputs", HelperGui.gCategoryBold);
+			if (!HelperGuiFields.drawCategoryFoldout("Outputs")) return;
 
 			GUILayout.BeginHorizontal(GUILayout.Height(20f));
 			HelperGuiFields.drawPrefToggle(BuildorVars.ppref_pre_compileCheck, "compile.check");
@@ -522,7 +520,7 @@ namespace fwp.buildor.editor
 		/// </summary>
 		void drawPrevisualization()
 		{
-			GUILayout.Label("Summary", HelperGui.gCategoryBold);
+			if (!HelperGuiFields.drawCategoryFoldout("Summary")) return;
 
 			if (aProfil == null)
 			{

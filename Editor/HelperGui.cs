@@ -24,6 +24,38 @@ namespace fwp.buildor
         public static readonly GUIStyle gButtonBig;
         public static readonly GUIStyle gColoredButtonRed;
         public static readonly GUIStyle gCategoryBold;
+
+        static GUIStyle _gCategoryFoldout;
+
+        /// <summary>
+        /// gCategoryBold look, as foldout
+        /// lazy : EditorStyles must be read during OnGUI, not in static ctor
+        /// </summary>
+        public static GUIStyle gCategoryFoldout
+        {
+            get
+            {
+                if (_gCategoryFoldout != null) return _gCategoryFoldout;
+
+                _gCategoryFoldout = new GUIStyle(EditorStyles.foldout);
+                _gCategoryFoldout.fontStyle = FontStyle.Bold;
+                _gCategoryFoldout.margin.left = 10;
+                _gCategoryFoldout.margin.top = 5;
+
+                // foldout swaps text color on hover/focus : keep red on all states
+                Color c = gCategoryBold.normal.textColor;
+                _gCategoryFoldout.normal.textColor = c;
+                _gCategoryFoldout.onNormal.textColor = c;
+                _gCategoryFoldout.hover.textColor = c;
+                _gCategoryFoldout.onHover.textColor = c;
+                _gCategoryFoldout.focused.textColor = c;
+                _gCategoryFoldout.onFocused.textColor = c;
+                _gCategoryFoldout.active.textColor = c;
+                _gCategoryFoldout.onActive.textColor = c;
+
+                return _gCategoryFoldout;
+            }
+        }
         public static readonly GUIStyle gBold;
         public static readonly GUIStyle gLabelBoldGizmos;
 

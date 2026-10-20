@@ -17,6 +17,22 @@ namespace fwp.buildor.editor
 			GUILayout.EndHorizontal();
 		}
 
+		const string ppref_fold_prefix = "buildor.fold.";
+
+		/// <summary>
+		/// category header (red label) as foldout
+		/// fold state saved in editor pprefs, keyed on label unless specific key is given
+		/// returns true when unfolded
+		/// </summary>
+		static public bool drawCategoryFoldout(string label, string ppref = null, bool defaultOpen = true)
+		{
+			string key = ppref_fold_prefix + (string.IsNullOrEmpty(ppref) ? label : ppref);
+			bool value = EditorPrefs.GetBool(key, defaultOpen);
+			bool _val = EditorGUILayout.Foldout(value, label, true, HelperGui.gCategoryFoldout);
+			if (_val != value) EditorPrefs.SetBool(key, _val);
+			return _val;
+		}
+
 		static public void drawWrapLabel(string label)
 		{
 			if (string.IsNullOrEmpty(label)) return;
